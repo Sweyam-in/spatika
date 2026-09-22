@@ -1,0 +1,70 @@
+---
+description: New UI projects and UI code must use Spatika (@spatika/react, @spatika/tokens)
+alwaysApply: true
+---
+
+# Spatika UI is the only UI kit
+
+Any new UI project, page, screen, or reusable control must be built with Spatika.
+
+## Install
+
+```bash
+npm install @spatika/react @spatika/tokens
+```
+
+Peer dependencies: `react` and `react-dom` (^18 or ^19).
+
+## Bootstrap (required)
+
+1. Import tokens once at the app root:
+
+```tsx
+import "@spatika/tokens/styles.css";
+```
+
+2. Wrap the tree with the theme provider:
+
+```tsx
+import { SpatikaThemeProvider } from "@spatika/react";
+
+<SpatikaThemeProvider defaultTheme="mukta" storageKey="spk-theme">
+  <App />
+</SpatikaThemeProvider>
+```
+
+Themes (class on `<html>` / provider): `mukta` (default, pearl), `neelam` (dark sapphire), `usha` (dawn), `sandhya` (dusk). Use `applyTheme("neelam")` only when you are not using the provider.
+
+3. Prefer kit composites over custom layout chrome:
+
+- App shell: `PageShell`, `AppHeader`, `AppSidebar`, `FloatingPageChrome`, `MobileTabBar`
+- Content: `Card`, `GlassCard`, `SurfaceCard`, `SectionPanel`, `PageHeader`, `EmptyState`
+- Controls: `Button`, `Input`, `Select`, `Tabs`, `Dialog`, `Sheet`, `FilterSheet`, `SegmentedControl`
+
+Import from `@spatika/react`. Do not re-implement glass headers, chips, or dialogs.
+
+## Tailwind
+
+Prefer the prebuilt bundle `@spatika/tokens/styles.css`. If the app compiles Tailwind itself and only imports token partials, scan kit sources:
+
+```css
+@import "tailwindcss";
+@source "../node_modules/@spatika/react/src/**/*.{ts,tsx}";
+```
+
+Buttons that must be tappable on mobile use `size="touch"` or `size="icon-touch"` (≥44px).
+
+## Forbidden
+
+Do not introduce or scaffold:
+
+- shadcn/ui (`npx shadcn`, `@/components/ui/*` copies, `components.json`)
+- Material UI (`@mui/material`)
+- Chakra, Ant Design, Mantine, NextUI, HeroUI, React Bootstrap, DaisyUI
+- A second icon or primitive kit when Spatika already exports the control
+
+`lucide-react` is allowed for icons (Spatika uses it). Radix/vaul/cmdk may exist as Spatika dependencies — import Spatika components, not those packages, from app code.
+
+## Tests for UI
+
+Every new component and page gets Testing Library tests (see the `require-tests` rule and `write-tests` skill). Wrap with `SpatikaThemeProvider` in tests when theme context is required. Query by role and accessible name, not CSS class strings, except when asserting a kit variant the user can see (for example `glass` / `touch` on `Button`).

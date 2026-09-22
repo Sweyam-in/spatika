@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-spk-seo="title">Spatika UI — React Design System</title>
+    <meta
+      data-spk-seo="description"
+      name="description"
+      content="Spatika UI is an open-source React design system with calm surfaces, four themes, app chrome, SVG charts (@spatika/charts), a Tiptap editor (@spatika/editor), and scheduling (EventCalendar). Also known as Spadik UI."
+    />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="author" content="Sreelal Chalil" />
+    <meta name="application-name" content="Spatika UI" />
+    <meta name="apple-mobile-web-app-title" content="Spatika UI" />
+    <meta name="theme-color" content="#e95420" />
+    <link data-spk-seo="canonical" rel="canonical" href="https://spatika.sweyam.com/" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://spatika.sweyam.com/sitemap.xml" />
+    <link rel="alternate" type="text/plain" title="LLM Markdown index" href="https://spatika.sweyam.com/llms.txt" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Spatika UI" />
+    <meta property="og:locale" content="en_US" />
+    <meta data-spk-seo="og-title" property="og:title" content="Spatika UI — React Design System" />
+    <meta
+      data-spk-seo="og-description"
+      property="og:description"
+      content="Spatika UI is an open-source React design system with calm surfaces, four themes, app chrome, SVG charts (@spatika/charts), a Tiptap editor (@spatika/editor), and scheduling (EventCalendar). Also known as Spadik UI."
+    />
+    <meta data-spk-seo="og-url" property="og:url" content="https://spatika.sweyam.com/" />
+    <meta property="og:image" content="https://spatika.sweyam.com/og.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Spatika UI — React design system" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta data-spk-seo="twitter-title" name="twitter:title" content="Spatika UI — React Design System" />
+    <meta
+      data-spk-seo="twitter-description"
+      name="twitter:description"
+      content="Spatika UI is an open-source React design system with calm surfaces, four themes, app chrome, SVG charts (@spatika/charts), a Tiptap editor (@spatika/editor), and scheduling (EventCalendar). Also known as Spadik UI."
+    />
+    <meta name="twitter:image" content="https://spatika.sweyam.com/og.png" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <script type="application/ld+json" data-spk-seo="jsonld">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://spatika.sweyam.com/#website",
+            "name": "Spatika UI",
+            "alternateName": ["Spatika", "Spadik UI", "Spadik", "Spatika React"],
+            "url": "https://spatika.sweyam.com",
+            "description": "Spatika UI is an open-source React design system with calm surfaces, four themes, app chrome, SVG charts (@spatika/charts), a Tiptap editor (@spatika/editor), and scheduling (EventCalendar). Also known as Spadik UI."
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://spatika.sweyam.com/#app",
+            "name": "Spatika UI",
+            "alternateName": ["Spatika", "Spadik UI", "Spadik", "Spatika React"],
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Web",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+            "url": "https://spatika.sweyam.com",
+            "downloadUrl": "https://www.npmjs.com/package/@spatika/react"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D38N6ZVFM0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D38N6ZVFM0');
+    </script>
+    <script>
+      try {
+        var t = localStorage.getItem("spk-theme") || "usha";
+        if (t === "neelam" || t === "usha" || t === "sandhya") {
+          document.documentElement.classList.add(t);
+        }
+        if (t === "mukta" || t === "neelam" || t === "usha" || t === "sandhya") {
+          document.documentElement.setAttribute("data-spk-theme", t);
+          document.documentElement.style.colorScheme =
+            t === "neelam" || t === "sandhya" ? "dark" : "light";
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <noscript data-spk-seo="noscript">
+      <h1>Spatika UI — React Design System</h1>
+      <p>
+        Spatika UI (also spelled Spadik UI) is an open-source React design system with calm
+        surfaces, four themes, app chrome, SVG charts, a Tiptap editor, and EventCalendar scheduling.
+      </p>
+      <p>
+        <a href="/design">Design language</a> ·
+        <a href="/components">Components</a> ·
+        <a href="/guides">Guides</a> ·
+        <a href="/showcase">Showcase</a> ·
+        <a href="/llms.txt">llms.txt</a>
+      </p>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

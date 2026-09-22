@@ -1,0 +1,60 @@
+{
+  "name": "@spatika/tokens",
+  "version": "2.2.0",
+  "description": "Spatika design tokens — semantic themes, density, motion, and component recipes (framework-agnostic)",
+  "homepage": "https://spatika.sweyam.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SreelalChalil/spatika.git",
+    "directory": "packages/tokens"
+  },
+  "bugs": {
+    "url": "https://github.com/SreelalChalil/spatika/issues"
+  },
+  "author": "Sreelal Chalil",
+  "keywords": [
+    "spatika",
+    "spatika-ui",
+    "spadik",
+    "css",
+    "design-tokens",
+    "glass",
+    "glassmorphism",
+    "theme"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": "./dist/styles.css",
+    "./styles.css": "./dist/styles.css",
+    "./fonts.css": "./src/fonts.css",
+    "./tokens.css": "./src/tokens.css",
+    "./glass.css": "./src/glass.css",
+    "./surfaces.css": "./src/surfaces.css",
+    "./components.css": "./src/components.css",
+    "./chrome.css": "./src/chrome.css",
+    "./marketing.css": "./src/marketing.css",
+    "./marketing-blocks.css": "./src/marketing-blocks.css",
+    "./charts.css": "./src/charts.css",
+    "./base.css": "./src/base.css",
+    "./src/index.css": "./src/index.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "mkdir -p dist && tailwindcss -i ./src/build-entry.css -o ./dist/styles.css --minify"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# LLM / coding-agent docs — https://llmstxt.org
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /AGENTS.md
+Allow: /docs/
+Allow: /skills/
+
+Sitemap: https://spatika.sweyam.com/sitemap.xml

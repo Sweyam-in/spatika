@@ -1,0 +1,1158 @@
+/**
+ * Spatika editor styles — import `@spatika/editor/styles.css` alongside `@spatika/tokens/styles.css`.
+ */
+
+.spk-editor-shell {
+  /* Opaque surfaces for menus/popovers that float over document text. */
+  --spk-editor-overlay-bg: var(--spk-surface-overlay);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--spk-border);
+  background: var(--spk-surface);
+  box-shadow: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.spk-editor-shell--disabled {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.spk-editor-shell--loading {
+  padding: 1rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.spk-editor-shell--fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal, 50);
+  border-radius: 0;
+  max-height: none;
+}
+
+.spk-editor-toolbar {
+  position: relative;
+  z-index: 2;
+  overflow: visible;
+  background: var(--spk-surface);
+  border-bottom: 1px solid var(--spk-border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem;
+}
+
+.spk-editor-toolbar--compact .spk-editor-toolbar-row {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.spk-editor-toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.spk-editor-toolbar-group {
+  display: inline-flex;
+  gap: 0.15rem;
+  padding-right: 0.35rem;
+  border-right: 1px solid var(--border);
+}
+
+.spk-editor-toolbar-group:last-child {
+  border-right: 0;
+}
+
+.spk-editor-toolbar-actions {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.spk-editor-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--spk-radius-sm);
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.spk-editor-toolbar-btn:hover {
+  background: color-mix(in oklab, var(--foreground) 8%, transparent);
+}
+
+.spk-editor-toolbar-btn--active,
+.spk-editor-toolbar-btn[data-active="true"] {
+  background: color-mix(in oklab, var(--primary) 16%, transparent);
+  color: var(--primary);
+}
+
+.spk-editor-body {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.spk-editor-shell--with-ai-dock {
+  min-height: inherit;
+}
+
+.spk-editor-shell--with-ai-dock .spk-editor-body {
+  overflow-y: auto;
+}
+
+.spk-editor-ai-dock-footer {
+  position: relative;
+  flex-shrink: 0;
+  z-index: 3;
+  padding: 0.65rem 0.85rem 0.75rem;
+  border-top: 1px solid var(--spk-border);
+  background: var(--spk-surface-subtle);
+}
+
+.spk-editor-shell--playground {
+  min-height: 32rem;
+  overflow: visible;
+}
+
+.spk-editor-shell--playground .spk-editor-body {
+  overflow: visible;
+}
+
+.spk-editor-surface {
+  padding: 1rem 1.25rem;
+}
+
+.spk-editor-shell .ProseMirror {
+  outline: none;
+  min-height: inherit;
+  font-family: var(--spk-font-sans, inherit);
+  font-size: var(--spk-text-body-lg, 1rem);
+  color: var(--spk-text-primary, var(--foreground));
+  line-height: 1.7;
+}
+
+.spk-editor-shell .ProseMirror h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.022em;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.spk-editor-shell .ProseMirror h2 {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.016em;
+  margin: 1.25rem 0 0.4rem;
+}
+
+.spk-editor-shell .ProseMirror h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 1rem 0 0.3rem;
+}
+
+.spk-editor-shell .ProseMirror > :first-child {
+  margin-top: 0;
+}
+
+.spk-editor-shell .ProseMirror p {
+  margin: 0.5rem 0;
+}
+
+.spk-editor-shell .ProseMirror blockquote {
+  border-left: 2px solid var(--spk-border-strong, var(--border));
+  margin: 0.75rem 0;
+  padding-left: 1rem;
+  color: var(--spk-text-secondary, var(--muted-foreground));
+}
+
+.spk-editor-shell .ProseMirror ul,
+.spk-editor-shell .ProseMirror ol {
+  margin: 0.5rem 0;
+  padding-left: 1.35rem;
+}
+
+/* Restore markers: the token reset (Tailwind preflight) clears list styling. */
+.spk-editor-shell .ProseMirror ul {
+  list-style: disc outside;
+}
+
+.spk-editor-shell .ProseMirror ul ul {
+  list-style: circle outside;
+}
+
+.spk-editor-shell .ProseMirror ol {
+  list-style: decimal outside;
+}
+
+.spk-editor-shell .ProseMirror li::marker {
+  color: var(--spk-text-tertiary, var(--muted-foreground));
+}
+
+.spk-editor-shell .ProseMirror li > p {
+  margin: 0.15rem 0;
+}
+
+.spk-editor-shell .ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.spk-editor-shell .ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.spk-editor-shell .ProseMirror ul[data-type="taskList"] li > label {
+  flex: 0 0 auto;
+  margin-top: 0.2rem;
+  user-select: none;
+}
+
+.spk-editor-shell .ProseMirror ul[data-type="taskList"] li > div {
+  flex: 1 1 auto;
+}
+
+.spk-editor-shell .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
+  accent-color: var(--primary);
+  width: 0.95rem;
+  height: 0.95rem;
+  cursor: pointer;
+}
+
+.spk-editor-shell .ProseMirror code {
+  font-family: var(--spk-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.85em;
+  border-radius: var(--spk-radius-xs, 0.25rem);
+  border: 1px solid var(--spk-border-subtle, var(--border));
+  background: var(--spk-surface-subtle, var(--muted));
+  padding: 0.05rem 0.3rem;
+}
+
+.spk-editor-shell .ProseMirror pre {
+  margin: 0.5rem 0;
+  border-radius: var(--spk-radius-sm);
+  border: 1px solid var(--spk-border, var(--border));
+  background: var(--spk-surface-sunken, var(--muted));
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+}
+
+.spk-editor-shell .ProseMirror pre code {
+  display: block;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+.spk-editor-shell .ProseMirror mark {
+  border-radius: 0.15rem;
+  padding: 0.05rem 0.1rem;
+}
+
+.spk-editor-color-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.spk-editor-color-swatch {
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--swatch-color, var(--foreground));
+  cursor: pointer;
+  padding: 0;
+}
+
+.spk-editor-color-swatch--default {
+  background:
+    linear-gradient(135deg, transparent 46%, var(--spk-danger) 46%, var(--spk-danger) 54%, transparent 54%),
+    var(--background);
+}
+
+.spk-editor-color-swatch--active {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 3px var(--primary);
+}
+
+.spk-editor-shell .ProseMirror hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0.85rem 0;
+}
+
+.spk-editor-shell .ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+.spk-editor-shell .ProseMirror th,
+.spk-editor-shell .ProseMirror td {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.5rem;
+  vertical-align: top;
+}
+
+.spk-editor-shell .ProseMirror th {
+  background: var(--spk-surface-subtle, var(--muted));
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+}
+
+.spk-editor-shell .ProseMirror img,
+.spk-editor-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--spk-radius-sm);
+  display: block;
+  margin: 0.5rem auto;
+}
+
+.spk-editor-image--left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.spk-editor-image--right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.spk-editor-link {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.spk-editor-mention {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-pill, 999px);
+  background: color-mix(in oklab, var(--primary) 14%, transparent);
+  color: var(--primary);
+  padding: 0.05rem 0.45rem;
+  font-weight: 500;
+}
+
+.spk-editor-shell .ProseMirror p.is-editor-empty:first-child::before {
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+.spk-editor-bubble-menu {
+  /* 2.0: floating selection menu uses overlay material, not a glass pill. */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  background: var(--spk-editor-overlay-bg, var(--background));
+  border: 1px solid var(--spk-border);
+  border-radius: var(--spk-radius-md);
+  box-shadow: var(--spk-shadow-lg), var(--spk-facet);
+}
+
+.spk-editor-suggestion {
+  position: absolute;
+  z-index: 20;
+  left: 1rem;
+  top: 3.5rem;
+  min-width: 14rem;
+  max-width: min(20rem, calc(100% - 2rem));
+  background: var(--spk-editor-overlay-bg, var(--background));
+  border: 1px solid var(--spk-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--spk-shadow-lg), var(--spk-facet);
+  overflow: hidden;
+}
+
+.spk-editor-suggestion-header {
+  padding: 0.45rem 0.65rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--border);
+}
+
+.spk-editor-suggestion-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem;
+  max-height: 14rem;
+  overflow-y: auto;
+}
+
+.spk-editor-suggestion-item {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  border-radius: var(--spk-radius-sm);
+  padding: 0.45rem 0.55rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.spk-editor-suggestion-item:hover,
+.spk-editor-suggestion-item--active {
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+}
+
+.spk-editor-suggestion-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.spk-editor-suggestion-desc {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.spk-editor-ai-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: color-mix(in oklab, var(--background) 55%, transparent);
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.spk-editor-ai-overlay-icon {
+  animation: spk-editor-sparkle 1.2s ease-in-out infinite;
+}
+
+.spk-editor-ai-selection {
+  background: color-mix(in oklab, var(--primary) 18%, transparent);
+  border-radius: 0.15rem;
+}
+
+.spk-editor-fullscreen-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 0.75rem;
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+  border-top: 1px solid var(--border);
+  background: var(--spk-surface);
+}
+
+.spk-editor-fullscreen-close {
+  border: 0;
+  border-radius: var(--spk-radius-sm);
+  min-height: 2.75rem;
+  padding: 0.35rem 0.85rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .spk-editor-toolbar-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    max-width: 100%;
+  }
+
+  .spk-editor-toolbar-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .spk-editor-toolbar-group {
+    flex-shrink: 0;
+  }
+
+  .spk-editor-toolbar-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+  }
+
+  .spk-editor-surface {
+    padding: 0.65rem 0.75rem;
+  }
+
+  .spk-editor-shell--playground {
+    min-height: min(32rem, 72vh);
+  }
+
+  .spk-editor-shell--playground .spk-editor-surface {
+    min-height: min(28rem, 58vh) !important;
+  }
+
+  .spk-editor-ai-dock-footer {
+    padding-left: max(0.65rem, env(safe-area-inset-left));
+    padding-right: max(0.65rem, env(safe-area-inset-right));
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  .spk-editor-ai-dock-panel {
+    left: 0;
+    right: auto;
+    width: min(24rem, calc(100vw - 1.7rem));
+    max-width: none;
+  }
+
+  .spk-editor-ai-dock-input {
+    font-size: 1rem;
+  }
+
+  .spk-editor-toolbar-popover-panel--portal {
+    max-width: min(18rem, calc(100vw - 1.5rem));
+  }
+
+  .spk-editor-suggestion {
+    left: 0.65rem;
+    right: 0.65rem;
+    max-width: none;
+    width: auto;
+  }
+
+  .spk-editor-shell--fullscreen {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@keyframes spk-editor-sparkle {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.spk-editor-toolbar-popover {
+  position: relative;
+  display: inline-flex;
+  overflow: visible;
+}
+
+.spk-editor-toolbar-popover-panel {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  z-index: 40;
+  min-width: 15rem;
+  padding: 0.65rem;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--spk-border);
+  background: var(--spk-editor-overlay-bg, var(--background));
+  box-shadow: var(--spk-shadow-lg), var(--spk-facet);
+  overflow: visible;
+}
+
+.spk-editor-toolbar-popover-title {
+  margin-bottom: 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.spk-editor-toolbar-popover-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.spk-editor-toolbar-popover-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.spk-editor-toolbar-popover-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+}
+
+.spk-editor-toolbar-popover-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--spk-radius-sm);
+  background: var(--input-background, var(--background));
+  color: var(--foreground);
+  padding: 0.4rem 0.55rem;
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.spk-editor-toolbar-popover-input:focus {
+  outline: 2px solid color-mix(in oklab, var(--primary) 35%, transparent);
+  outline-offset: 1px;
+}
+
+.spk-editor-toolbar-popover-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8125rem;
+  color: var(--foreground);
+}
+
+.spk-editor-toolbar-popover-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+.spk-editor-toolbar-popover-btn {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 0;
+  border-radius: var(--spk-radius-sm);
+  padding: 0.4rem 0.75rem;
+  min-height: 2rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.spk-editor-toolbar-popover-btn--ghost {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid color-mix(in oklab, var(--border) 85%, transparent);
+}
+
+.spk-editor-toolbar-popover-btn--ghost:hover {
+  background: color-mix(in oklab, var(--foreground) 8%, transparent);
+}
+
+.spk-editor-toolbar-popover-btn--primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.spk-editor-toolbar-popover-btn--primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.spk-editor-toolbar-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.spk-editor-table-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.35rem;
+}
+
+.spk-editor-table-picker-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  text-align: center;
+}
+
+.spk-editor-table-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1.125rem);
+  gap: 0.25rem;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+}
+
+.spk-editor-table-picker-cell {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 0;
+  border-radius: 0.25rem;
+  background: color-mix(in oklab, var(--muted-foreground) 18%, transparent);
+  cursor: pointer;
+  padding: 0;
+}
+
+.spk-editor-table-picker-cell--active {
+  background: color-mix(in oklab, var(--primary) 55%, transparent);
+}
+
+.spk-editor-table-picker-size {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.spk-editor-table-picker-size-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--muted-foreground);
+}
+
+.spk-editor-table-picker-size-input {
+  width: 3rem;
+  border: 1px solid var(--border);
+  border-radius: var(--spk-radius-sm);
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.25rem 0.35rem;
+  text-align: center;
+}
+
+.spk-editor-table-picker-size-sep {
+  color: var(--muted-foreground);
+}
+
+.spk-editor-table-picker-insert {
+  width: 100%;
+}
+
+.spk-editor-image-insert {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.spk-editor-image-gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.spk-editor-image-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.spk-editor-image-gallery-item {
+  position: relative;
+  aspect-ratio: 1;
+  max-height: 3.25rem;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: var(--spk-radius-sm);
+  background: color-mix(in oklab, var(--muted) 40%, transparent);
+  padding: 0;
+  cursor: pointer;
+}
+
+.spk-editor-image-gallery-item:hover {
+  border-color: color-mix(in oklab, var(--primary) 55%, transparent);
+}
+
+.spk-editor-image-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.spk-editor-image-gallery-empty {
+  margin: 0;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.spk-editor-image-gallery-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  min-height: 2rem;
+  border: 1px solid color-mix(in oklab, var(--border) 80%, transparent);
+  border-radius: var(--spk-radius-sm);
+  background: color-mix(in oklab, var(--muted) 24%, transparent);
+  color: var(--foreground);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.spk-editor-image-gallery-open:hover {
+  border-color: color-mix(in oklab, var(--primary) 35%, var(--border));
+  background: color-mix(in oklab, var(--primary) 8%, transparent);
+}
+
+.spk-editor-image-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  border: 1px dashed color-mix(in oklab, var(--primary) 35%, var(--border));
+  border-radius: var(--radius-card);
+  background: color-mix(in oklab, var(--primary) 4%, transparent);
+  padding: 1rem 0.75rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.spk-editor-image-dropzone--active,
+.spk-editor-image-dropzone:hover {
+  border-color: var(--primary);
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+}
+
+.spk-editor-image-dropzone-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: var(--radius-pill, 999px);
+  background: color-mix(in oklab, var(--primary) 16%, transparent);
+  color: var(--primary);
+}
+
+.spk-editor-image-dropzone-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.spk-editor-image-dropzone-hint,
+.spk-editor-image-insert-error {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.spk-editor-image-insert-error {
+  color: var(--spk-danger);
+  margin: 0;
+}
+
+.spk-editor-image-insert-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.spk-editor-image-insert-divider::before,
+.spk-editor-image-insert-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.spk-editor-image-wrap {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0.5rem auto;
+}
+
+.spk-editor-image-wrap--left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.spk-editor-image-wrap--right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.spk-editor-image-wrap--selected {
+  outline: 2px solid color-mix(in oklab, var(--primary) 55%, transparent);
+  outline-offset: 2px;
+  border-radius: var(--spk-radius-sm);
+}
+
+.spk-editor-image-wrap .spk-editor-image {
+  margin: 0;
+  display: block;
+}
+
+.spk-editor-image-resize-handle {
+  position: absolute;
+  right: 0.15rem;
+  bottom: 0.15rem;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 0.15rem;
+  background: var(--primary);
+  border: 2px solid var(--background);
+  cursor: nwse-resize;
+  touch-action: none;
+}
+
+.spk-editor-toolbar-popover-panel--portal {
+  position: fixed;
+  z-index: var(--z-popover, 10050);
+  width: min(18rem, calc(100vw - 1.5rem));
+  max-width: min(18rem, calc(100vw - 1.5rem));
+}
+
+.spk-editor-ai-panel {
+  background: var(--spk-editor-overlay-bg, var(--background));
+  border: 1px solid var(--spk-border);
+  border-radius: var(--spk-radius-md);
+  box-shadow: var(--spk-shadow-lg), var(--spk-facet);
+  overflow: hidden;
+}
+
+.spk-editor-ai-panel-title {
+  padding: 0.7rem 0.85rem 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.spk-editor-ai-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem;
+  max-height: 18rem;
+  overflow-y: auto;
+}
+
+.spk-editor-ai-panel-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 0;
+  background: transparent;
+  border-radius: var(--spk-radius-sm);
+  padding: 0.55rem 0.65rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.spk-editor-ai-panel-item:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--primary) 8%, transparent);
+}
+
+.spk-editor-ai-panel-item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.spk-editor-ai-panel-item-icon {
+  display: inline-flex;
+  color: var(--muted-foreground);
+}
+
+.spk-editor-ai-panel-item-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+.spk-editor-ai-panel-item-desc {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.spk-editor-ai-dock {
+  position: relative;
+  width: 100%;
+  max-width: none;
+}
+
+.spk-editor-ai-dock-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% + 0.55rem);
+  max-width: 24rem;
+}
+
+.spk-editor-ai-dock-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.45rem;
+  border: 1px solid color-mix(in oklab, var(--primary) 28%, var(--border));
+  border-radius: var(--spk-radius-md);
+  background: var(--spk-editor-overlay-bg, var(--background));
+  box-shadow: var(--spk-shadow-lg), var(--spk-facet);
+}
+
+.spk-editor-ai-dock-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--spk-radius-sm);
+  background: color-mix(in oklab, var(--primary) 12%, transparent);
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.spk-editor-ai-dock-trigger--active {
+  background: color-mix(in oklab, var(--primary) 22%, transparent);
+}
+
+.spk-editor-ai-dock-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.spk-editor-ai-dock-input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  padding: 0.35rem 0;
+}
+
+.spk-editor-ai-dock-input:focus {
+  outline: none;
+}
+
+.spk-editor-ai-dock-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.spk-editor-ai-dock-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--spk-radius-sm);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  cursor: pointer;
+}
+
+.spk-editor-ai-dock-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.spk-editor-ai-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.spk-editor-ai-menu-shell {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  min-width: 18rem;
+  max-width: min(24rem, calc(100vw - 2rem));
+  border-radius: var(--spk-radius-md);
+  overflow: hidden;
+  box-shadow: var(--spk-shadow-lg), var(--spk-facet);
+}
+
+.spk-editor-ai-menu-prompt {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.65rem;
+  border-top: 1px solid var(--border);
+  background: color-mix(in oklab, var(--primary) 4%, transparent);
+}
+
+.spk-editor-ai-menu-prompt-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.spk-editor-ai-menu-prompt-input {
+  width: 100%;
+  border: 1px solid color-mix(in oklab, var(--primary) 35%, var(--border));
+  border-radius: var(--spk-radius-sm);
+  background: var(--background);
+  color: var(--foreground);
+  padding: 0.45rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.spk-editor-ai-menu-prompt-input:focus {
+  outline: 2px solid color-mix(in oklab, var(--primary) 35%, transparent);
+  outline-offset: 1px;
+}
+
+.spk-editor-ai-menu-prompt-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--spk-radius-sm);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  cursor: pointer;
+}
+
+.spk-editor-ai-menu-prompt-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.spk-editor-shell .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

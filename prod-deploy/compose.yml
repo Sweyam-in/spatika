@@ -1,0 +1,81 @@
+name: spatika
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  spatika-web:
+    container_name: spatika-web
+    image: ${SPATIKA_IMAGE:?set SPATIKA_IMAGE}:${SPATIKA_IMAGE_TAG:?set SPATIKA_IMAGE_TAG}
+    restart: unless-stopped
+    networks:
+      edge:
+        aliases:
+          - spatika
+          - spatika-web
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging: *default-logging
+
+  # Private log UI over Tailscale. No public route; bind strictly to Tailscale IP.
+  dozzle:
+    image: amir20/dozzle:v10.8.0
+    restart: unless-stopped
+    ports:
+      - "${ATLAS_LOGS_BIND_IP:-127.0.0.1}:${ATLAS_LOGS_PORT:-9997}:8080"
+    environment:
+      DOZZLE_REMOTE_HOST: tcp://docker-socket-proxy:2375|Spatika
+      DOZZLE_FILTER: label=com.docker.compose.project=spatika
+      DOZZLE_ENABLE_ACTIONS: "false"
+      DOZZLE_ENABLE_SHELL: "false"
+      DOZZLE_NO_ANALYTICS: "true"
+    depends_on:
+      docker-socket-proxy:
+        condition: service_started
+    networks:
+      - logs-ui
+      - docker-api
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging: *default-logging
+
+  # The log UI has no direct Docker socket mount. This private proxy blocks writes.
+  docker-socket-proxy:
+    image: tecnativa/docker-socket-proxy@sha256:1f5038b54f06c3e18422902cf00ba21803d1c97805aae032e5e6673d532d3459
+    restart: unless-stopped
+    environment:
+      CONTAINERS: "1"
+      INFO: "1"
+      EVENTS: "1"
+      PING: "1"
+      VERSION: "1"
+      POST: "0"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - docker-api
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+
+networks:
+  # Shared edge network with Kasho & Sweyam Auth where cloudfare-kasho tunnel container runs
+  edge:
+    name: ${EDGE_NETWORK_NAME:-kasho_edge}
+    external: true
+  logs-ui:
+  docker-api:
+    internal: true

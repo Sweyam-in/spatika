@@ -1,0 +1,108 @@
+/**
+ * Marketing-site helpers.
+ *
+ * 2.0 retires animated gradient type and glowing rules. The class names still exist so
+ * 1.x markup renders — now as restrained, typographic treatments.
+ * Kept unlayered so consumers always emit the classes.
+ */
+
+:root {
+  --spk-marketing-gradient: linear-gradient(90deg, var(--spk-accent), var(--spk-accent));
+  --spk-marketing-text-gradient: linear-gradient(
+    180deg,
+    var(--spk-text-primary) 0%,
+    color-mix(in srgb, var(--spk-text-primary) 72%, var(--spk-canvas)) 100%
+  );
+  --spk-marketing-flow-gradient: var(--spk-marketing-text-gradient);
+}
+
+@keyframes spk-nav-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Gradient text now renders as a quiet vertical ink fade, or the accent text colour. */
+.spk-gradient-text,
+.spk-gradient-text-static {
+  color: var(--spk-accent-text);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .spk-gradient-text-static {
+    background: var(--spk-marketing-text-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+}
+
+.spk-hr-accent {
+  height: 2px;
+  width: 2rem;
+  border: none;
+  border-radius: 2px;
+  background: var(--spk-accent);
+}
+
+.spk-section-wash {
+  background: var(--spk-surface-subtle);
+}
+
+.spk-site-nav {
+  animation: spk-nav-enter var(--spk-duration-slow) var(--spk-ease-enter) both;
+}
+
+/*
+ * Scrolled navbar and open mobile menu. Content passes under this bar, so it needs a
+ * real frosted material — the same recipe as `.app-chrome-header`, not a translucent
+ * colour on its own. Without backdrop-filter support the bar goes solid instead.
+ */
+[data-slot="site-nav"][data-scrolled="true"],
+[data-slot="site-nav"] [data-slot="site-nav-menu"] {
+  background: var(--spk-canvas);
+}
+
+@supports ((backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))) {
+  [data-slot="site-nav"][data-scrolled="true"],
+  [data-slot="site-nav"] [data-slot="site-nav-menu"] {
+    background: color-mix(in srgb, var(--spk-canvas) 93%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    backdrop-filter: blur(20px) saturate(150%);
+  }
+}
+
+/* Sandhya is the flat theme — it never blurs. */
+.sandhya [data-slot="site-nav"][data-scrolled="true"],
+.sandhya [data-slot="site-nav"] [data-slot="site-nav-menu"] {
+  background: var(--spk-canvas);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  [data-slot="site-nav"][data-scrolled="true"],
+  [data-slot="site-nav"] [data-slot="site-nav-menu"] {
+    background: var(--spk-canvas);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* Floating decoration retired — kept as a no-op for markup compatibility. */
+.spk-float {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spk-site-nav {
+    animation: none;
+    transform: none;
+  }
+}

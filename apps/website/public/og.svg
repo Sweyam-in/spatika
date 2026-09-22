@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0b1220"/>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <defs>
+    <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(180 80) rotate(28) scale(980 640)">
+      <stop stop-color="#1d4ed8" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#0b1220" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mark" x1="72" y1="210" x2="168" y2="306">
+      <stop stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <rect x="72" y="210" width="96" height="96" rx="28" fill="url(#mark)"/>
+  <path d="M120 226.5L145.5 240.75V269.25L120 283.5L94.5 269.25V240.75L120 226.5Z" fill="white" fill-opacity=".12" stroke="white" stroke-opacity=".9" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M120 226.5L94.5 240.75L120 255L145.5 240.75L120 226.5Z" fill="white" fill-opacity=".3"/>
+  <text x="192" y="248" fill="#f8fafc" font-family="ui-sans-serif, system-ui, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">Spatika UI</text>
+  <text x="192" y="292" fill="#93c5fd" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="500">Glass React design system</text>
+  <text x="72" y="520" fill="#94a3b8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="22">Open source � also known as Spadik UI � spatika.sweyam.com</text>
+</svg>

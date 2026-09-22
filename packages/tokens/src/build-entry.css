@@ -1,0 +1,17 @@
+/**
+ * Build entry for the consumer CSS bundle.
+ * Tailwind scans kit component sources so apps do not need Tailwind.
+ */
+@import "tailwindcss";
+
+@source "../../react/src";
+
+@import "./tokens.css";
+@import "./glass.css";
+@import "./components.css";
+@import "./surfaces.css";
+@import "./chrome.css";
+@import "./marketing.css";
+@import "./marketing-blocks.css";
+@import "./charts.css";
+@import "./base.css";

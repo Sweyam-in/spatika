@@ -1,0 +1,8 @@
+/**
+ * Optional font loading (Google Fonts CDN) for the Spatika typefaces.
+ *   import "@spatika/tokens/fonts.css";
+ *
+ * Inter carries UI and data (tabular numerals, slashed zero); JetBrains Mono carries code.
+ * Without this import the system UI stack is used — the scale and weights still hold.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&family=JetBrains+Mono:wght@400;500&display=swap");

@@ -1,0 +1,13 @@
+.git
+.github
+.changeset
+**/.DS_Store
+**/node_modules
+**/dist
+**/coverage
+**/.vite
+**/*.local
+k8s
+deploy.sh
+*.md
+LICENSE

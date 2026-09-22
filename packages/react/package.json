@@ -1,0 +1,93 @@
+{
+  "name": "@spatika/react",
+  "version": "2.2.0",
+  "license": "MIT",
+  "description": "Spatika UI — React design system: semantic tokens, density, application shell, data tables, forms, and overlays",
+  "homepage": "https://spatika.sweyam.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SreelalChalil/spatika.git",
+    "directory": "packages/react"
+  },
+  "bugs": {
+    "url": "https://github.com/SreelalChalil/spatika/issues"
+  },
+  "author": "Sreelal Chalil",
+  "keywords": [
+    "spatika",
+    "spatika-ui",
+    "spadik",
+    "spadik-ui",
+    "react",
+    "design-system",
+    "component-library",
+    "ui",
+    "data-table",
+    "dashboard",
+    "app-shell",
+    "tokens"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "AGENTS.md",
+    "skills",
+    "!src/**/*.test.ts",
+    "!src/**/*.test.tsx",
+    "!src/**/*.spec.ts",
+    "!src/**/*.spec.tsx",
+    "!src/test",
+    "!src/**/__tests__"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node ../../scripts/fix-esm-extensions.mjs dist",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@spatika/charts": "2.2.0",
+    "@spatika/editor": "2.2.0",
+    "@spatika/tokens": "2.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "lucide-react": "^0.487.0",
+    "tailwind-merge": "^3.2.0",
+    "vaul": "^1.1.2"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitest/coverage-v8": "^4.1.10",
+    "jsdom": "^30.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "~5.8.3",
+    "vitest": "^4.1.10"
+  }
+}

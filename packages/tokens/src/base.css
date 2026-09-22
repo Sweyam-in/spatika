@@ -1,0 +1,97 @@
+/**
+ * Base document styles.
+ */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-size: var(--font-size);
+    font-family: var(--spk-font-sans);
+    font-feature-settings: var(--spk-font-features);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--spk-canvas);
+    color: var(--spk-text-primary);
+    font-family: var(--spk-font-sans);
+    font-size: var(--spk-text-body);
+    line-height: var(--spk-text-body-lh);
+  }
+
+  ::selection {
+    background: var(--spk-selection);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--spk-focus);
+    outline-offset: 2px;
+  }
+
+  /* Components that draw their own ring opt out of the UA outline. */
+  :where([data-slot]):focus-visible {
+    outline: none;
+  }
+
+  h1 {
+    font-size: var(--spk-text-title-1);
+    line-height: var(--spk-text-title-1-lh);
+    font-weight: var(--spk-weight-semibold);
+    letter-spacing: var(--spk-tracking-tight);
+  }
+
+  h2 {
+    font-size: var(--spk-text-title-2);
+    line-height: var(--spk-text-title-2-lh);
+    font-weight: var(--spk-weight-semibold);
+    letter-spacing: var(--spk-tracking-snug);
+  }
+
+  h3 {
+    font-size: var(--spk-text-title-3);
+    line-height: var(--spk-text-title-3-lh);
+    font-weight: var(--spk-weight-semibold);
+    letter-spacing: var(--spk-tracking-snug);
+  }
+
+  h4 {
+    font-size: var(--spk-text-body);
+    line-height: var(--spk-text-body-lh);
+    font-weight: var(--spk-weight-semibold);
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--spk-font-mono);
+    font-size: var(--spk-text-code);
+  }
+
+  /* iOS zooms inputs under 16px — keep form text legible on phones. */
+  @media (max-width: 639px) {
+    input,
+    textarea,
+    select {
+      font-size: max(16px, 1em);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

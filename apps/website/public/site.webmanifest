@@ -1,0 +1,16 @@
+{
+  "name": "Spatika UI",
+  "short_name": "Spatika",
+  "description": "Open-source glass React UI design system. Also known as Spadik UI.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#faf8f6",
+  "theme_color": "#e95420",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

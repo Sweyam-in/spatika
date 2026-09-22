@@ -1,0 +1,193 @@
+/**
+ * Materials and interaction helpers.
+ *
+ * 2.0: glass is an optional material, not the spine of the system.
+ *  - `.spk-glass`            real translucency — floating chrome, media controls, overlays on imagery
+ *  - `.glass*` (1.x names)   kept for compatibility and now render as calm solid surfaces
+ *
+ * Theme class on <html>: mukta (default), .neelam, .usha, .sandhya (flat, never blurs).
+ */
+
+/* Interaction helpers live in the utilities layer so they win over utility shadows. */
+@layer utilities {
+  /* Crystal focus ring for custom controls. */
+  .spk-focus-ring {
+    outline: none;
+  }
+
+  .spk-focus-ring:focus-visible {
+    box-shadow: var(--spk-focus-ring);
+  }
+
+  /* ≥44px interactive target (WCAG 2.2 friendly) */
+  .spk-touch-target {
+    min-height: var(--spk-touch-min);
+    min-width: var(--spk-touch-min);
+  }
+}
+
+@layer components {
+  /* ── Opt-in glass material ────────────────────────────────────────────── */
+
+  .spk-glass {
+    background: var(--spk-glass-tint);
+    border: 1px solid var(--spk-glass-border);
+    box-shadow: var(--spk-shadow-lg), var(--spk-facet);
+  }
+
+  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
+    .spk-glass {
+      -webkit-backdrop-filter: blur(var(--spk-glass-blur)) saturate(var(--spk-glass-saturate));
+      backdrop-filter: blur(var(--spk-glass-blur)) saturate(var(--spk-glass-saturate));
+    }
+  }
+
+  /* Without backdrop support, fall back to the solid overlay surface. */
+  @supports not ((backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))) {
+    .spk-glass {
+      background: var(--spk-surface-overlay);
+    }
+  }
+
+  /* ── 1.x glass classes → calm solid material ──────────────────────────── */
+
+  .glass,
+  .glass-panel,
+  .glass-subtle,
+  .glass-menu {
+    position: relative;
+    background: var(--spk-surface);
+    border: 1px solid var(--spk-border);
+    box-shadow: var(--spk-shadow-xs);
+  }
+
+  .glass-panel {
+    background: var(--spk-surface-raised);
+    box-shadow: var(--spk-shadow-sm), var(--spk-facet);
+  }
+
+  .glass-subtle {
+    background: var(--spk-surface-subtle);
+    border-color: var(--spk-border-subtle);
+    box-shadow: none;
+  }
+
+  .glass-menu {
+    background: var(--spk-surface-overlay);
+    box-shadow: var(--spk-shadow-lg), var(--spk-facet);
+  }
+
+  /* Headers may use a light translucency so content scrolling beneath reads as depth. */
+  .glass-header {
+    position: relative;
+    overflow: visible;
+    background: color-mix(in srgb, var(--spk-canvas) 86%, transparent);
+    border: 0 solid var(--spk-border-subtle);
+  }
+
+  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
+    .glass-header {
+      -webkit-backdrop-filter: blur(var(--glass-header-blur)) saturate(140%);
+      backdrop-filter: blur(var(--glass-header-blur)) saturate(140%);
+    }
+  }
+
+  /* ── Floating tab bar — a legitimate place for translucency ───────────── */
+
+  [data-app-tabbar-shell],
+  [data-app-search-frost] {
+    box-shadow: var(--spk-shadow-lg);
+  }
+
+  .glass-tabbar {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--spk-radius-lg);
+    background: var(--spk-glass-tint);
+    border: 1px solid var(--spk-glass-border);
+    box-shadow: var(--spk-facet);
+  }
+
+  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
+    .glass-tabbar {
+      -webkit-backdrop-filter: blur(var(--app-tabbar-blur)) saturate(var(--spk-glass-saturate));
+      backdrop-filter: blur(var(--app-tabbar-blur)) saturate(var(--spk-glass-saturate));
+    }
+  }
+
+  .glass-more-sheet {
+    position: relative;
+    overflow: hidden;
+    background: var(--spk-glass-tint) !important;
+    border: 1px solid var(--spk-glass-border);
+    box-shadow: var(--spk-shadow-xl), var(--spk-facet);
+  }
+
+  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
+    .glass-more-sheet {
+      -webkit-backdrop-filter: blur(var(--app-tabbar-blur)) saturate(var(--spk-glass-saturate));
+      backdrop-filter: blur(var(--app-tabbar-blur)) saturate(var(--spk-glass-saturate));
+    }
+  }
+
+  /* Sandhya is flat: every material renders solid. */
+  .sandhya .spk-glass,
+  .sandhya .glass-header,
+  .sandhya .glass-tabbar,
+  .sandhya .glass-more-sheet,
+  .sandhya .glass-page-toolbar,
+  .sandhya :where(
+      .backdrop-blur-none,
+      .backdrop-blur-sm,
+      .backdrop-blur,
+      .backdrop-blur-md,
+      .backdrop-blur-lg,
+      .backdrop-blur-xl,
+      .backdrop-blur-2xl,
+      .backdrop-blur-3xl
+    ) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  .sandhya .glass-header {
+    background: var(--spk-canvas);
+  }
+
+  /*
+   * Sticky page bars must not create a transformed compositor layer —
+   * on iOS Safari that desyncs from scroll and jitters.
+   */
+  .glass-header.sticky,
+  .sticky.top-16 {
+    transform: none;
+    overflow: visible;
+    will-change: auto;
+  }
+
+  .sticky.top-16 {
+    top: var(--app-chrome-offset);
+  }
+}
+
+/* Users who ask for less transparency or motion get solid material. */
+@media (prefers-reduced-transparency: reduce) {
+  .spk-glass,
+  .glass-header,
+  .glass-tabbar,
+  .glass-more-sheet {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: var(--spk-surface-overlay) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spk-glass,
+  .glass-tabbar,
+  .glass-more-sheet {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--spk-surface-overlay);
+  }
+}

@@ -1,0 +1,755 @@
+/**
+ * Spatika 2.0 design tokens.
+ *
+ * Layers
+ *   1. Theme base values   — declared per theme (`:root` = Mukta, `.neelam`, `.usha`, `.sandhya`).
+ *   2. Derived tokens      — one rule that computes hover / muted / focus / legacy aliases from
+ *                            the base values. It also matches `[data-spk-theme]`, so custom themes
+ *                            that override a base value get correct derived values.
+ *   3. Tailwind bridge     — `@theme inline` exposes tokens as utilities (bg-surface, text-fg-secondary…).
+ *
+ * Components must consume semantic tokens. Raw hex values belong only in layer 1.
+ */
+
+@custom-variant dark (&:is(.neelam *, .sandhya *, .neelam, .sandhya));
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Theme-independent scales
+ * ──────────────────────────────────────────────────────────────────────────── */
+:root {
+  --font-size: 16px;
+
+  /* Typography — families */
+  --spk-font-sans: "Inter", "Inter Variable", ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --spk-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", monospace;
+  --spk-font-features: "cv11", "ss03";
+
+  /* Typography — scale (size / line-height / weight / tracking) */
+  --spk-text-display: 2.75rem;
+  --spk-text-display-lh: 1.08;
+  /* Marketing headline — one step above display, fluid so heroes never wrap badly. */
+  --spk-text-hero: clamp(2.25rem, 5.4vw, 3.75rem);
+  --spk-text-hero-lh: 1.03;
+  --spk-text-hero-sm: clamp(1.75rem, 3.6vw, 2.5rem);
+  --spk-text-hero-sm-lh: 1.1;
+  --spk-text-title-1: 1.625rem;
+  --spk-text-title-1-lh: 1.2;
+  --spk-text-title-2: 1.125rem;
+  --spk-text-title-2-lh: 1.35;
+  --spk-text-title-3: 0.9375rem;
+  --spk-text-title-3-lh: 1.4;
+  --spk-text-body-lg: 1rem;
+  --spk-text-body-lg-lh: 1.6;
+  --spk-text-body: 0.875rem;
+  --spk-text-body-lh: 1.5;
+  --spk-text-body-sm: 0.8125rem;
+  --spk-text-body-sm-lh: 1.45;
+  --spk-text-label: 0.8125rem;
+  --spk-text-label-lh: 1.25;
+  --spk-text-caption: 0.75rem;
+  --spk-text-caption-lh: 1.35;
+  --spk-text-overline: 0.6875rem;
+  --spk-text-overline-lh: 1.2;
+  --spk-text-code: 0.8125rem;
+  --spk-text-metric-xl: 2.25rem;
+  --spk-text-metric-lg: 1.75rem;
+  --spk-text-metric-md: 1.375rem;
+  --spk-text-metric-sm: 1.0625rem;
+
+  --spk-weight-regular: 400;
+  --spk-weight-medium: 500;
+  --spk-weight-semibold: 600;
+  --spk-weight-bold: 650;
+
+  --spk-tracking-tight: -0.02em;
+  --spk-tracking-snug: -0.011em;
+  --spk-tracking-normal: 0;
+  --spk-tracking-wide: 0.04em;
+
+  /* Spacing — 4px base, disciplined steps */
+  --spk-space-0: 0;
+  --spk-space-px: 1px;
+  --spk-space-0-5: 0.125rem;
+  --spk-space-1: 0.25rem;
+  --spk-space-1-5: 0.375rem;
+  --spk-space-2: 0.5rem;
+  --spk-space-3: 0.75rem;
+  --spk-space-4: 1rem;
+  --spk-space-5: 1.25rem;
+  --spk-space-6: 1.5rem;
+  --spk-space-8: 2rem;
+  --spk-space-10: 2.5rem;
+  --spk-space-12: 3rem;
+  --spk-space-16: 4rem;
+
+  /* Radius — restrained. Pills are reserved for tags, avatars and switches. */
+  --spk-radius-xs: 0.25rem; /* 4px — checkbox, kbd, inline code */
+  --spk-radius-sm: 0.375rem; /* 6px — controls */
+  --spk-radius-md: 0.625rem; /* 10px — cards, menus, popovers */
+  --spk-radius-lg: 0.875rem; /* 14px — dialogs, sheets */
+  --spk-radius-full: 999px;
+
+  /* Motion */
+  --spk-duration-instant: 80ms;
+  --spk-duration-fast: 120ms;
+  --spk-duration-base: 180ms;
+  --spk-duration-slow: 260ms;
+  --spk-duration-slower: 360ms;
+  --spk-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --spk-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --spk-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --spk-ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --spk-ease-drag: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --spk-motion-hover: var(--spk-duration-fast) var(--spk-ease-standard);
+  --spk-motion-press: var(--spk-duration-instant) var(--spk-ease-standard);
+  --spk-motion-enter: var(--spk-duration-slow) var(--spk-ease-enter);
+  --spk-motion-exit: var(--spk-duration-base) var(--spk-ease-exit);
+  --spk-motion-select: var(--spk-duration-base) var(--spk-ease-spring);
+  --spk-motion-expand: var(--spk-duration-slow) var(--spk-ease-standard);
+  --spk-motion-layout: var(--spk-duration-slow) var(--spk-ease-standard);
+
+  /* Density — comfortable (default) */
+  --spk-control-h: 2.25rem;
+  --spk-control-h-sm: 2rem;
+  --spk-control-h-xs: 1.625rem;
+  --spk-control-h-lg: 2.5rem;
+  --spk-control-px: 0.75rem;
+  --spk-control-gap: 0.5rem;
+  --spk-row-h: 2.75rem;
+  --spk-cell-px: 0.75rem;
+  --spk-cell-py: 0.625rem;
+  --spk-item-h: 2rem;
+  --spk-card-p: 1.25rem;
+  --spk-stack-gap: 1rem;
+  --spk-section-gap: 2.5rem;
+  --spk-touch-min: 2.75rem;
+
+  /* Layout */
+  --spk-page-max: 80rem;
+  --spk-page-px: 1rem;
+  --spk-sidebar-w: 15rem;
+  --spk-sidebar-w-collapsed: 3.5rem;
+  --spk-topbar-h: 3.25rem;
+  --spk-z-sticky: 30;
+  --spk-z-chrome: 40;
+  --spk-z-popover: 90;
+  --spk-z-toast: 200;
+
+  /* App chrome (1.x names kept — used by AppHeader, MobileTabBar, cover bleed) */
+  --app-header-height: 3.5rem;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --app-chrome-offset: calc(var(--app-header-height) + env(safe-area-inset-top, 0px));
+  --app-sidebar-width: 0px;
+  --profile-tabbar-height: 3.25rem;
+  --app-tabbar-height: 3.5rem;
+  --app-tabbar-inset-x: 0.75rem;
+  --app-tabbar-inset-y: 0.5rem;
+  --app-tabbar-offset: calc(
+    var(--app-tabbar-height) + var(--app-tabbar-inset-y) + env(safe-area-inset-bottom, 0px)
+  );
+  --app-tabbar-clearance: calc(var(--app-tabbar-offset) + 0.85rem);
+  --app-tabbar-blur: 24px;
+  --app-chrome-blur: 16px;
+
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --spk-page-px: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --spk-page-px: 2rem;
+    --spk-text-display: 3.25rem;
+    --spk-text-title-1: 1.75rem;
+  }
+}
+
+/* Coarse pointers get WCAG 2.2 friendly controls unless a region opts into compact. */
+@media (pointer: coarse) {
+  :root {
+    --spk-control-h: 2.75rem;
+    --spk-control-h-sm: 2.25rem;
+    --spk-control-h-lg: 3rem;
+    --spk-item-h: 2.75rem;
+    --spk-row-h: 3rem;
+  }
+}
+
+[data-density="compact"] {
+  --spk-control-h: 2rem;
+  --spk-control-h-sm: 1.75rem;
+  --spk-control-h-xs: 1.5rem;
+  --spk-control-h-lg: 2.25rem;
+  --spk-control-px: 0.625rem;
+  --spk-control-gap: 0.375rem;
+  --spk-row-h: 2.25rem;
+  --spk-cell-px: 0.625rem;
+  --spk-cell-py: 0.375rem;
+  --spk-item-h: 1.75rem;
+  --spk-card-p: 1rem;
+  --spk-stack-gap: 0.75rem;
+  --spk-section-gap: 1.75rem;
+}
+
+[data-density="comfortable"] {
+  --spk-control-h: 2.25rem;
+  --spk-row-h: 2.75rem;
+  --spk-cell-py: 0.625rem;
+  --spk-item-h: 2rem;
+}
+
+[data-density="spacious"] {
+  --spk-control-h: 2.75rem;
+  --spk-control-h-sm: 2.25rem;
+  --spk-control-h-lg: 3rem;
+  --spk-control-px: 1rem;
+  --spk-row-h: 3.25rem;
+  --spk-cell-px: 1rem;
+  --spk-cell-py: 0.875rem;
+  --spk-item-h: 2.75rem;
+  --spk-card-p: 1.5rem;
+  --spk-stack-gap: 1.25rem;
+  --spk-section-gap: 3rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Layer 1 — theme base values
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+/* Mukta — neutral cool light (default). `.mukta` re-scopes it inside a dark page. */
+:root,
+.mukta {
+  --spk-scheme: light;
+
+  --spk-canvas: #f7f7f8;
+  --spk-surface: #ffffff;
+  --spk-surface-raised: #ffffff;
+  --spk-surface-overlay: #ffffff;
+  --spk-surface-subtle: #f3f3f5;
+  --spk-surface-sunken: #eeeef1;
+  --spk-surface-inverse: #17181e;
+
+  --spk-text-primary: #16171d;
+  --spk-text-secondary: #585b68;
+  --spk-text-tertiary: #737685;
+  --spk-text-disabled: #a6a8b3;
+  --spk-text-inverse: #f7f7f8;
+
+  --spk-border: #e2e3e8;
+  --spk-border-subtle: #ececf0;
+  --spk-border-strong: #cdcfd7;
+
+  --spk-accent: #4655d4;
+  --spk-accent-fg: #ffffff;
+  --spk-accent-text: #3a48c6;
+
+  --spk-success: #1c9457;
+  --spk-success-text: #147244;
+  --spk-warning: #d38a10;
+  --spk-warning-text: #8f5600;
+  --spk-danger: #d83a31;
+  --spk-danger-text: #bf2f27;
+  --spk-info: #2a82d2;
+  --spk-info-text: #1d67ad;
+
+  --spk-state-hover: rgb(22 23 29 / 0.045);
+  --spk-state-active: rgb(22 23 29 / 0.08);
+  --spk-overlay-scrim: rgb(14 15 20 / 0.32);
+
+  --spk-shadow-color: 222 20% 10%;
+  --spk-facet: inset 0 1px 0 rgb(255 255 255 / 0.7);
+  --spk-facet-strong: inset 0 1px 0 rgb(255 255 255 / 0.18), inset 0 -1px 0 rgb(0 0 0 / 0.12);
+
+  --spk-glass-tint: rgb(255 255 255 / 0.72);
+  --spk-glass-border: rgb(255 255 255 / 0.6);
+  --spk-glass-blur: 20px;
+  --spk-glass-saturate: 160%;
+
+  --spk-viz-1: #4655d4;
+  --spk-viz-2: #25a18e;
+  --spk-viz-3: #d89630;
+  --spk-viz-4: #9562c4;
+  --spk-viz-5: #8a90a2;
+  --spk-viz-6: #d55d7c;
+  --spk-viz-7: #4ea1dc;
+  --spk-viz-8: #7ea63d;
+  --spk-viz-grid: #ececf0;
+  --spk-viz-axis: #d6d7dd;
+}
+
+/* Neelam — designed dark, sapphire-tinted layers */
+.neelam {
+  --spk-scheme: dark;
+
+  --spk-canvas: #0c0d11;
+  --spk-surface: #13141a;
+  --spk-surface-raised: #191a21;
+  --spk-surface-overlay: #1d1e26;
+  --spk-surface-subtle: #17181f;
+  --spk-surface-sunken: #0a0a0e;
+  --spk-surface-inverse: #ededf0;
+
+  --spk-text-primary: #ececf1;
+  --spk-text-secondary: #a2a5b3;
+  --spk-text-tertiary: #7f8291;
+  --spk-text-disabled: #555866;
+  --spk-text-inverse: #13141a;
+
+  --spk-border: #25262f;
+  --spk-border-subtle: #1e1f27;
+  --spk-border-strong: #353744;
+
+  --spk-accent: #5a68e6;
+  --spk-accent-fg: #ffffff;
+  --spk-accent-text: #a1abff;
+
+  --spk-success: #2fb872;
+  --spk-success-text: #5fd39a;
+  --spk-warning: #e3a13a;
+  --spk-warning-text: #f0bf6c;
+  --spk-danger: #e5534b;
+  --spk-danger-text: #ff8a80;
+  --spk-info: #3d97e6;
+  --spk-info-text: #7ab9f2;
+
+  --spk-state-hover: rgb(255 255 255 / 0.045);
+  --spk-state-active: rgb(255 255 255 / 0.08);
+  --spk-overlay-scrim: rgb(0 0 0 / 0.6);
+
+  --spk-shadow-color: 230 30% 2%;
+  --spk-facet: inset 0 1px 0 rgb(255 255 255 / 0.05);
+  --spk-facet-strong: inset 0 1px 0 rgb(255 255 255 / 0.16), inset 0 -1px 0 rgb(0 0 0 / 0.2);
+
+  --spk-glass-tint: rgb(25 26 33 / 0.72);
+  --spk-glass-border: rgb(255 255 255 / 0.08);
+  --spk-glass-blur: 20px;
+  --spk-glass-saturate: 140%;
+
+  --spk-viz-1: #7584f5;
+  --spk-viz-2: #3cc0a8;
+  --spk-viz-3: #e6ad52;
+  --spk-viz-4: #b18ae0;
+  --spk-viz-5: #8e93a6;
+  --spk-viz-6: #ea7d98;
+  --spk-viz-7: #69b6ec;
+  --spk-viz-8: #9cc458;
+  --spk-viz-grid: #1f2028;
+  --spk-viz-axis: #30313c;
+}
+
+/* Usha — warm paper light */
+.usha {
+  --spk-scheme: light;
+
+  --spk-canvas: #f7f5f2;
+  --spk-surface: #fffefc;
+  --spk-surface-raised: #fffefc;
+  --spk-surface-overlay: #fffefc;
+  --spk-surface-subtle: #f2efea;
+  --spk-surface-sunken: #ece8e1;
+  --spk-surface-inverse: #1d1b18;
+
+  --spk-text-primary: #1d1b18;
+  --spk-text-secondary: #5f5a52;
+  --spk-text-tertiary: #767067;
+  --spk-text-disabled: #aca69c;
+  --spk-text-inverse: #f7f5f2;
+
+  --spk-border: #e5e0d7;
+  --spk-border-subtle: #ede9e2;
+  --spk-border-strong: #d2ccc1;
+
+  --spk-accent: #c2511d;
+  --spk-accent-fg: #ffffff;
+  --spk-accent-text: #a94416;
+
+  --spk-success: #2a8f58;
+  --spk-success-text: #1e6f43;
+  --spk-warning: #c98712;
+  --spk-warning-text: #8a5700;
+  --spk-danger: #cc3b2f;
+  --spk-danger-text: #b23126;
+  --spk-info: #2f7fbf;
+  --spk-info-text: #22649b;
+
+  --spk-state-hover: rgb(29 27 24 / 0.045);
+  --spk-state-active: rgb(29 27 24 / 0.08);
+  --spk-overlay-scrim: rgb(24 20 16 / 0.28);
+
+  --spk-shadow-color: 30 20% 12%;
+  --spk-facet: inset 0 1px 0 rgb(255 255 255 / 0.75);
+  --spk-facet-strong: inset 0 1px 0 rgb(255 255 255 / 0.2), inset 0 -1px 0 rgb(0 0 0 / 0.12);
+
+  --spk-glass-tint: rgb(255 254 252 / 0.74);
+  --spk-glass-border: rgb(255 255 255 / 0.6);
+  --spk-glass-blur: 20px;
+  --spk-glass-saturate: 150%;
+
+  --spk-viz-1: #c2511d;
+  --spk-viz-2: #2f8f86;
+  --spk-viz-3: #d2a03a;
+  --spk-viz-4: #7d4f8f;
+  --spk-viz-5: #948c80;
+  --spk-viz-6: #c9607a;
+  --spk-viz-7: #4a8cc1;
+  --spk-viz-8: #7c9c42;
+  --spk-viz-grid: #ede9e2;
+  --spk-viz-axis: #d8d2c7;
+}
+
+/* Sandhya — warm dark, flat (never blurs) */
+.sandhya {
+  --spk-scheme: dark;
+
+  --spk-canvas: #100f0e;
+  --spk-surface: #171514;
+  --spk-surface-raised: #1d1b19;
+  --spk-surface-overlay: #22201d;
+  --spk-surface-subtle: #1a1817;
+  --spk-surface-sunken: #0c0b0a;
+  --spk-surface-inverse: #efebe6;
+
+  --spk-text-primary: #efebe6;
+  --spk-text-secondary: #aba49b;
+  --spk-text-tertiary: #878077;
+  --spk-text-disabled: #5a554f;
+  --spk-text-inverse: #171514;
+
+  --spk-border: #2b2825;
+  --spk-border-subtle: #221f1d;
+  --spk-border-strong: #3a3632;
+
+  --spk-accent: #c2531f;
+  --spk-accent-fg: #ffffff;
+  --spk-accent-text: #f2935f;
+
+  --spk-success: #3fae6f;
+  --spk-success-text: #6fcf98;
+  --spk-warning: #dca040;
+  --spk-warning-text: #eec07a;
+  --spk-danger: #e0584c;
+  --spk-danger-text: #ff8f84;
+  --spk-info: #4d9ad8;
+  --spk-info-text: #8bbfeb;
+
+  --spk-state-hover: rgb(255 255 255 / 0.045);
+  --spk-state-active: rgb(255 255 255 / 0.08);
+  --spk-overlay-scrim: rgb(0 0 0 / 0.62);
+
+  --spk-shadow-color: 20 20% 2%;
+  --spk-facet: inset 0 1px 0 rgb(255 255 255 / 0.045);
+  --spk-facet-strong: inset 0 1px 0 rgb(255 255 255 / 0.14), inset 0 -1px 0 rgb(0 0 0 / 0.2);
+
+  /* Sandhya is the flat theme: glass renders as solid overlay material. */
+  --spk-glass-tint: #22201d;
+  --spk-glass-border: #2b2825;
+  --spk-glass-blur: 0px;
+  --spk-glass-saturate: 100%;
+
+  --spk-viz-1: #e07443;
+  --spk-viz-2: #3fb3a3;
+  --spk-viz-3: #e4b457;
+  --spk-viz-4: #b98fcf;
+  --spk-viz-5: #978f85;
+  --spk-viz-6: #e57f97;
+  --spk-viz-7: #6aaee3;
+  --spk-viz-8: #a1c261;
+  --spk-viz-grid: #221f1d;
+  --spk-viz-axis: #36322e;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Layer 2 — derived tokens + 1.x compatibility aliases
+ * Re-evaluated on every theme root so brand overrides flow into derived values.
+ * ──────────────────────────────────────────────────────────────────────────── */
+:root,
+.mukta,
+.neelam,
+.usha,
+.sandhya,
+[data-spk-theme] {
+  --spk-accent-hover: color-mix(in oklab, var(--spk-accent) 90%, var(--spk-text-primary));
+  --spk-accent-active: color-mix(in oklab, var(--spk-accent) 82%, var(--spk-text-primary));
+  --spk-accent-muted: color-mix(in oklab, var(--spk-accent) 11%, transparent);
+  --spk-accent-subtle: color-mix(in oklab, var(--spk-accent) 6%, transparent);
+  --spk-accent-border: color-mix(in oklab, var(--spk-accent) 32%, transparent);
+
+  --spk-success-muted: color-mix(in oklab, var(--spk-success) 12%, transparent);
+  --spk-warning-muted: color-mix(in oklab, var(--spk-warning) 14%, transparent);
+  --spk-danger-muted: color-mix(in oklab, var(--spk-danger) 11%, transparent);
+  --spk-info-muted: color-mix(in oklab, var(--spk-info) 12%, transparent);
+  --spk-danger-hover: color-mix(in oklab, var(--spk-danger) 88%, var(--spk-text-primary));
+
+  /* Finance semantics */
+  --spk-positive: var(--spk-success-text);
+  --spk-negative: var(--spk-danger-text);
+  --spk-neutral: var(--spk-text-secondary);
+
+  /* Controls */
+  --spk-control-bg: var(--spk-surface);
+  --spk-control-border: var(--spk-border);
+  --spk-control-border-hover: var(--spk-border-strong);
+  --spk-selection: color-mix(in oklab, var(--spk-accent) 22%, transparent);
+
+  /* Focus — "crystal" ring: surface-coloured gap + accent ring */
+  --spk-focus: var(--spk-accent);
+  --spk-focus-ring: 0 0 0 2px var(--spk-surface), 0 0 0 4px
+    color-mix(in oklab, var(--spk-focus) 70%, transparent);
+  --spk-focus-ring-inset: inset 0 0 0 1px var(--spk-focus), 0 0 0 3px
+    color-mix(in oklab, var(--spk-focus) 22%, transparent);
+  --spk-focus-ring-danger: inset 0 0 0 1px var(--spk-danger), 0 0 0 3px
+    color-mix(in oklab, var(--spk-danger) 22%, transparent);
+
+  /* Elevation — subtle, never dominant */
+  --spk-shadow-xs: 0 1px 1px hsl(var(--spk-shadow-color) / 0.04);
+  --spk-shadow-sm: 0 1px 2px hsl(var(--spk-shadow-color) / 0.06),
+    0 1px 3px hsl(var(--spk-shadow-color) / 0.04);
+  --spk-shadow-md: 0 4px 12px -2px hsl(var(--spk-shadow-color) / 0.08),
+    0 2px 4px -2px hsl(var(--spk-shadow-color) / 0.05);
+  --spk-shadow-lg: 0 12px 32px -8px hsl(var(--spk-shadow-color) / 0.16),
+    0 4px 8px -4px hsl(var(--spk-shadow-color) / 0.06);
+  --spk-shadow-xl: 0 24px 56px -12px hsl(var(--spk-shadow-color) / 0.24),
+    0 8px 16px -8px hsl(var(--spk-shadow-color) / 0.08);
+
+  /* 1.x compatibility — shadcn-style names used across components & consumer apps */
+  --background: var(--spk-canvas);
+  --foreground: var(--spk-text-primary);
+  --card: var(--spk-surface);
+  --card-foreground: var(--spk-text-primary);
+  --popover: var(--spk-surface-overlay);
+  --popover-foreground: var(--spk-text-primary);
+  --primary: var(--spk-accent);
+  --primary-foreground: var(--spk-accent-fg);
+  --secondary: var(--spk-surface-subtle);
+  --secondary-foreground: var(--spk-text-primary);
+  --muted: var(--spk-surface-subtle);
+  --muted-foreground: var(--spk-text-secondary);
+  --accent: var(--spk-state-hover);
+  --accent-foreground: var(--spk-text-primary);
+  --destructive: var(--spk-danger);
+  --destructive-foreground: #ffffff;
+  --border: var(--spk-border);
+  --input: var(--spk-border);
+  --input-background: var(--spk-control-bg);
+  --switch-background: var(--spk-border-strong);
+  --ring: var(--spk-focus);
+  --radius: var(--spk-radius-sm);
+  --sidebar: var(--spk-canvas);
+  --sidebar-foreground: var(--spk-text-primary);
+  --sidebar-primary: var(--spk-accent);
+  --sidebar-primary-foreground: var(--spk-accent-fg);
+  --sidebar-accent: var(--spk-state-hover);
+  --sidebar-accent-foreground: var(--spk-text-primary);
+  --sidebar-border: var(--spk-border-subtle);
+  --sidebar-ring: var(--spk-focus);
+
+  /* 1.x glass variables now resolve to calm solid material.
+   * Real translucency lives on `.spk-glass` / `surface="glass"`. */
+  --glass-bg: var(--spk-surface);
+  --glass-panel-bg: var(--spk-surface-raised);
+  --glass-muted-bg: var(--spk-surface-subtle);
+  --glass-header-bg: var(--spk-canvas);
+  --glass-border: var(--spk-border);
+  --glass-blur: 0px;
+  --glass-header-blur: 12px;
+  --glass-menu-blur: 0px;
+  --glass-saturate: 100%;
+  --glass-shadow: var(--spk-shadow-sm);
+  --glass-highlight: transparent;
+  --modal-overlay-bg: var(--spk-overlay-scrim);
+  --modal-overlay-blur: 0px;
+
+  --surface-1: var(--spk-surface-raised);
+  --surface-2: var(--spk-surface);
+  --surface-3: var(--spk-surface-subtle);
+  --surface-strong: var(--spk-surface-raised);
+  --border-strong: var(--spk-border-strong);
+  --shadow-soft: var(--spk-shadow-sm);
+  --shadow-raised: var(--spk-shadow-md);
+  --shadow-press: var(--spk-shadow-xs);
+  --radius-card: var(--spk-radius-md);
+  --radius-control: var(--spk-radius-sm);
+  --radius-pill: var(--spk-radius-full);
+
+  --accent-info: var(--spk-info-text);
+  --accent-info-bg: var(--spk-info-muted);
+  --accent-highlight: var(--spk-accent-text);
+  --accent-highlight-bg: var(--spk-accent-muted);
+  --accent-warm: var(--spk-warning-text);
+  --accent-warm-bg: var(--spk-warning-muted);
+  --accent-danger-bg: var(--spk-danger-muted);
+
+  --chart-1: var(--spk-viz-1);
+  --chart-2: var(--spk-viz-2);
+  --chart-3: var(--spk-viz-3);
+  --chart-4: var(--spk-viz-4);
+  --chart-5: var(--spk-viz-5);
+  --chart-6: var(--spk-viz-6);
+  --chart-7: var(--spk-viz-7);
+  --chart-8: var(--spk-viz-8);
+
+  color-scheme: var(--spk-scheme);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Layer 3 — Tailwind bridge
+ * ──────────────────────────────────────────────────────────────────────────── */
+@theme inline {
+  /* Semantic surfaces & text */
+  --color-canvas: var(--spk-canvas);
+  --color-surface: var(--spk-surface);
+  --color-surface-raised: var(--spk-surface-raised);
+  --color-surface-overlay: var(--spk-surface-overlay);
+  --color-surface-subtle: var(--spk-surface-subtle);
+  --color-surface-sunken: var(--spk-surface-sunken);
+  --color-surface-inverse: var(--spk-surface-inverse);
+  --color-fg: var(--spk-text-primary);
+  --color-fg-secondary: var(--spk-text-secondary);
+  --color-fg-tertiary: var(--spk-text-tertiary);
+  --color-fg-disabled: var(--spk-text-disabled);
+  --color-fg-inverse: var(--spk-text-inverse);
+  --color-line: var(--spk-border);
+  --color-line-subtle: var(--spk-border-subtle);
+  --color-line-strong: var(--spk-border-strong);
+  --color-hover: var(--spk-state-hover);
+  --color-pressed: var(--spk-state-active);
+
+  --color-accent-solid: var(--spk-accent);
+  --color-accent-hover: var(--spk-accent-hover);
+  --color-accent-active: var(--spk-accent-active);
+  --color-accent-muted: var(--spk-accent-muted);
+  --color-accent-subtle: var(--spk-accent-subtle);
+  --color-accent-text: var(--spk-accent-text);
+  --color-accent-border: var(--spk-accent-border);
+
+  --color-success: var(--spk-success);
+  --color-success-text: var(--spk-success-text);
+  --color-success-muted: var(--spk-success-muted);
+  --color-warning: var(--spk-warning);
+  --color-warning-text: var(--spk-warning-text);
+  --color-warning-muted: var(--spk-warning-muted);
+  --color-danger: var(--spk-danger);
+  --color-danger-text: var(--spk-danger-text);
+  --color-danger-muted: var(--spk-danger-muted);
+  --color-info: var(--spk-info);
+  --color-info-text: var(--spk-info-text);
+  --color-info-muted: var(--spk-info-muted);
+  --color-positive: var(--spk-positive);
+  --color-negative: var(--spk-negative);
+
+  /* 1.x names */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Radius — Tailwind's scale is remapped so legacy `rounded-2xl` stays restrained */
+  --radius-xs: var(--spk-radius-xs);
+  --radius-sm: var(--spk-radius-xs);
+  --radius-md: var(--spk-radius-sm);
+  --radius-lg: var(--spk-radius-sm);
+  --radius-xl: var(--spk-radius-md);
+  --radius-2xl: var(--spk-radius-md);
+  --radius-3xl: var(--spk-radius-lg);
+  --radius-control: var(--spk-radius-sm);
+  --radius-card: var(--spk-radius-md);
+  --radius-sheet: var(--spk-radius-lg);
+
+  /* Elevation — Tailwind shadow scale remapped to Spatika elevation */
+  --shadow-2xs: var(--spk-shadow-xs);
+  --shadow-xs: var(--spk-shadow-xs);
+  --shadow-sm: var(--spk-shadow-sm);
+  --shadow: var(--spk-shadow-sm);
+  --shadow-md: var(--spk-shadow-md);
+  --shadow-lg: var(--spk-shadow-lg);
+  --shadow-xl: var(--spk-shadow-lg);
+  --shadow-2xl: var(--spk-shadow-xl);
+
+  /* Type */
+  --font-sans: var(--spk-font-sans);
+  --font-mono: var(--spk-font-mono);
+  --font-weight-black: 650;
+  --font-weight-extrabold: 650;
+  --text-display: var(--spk-text-display);
+  --text-display--line-height: var(--spk-text-display-lh);
+  --text-display--letter-spacing: -0.03em;
+  --text-display--font-weight: 600;
+  --text-hero: var(--spk-text-hero);
+  --text-hero--line-height: var(--spk-text-hero-lh);
+  --text-hero--letter-spacing: -0.035em;
+  --text-hero--font-weight: 650;
+  --text-hero-sm: var(--spk-text-hero-sm);
+  --text-hero-sm--line-height: var(--spk-text-hero-sm-lh);
+  --text-hero-sm--letter-spacing: -0.03em;
+  --text-hero-sm--font-weight: 650;
+  --text-title-1: var(--spk-text-title-1);
+  --text-title-1--line-height: var(--spk-text-title-1-lh);
+  --text-title-1--letter-spacing: var(--spk-tracking-tight);
+  --text-title-1--font-weight: 600;
+  --text-title-2: var(--spk-text-title-2);
+  --text-title-2--line-height: var(--spk-text-title-2-lh);
+  --text-title-2--letter-spacing: var(--spk-tracking-snug);
+  --text-title-2--font-weight: 600;
+  --text-title-3: var(--spk-text-title-3);
+  --text-title-3--line-height: var(--spk-text-title-3-lh);
+  --text-title-3--letter-spacing: var(--spk-tracking-snug);
+  --text-title-3--font-weight: 600;
+  --text-body-lg: var(--spk-text-body-lg);
+  --text-body-lg--line-height: var(--spk-text-body-lg-lh);
+  --text-body: var(--spk-text-body);
+  --text-body--line-height: var(--spk-text-body-lh);
+  --text-body-sm: var(--spk-text-body-sm);
+  --text-body-sm--line-height: var(--spk-text-body-sm-lh);
+  --text-label: var(--spk-text-label);
+  --text-label--line-height: var(--spk-text-label-lh);
+  --text-label--font-weight: 500;
+  --text-caption: var(--spk-text-caption);
+  --text-caption--line-height: var(--spk-text-caption-lh);
+  --text-overline: var(--spk-text-overline);
+  --text-overline--line-height: var(--spk-text-overline-lh);
+  --text-overline--letter-spacing: var(--spk-tracking-wide);
+  --text-overline--font-weight: 500;
+
+  /* Motion */
+  --ease-standard: var(--spk-ease-standard);
+  --ease-enter: var(--spk-ease-enter);
+  --ease-exit: var(--spk-ease-exit);
+  --ease-spring: var(--spk-ease-spring);
+}
