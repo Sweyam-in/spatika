@@ -193,7 +193,7 @@ export function GuidesPage() {
         .
       </p>
       <CodeBlock
-        code={`git clone https://github.com/SreelalChalil/spatika.git
+        code={`git clone https://github.com/Sweyam-in/spatika.git
 cd spatika
 npm install
 npm run dev`}

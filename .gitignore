@@ -15,4 +15,5 @@ prod-deploy/.env.production
 scripts/build-push-ghcr.env
 *.pem
 *.key
-
+.claude/
+.cursor/

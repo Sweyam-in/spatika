@@ -78,7 +78,7 @@ cp scripts/build-push-ghcr.env.example scripts/build-push-ghcr.env
 2. Configure deployment variables:
    - `prod-deploy/atlas.deploy.env`: Set `ATLAS_HOST` (e.g. Atlas VM IP) and `ATLAS_USER` / `ATLAS_SSH_KEY`.
    - `prod-deploy/.env.production`: Set `ATLAS_LOGS_BIND_IP` (Tailscale IP).
-   - `scripts/build-push-ghcr.env`: Set `GHCR_OWNER` (e.g. `sreelalchalil`) and GHCR credentials if not already logged in with docker.
+   - `scripts/build-push-ghcr.env`: Set `GHCR_OWNER` (e.g. `sweyam-in`) and GHCR credentials if not already logged in with docker.
 
 3. Deploy to the Atlas VM:
 

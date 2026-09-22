@@ -6,11 +6,11 @@
   "homepage": "https://spatika.sweyam.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SreelalChalil/spatika.git",
+    "url": "git+https://github.com/Sweyam-in/spatika.git",
     "directory": "packages/charts"
   },
   "bugs": {
-    "url": "https://github.com/SreelalChalil/spatika/issues"
+    "url": "https://github.com/Sweyam-in/spatika/issues"
   },
   "author": "Sreelal Chalil",
   "keywords": [

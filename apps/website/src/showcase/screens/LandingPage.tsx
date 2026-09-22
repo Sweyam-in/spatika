@@ -486,7 +486,7 @@ export function LandingPage() {
           {
             title: "Project",
             links: [
-              { href: "https://github.com/SreelalChalil/spatika", label: "GitHub" },
+              { href: "https://github.com/Sweyam-in/spatika", label: "GitHub" },
               { href: "/guides#contribute", label: "Contribute" },
               { href: "/guides#publishing", label: "Releases" },
             ],
