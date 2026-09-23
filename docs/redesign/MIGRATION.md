@@ -23,8 +23,8 @@ import "@spatika/tokens/fonts.css"; // now loads Inter + JetBrains Mono
 |---|---|---|
 | Surfaces | Frosted glass everywhere (`.glass`, `.glass-panel`, `.glass-menu`) | Calm solid material; the same classes now render solid |
 | Blur | 32–84px backdrop blur on cards, headers, menus | Blur only on floating chrome (`--app-tabbar-blur`, header) and opt-in `.spk-glass` |
-| Radii | 6 competing radii up to 28px | 4 · 6 · 10 · 14px; Tailwind's `rounded-*` scale is remapped to match |
-| Shadows | `0 28px 65px` soft clouds | `--spk-shadow-xs…xl`; Tailwind's `shadow-*` scale is remapped |
+| Radii | 6 competing radii up to 28px | 4 · 6 · 10 · 14px; Spatika's utility `rounded-*` scale is remapped to match |
+| Shadows | `0 28px 65px` soft clouds | `--spk-shadow-xs…xl`; Spatika's utility `shadow-*` scale is remapped |
 | Type | `font-black` (900) headings, 10px uppercase micro-labels | 600 headings, sentence-case labels, 14px body |
 | Numbers | Proportional | Tabular with slashed zero in metrics, tables and charts |
 | Focus | `ring-[3px]` on some controls | One crystal focus ring on every control |

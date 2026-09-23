@@ -1,6 +1,6 @@
 /**
  * Named typography roles. Hierarchy comes from size and weight — not uppercase shouting.
- * Tailwind utilities map to the `--spk-text-*` scale in `@spatika/tokens`.
+ * Spatika utilities map to the `--spk-text-*` scale in `@spatika/tokens`.
  */
 
 export const typographyDisplay = "text-display text-fg";

@@ -1,14 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite";
-import { applySeoToHtml, getSeoPage, SEO_PAGES, sitemapXml } from "./src/data/seo";
+import { applySeoToHtml, getSeoPage, NOT_FOUND_PAGE, SEO_PAGES, sitemapXml } from "./src/data/seo";
 
 function writeRouteHtml(dist: string, template: string, routePath: string) {
   const page = getSeoPage(routePath);
   const html = applySeoToHtml(template, page);
   if (routePath === "/") {
     fs.writeFileSync(path.join(dist, "index.html"), html);
-    fs.writeFileSync(path.join(dist, "404.html"), html);
     return;
   }
   const dir = path.join(dist, routePath.replace(/^\//, ""));
@@ -28,6 +27,7 @@ export function spatikaSeoPlugin(): Plugin {
       for (const page of SEO_PAGES) {
         writeRouteHtml(dist, template, page.path);
       }
+      fs.writeFileSync(path.join(dist, "404.html"), applySeoToHtml(template, NOT_FOUND_PAGE));
 
       const lastmod = new Date().toISOString().slice(0, 10);
       fs.writeFileSync(path.join(dist, "sitemap.xml"), sitemapXml(lastmod));

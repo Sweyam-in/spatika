@@ -399,7 +399,7 @@ ${RECIPE_CREATE_THEME}
 
 ## Color palette
 
-Map camelCase keys to CSS variables: \`primary\` → \`--primary\`, \`mutedForeground\` → \`--muted-foreground\`, \`chart1\` → \`--chart-1\`. Tailwind utilities (\`bg-primary\`, \`text-foreground\`) read those variables.
+Map camelCase keys to CSS variables: \`primary\` → \`--primary\`, \`mutedForeground\` → \`--muted-foreground\`, \`chart1\` → \`--chart-1\`. Spatika utilities (\`bg-primary\`, \`text-foreground\`) read those variables.
 
 ## Breakpoints
 

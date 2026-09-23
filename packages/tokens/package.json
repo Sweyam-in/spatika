@@ -1,6 +1,6 @@
 {
   "name": "@spatika/tokens",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Spatika design tokens — semantic themes, density, motion, and component recipes (framework-agnostic)",
   "homepage": "https://spatika.sweyam.com",
   "repository": {
@@ -32,6 +32,7 @@
     "./styles.css": "./dist/styles.css",
     "./fonts.css": "./src/fonts.css",
     "./tokens.css": "./src/tokens.css",
+    "./utilities.css": "./src/utilities.css",
     "./glass.css": "./src/glass.css",
     "./surfaces.css": "./src/surfaces.css",
     "./components.css": "./src/components.css",
@@ -48,13 +49,10 @@
     "src"
   ],
   "scripts": {
-    "build": "mkdir -p dist && tailwindcss -i ./src/build-entry.css -o ./dist/styles.css --minify"
+    "build": "node ../../scripts/build-tokens.mjs"
   },
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {
-    "@tailwindcss/cli": "^4.3.3",
-    "tailwindcss": "^4.3.3"
-  }
+  "devDependencies": {}
 }

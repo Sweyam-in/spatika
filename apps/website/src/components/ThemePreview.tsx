@@ -23,7 +23,7 @@ const themePalettes: Record<
     muted: "#94a3b8",
   },
   usha: {
-    bg: "#faf8f6",
+    bg: "#fbfbfa",
     surface: "#ffffff",
     primary: "#e95420",
     primaryForeground: "#ffffff",

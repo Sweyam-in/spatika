@@ -66,7 +66,7 @@ const FAQS = [
   { question: "Is Spatika free to use?", answer: "Yes. Spatika is MIT licensed and the full source is on GitHub — use it in commercial products without asking." },
   { question: "Does it work with my framework?", answer: "The React package covers React 18 and 19. The token package is plain CSS, so Vue, Svelte and server-rendered templates can use the recipes directly." },
   { question: "Can I use my own brand colour?", answer: "Pass createTheme({ id, extends, palette }) to SpatikaThemeProvider. Hover, muted, border and focus states are derived from your base values automatically." },
-  { question: "Do I need Tailwind?", answer: "No. The published stylesheet is prebuilt, so consumers import one CSS file and nothing else." },
+  { question: "Do I need an external CSS framework?", answer: "No. The published stylesheet is prebuilt, so consumers import one CSS file and nothing else." },
 ];
 
 /** Schematic of a product screen — drawn with tokens so it follows the active theme. */
@@ -246,7 +246,7 @@ export function LandingPage() {
           <SectionHeading align="center" eyebrow="How it works" title="Three steps to a themed screen" />
           <StepFlow
             steps={[
-              { title: "Install", description: "One package and one prebuilt stylesheet. No Tailwind required in your app." },
+              { title: "Install", description: "One package and one prebuilt stylesheet. No external CSS framework required in your app." },
               { title: "Pick a theme", description: "Wrap the app in SpatikaThemeProvider, or overlay your brand with createTheme." },
               { title: "Compose", description: "Build screens from primitives, composites and patterns — the same ones this page uses." },
             ]}

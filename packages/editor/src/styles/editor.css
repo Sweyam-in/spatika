@@ -188,7 +188,7 @@
   padding-left: 1.35rem;
 }
 
-/* Restore markers: the token reset (Tailwind preflight) clears list styling. */
+/* Restore markers: the Spatika token reset clears list styling. */
 .spk-editor-shell .ProseMirror ul {
   list-style: disc outside;
 }

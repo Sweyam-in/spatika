@@ -16,7 +16,7 @@ checked against the intent.
                   surfaces.css (.app-card, .entity-card, .profile-liquid-card, washes)
                   chrome.css (fixed header, cover bleed, liquid toolbar)
                   charts.css, marketing.css, base.css
-@spatika/react    ~150 components, Tailwind class strings inline (cva for a few)
+@spatika/react    ~150 components, Spatika utility class strings inline (cva for a few)
 @spatika/charts   SVG charts reading --chart-1..5
 @spatika/editor   Tiptap editor, 1.1k lines of CSS on glass vars
 apps/website      docs + "Relay" CRM showcase, 2.6k lines of site CSS
@@ -142,7 +142,7 @@ rather than fogging a surface.
 ```
 primitive values (per theme)        --spk-canvas, --spk-surface, --spk-text-primary, --spk-accent …
       ↓ derived (one rule for all)  --spk-accent-hover, --spk-accent-muted, --spk-focus-ring, legacy aliases
-      ↓ Tailwind bridge             bg-canvas, bg-surface-raised, text-fg-secondary, border-line-subtle …
+      ↓ Spatika utility bridge             bg-canvas, bg-surface-raised, text-fg-secondary, border-line-subtle …
       ↓ recipes (CSS)               .spk-surface--*, .spk-overlay, .spk-item, .spk-focus-ring, .spk-table
       ↓ components                  Button, Card surface=…, DataTable, Metric …
       ↓ patterns                    AppShell, PageHeader, PageSection, MetricGroup

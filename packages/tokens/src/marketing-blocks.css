@@ -740,7 +740,10 @@
 
   .spk-mk-marquee {
     display: flex;
+    contain: paint;
+    min-width: 0;
     width: 100%;
+    max-width: 100%;
     overflow: hidden;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
@@ -752,6 +755,7 @@
     align-items: center;
     gap: var(--spk-mk-marquee-gap);
     padding-inline-end: var(--spk-mk-marquee-gap);
+    max-width: max-content;
     min-width: 100%;
     will-change: transform;
     animation: spk-mk-marquee var(--spk-mk-marquee-duration) linear infinite;
@@ -1004,6 +1008,9 @@
   /* ── Comparison table ─────────────────────────────────────────────────── */
 
   .spk-mk-compare-scroll {
+    display: block;
+    contain: paint;
+    min-width: 0;
     width: 100%;
     max-width: 100%;
     overflow-x: auto;

@@ -8,6 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "visual:audit": "node scripts/visual-audit.mjs",
     "test": "vitest run"
   },
   "dependencies": {
@@ -21,13 +22,14 @@
     "react-router-dom": "^7.6.2"
   },
   "devDependencies": {
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.5.2",
     "jsdom": "^30.0.1",
+    "playwright": "^1.63.0",
     "typescript": "~5.8.3",
     "vite": "^6.3.5",
     "vitest": "^4.1.10"

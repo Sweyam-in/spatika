@@ -90,7 +90,7 @@ function ShellDemo() {
             </NavSection>
           </Sidebar>
         }
-        topbar={<TopBar title="People" actions={<Button size="sm">Invite</Button>} />}
+        topbar={<TopBar title="People" hideSidebarToggle actions={<Button size="sm">Invite</Button>} />}
       >
         <div className="home-shell-body">
           <PageSection title="Team" description="Everyone with access to this workspace.">

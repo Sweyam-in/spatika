@@ -1,8 +1,9 @@
 /**
- * Development / Storybook entry — includes Tailwind for live HMR.
+ * Development / Storybook entry.
  * Published consumers should import `@spatika/tokens/styles.css` (prebuilt).
  */
-@import "tailwindcss";
+@layer base, components, utilities;
+
 @import "./tokens.css";
 @import "./glass.css";
 @import "./components.css";
@@ -12,3 +13,4 @@
 @import "./marketing-blocks.css";
 @import "./charts.css";
 @import "./base.css";
+@import "./utilities.css";

@@ -473,7 +473,7 @@ export function DataTable<T>({
 
       {/* Phone list */}
       {responsive === "list" ? (
-        <ul data-slot="data-table-list" aria-label={ariaLabel} className="divide-y divide-line-subtle md:hidden">
+        <ul data-slot="data-table-list" aria-label={ariaLabel} className="spk-data-list md:hidden">
           {loading
             ? Array.from({ length: Math.min(loadingRows, 4) }, (_, r) => (
                 <li key={r} className="flex flex-col gap-2 px-3 py-3">
@@ -492,11 +492,14 @@ export function DataTable<T>({
                   return (
                     <li
                       key={id}
+                      data-slot="data-table-list-row"
                       data-state={isSelected ? "selected" : undefined}
+                      data-selectable={selectable ? "true" : undefined}
+                      data-clickable={onRowClick ? "true" : undefined}
                       className={cn(
-                        "flex min-h-[var(--spk-row-h)] items-center gap-3 px-3 py-2.5",
-                        isSelected && "bg-accent-subtle shadow-[inset_2px_0_0_var(--spk-accent)]",
-                        onRowClick && "cursor-pointer active:bg-hover",
+                        "spk-data-list-row",
+                        isSelected && "spk-data-list-row--selected",
+                        onRowClick && "spk-data-list-row--clickable",
                       )}
                       onClick={(event) => {
                         if (!onRowClick || isInteractiveTarget(event.target)) return;
@@ -504,14 +507,16 @@ export function DataTable<T>({
                       }}
                     >
                       {selectable ? (
-                        <Checkbox aria-label="Select row" checked={isSelected} onCheckedChange={() => toggleRow(id)} />
+                        <div data-slot="data-table-list-select" className="spk-data-list-select">
+                          <Checkbox aria-label="Select row" checked={isSelected} onCheckedChange={() => toggleRow(id)} />
+                        </div>
                       ) : null}
-                      <div className="min-w-0 flex-1">
-                        {title ? <div className="truncate text-body font-medium text-fg">{cellContent(title, row, index)}</div> : null}
+                      <div data-slot="data-table-list-main" className="spk-data-list-main">
+                        {title ? <div className="spk-data-list-title">{cellContent(title, row, index)}</div> : null}
                         {subtitles.length ? (
-                          <div className="mt-0.5 flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-body-sm text-fg-secondary">
+                          <div className="spk-data-list-subtitle">
                             {subtitles.map((c) => (
-                              <span key={c.id} className="min-w-0 truncate">
+                              <span key={c.id}>
                                 {cellContent(c, row, index)}
                               </span>
                             ))}
@@ -519,13 +524,13 @@ export function DataTable<T>({
                         ) : null}
                       </div>
                       {metas.length ? (
-                        <div className="flex shrink-0 flex-col items-end gap-0.5 text-right text-body spk-numeric">
+                        <div data-slot="data-table-list-meta" className="spk-data-list-meta">
                           {metas.map((c) => (
                             <span key={c.id}>{cellContent(c, row, index)}</span>
                           ))}
                         </div>
                       ) : null}
-                      {onRowClick ? <ChevronRight className="size-4 shrink-0 text-fg-tertiary" aria-hidden /> : null}
+                      {onRowClick ? <ChevronRight className="spk-data-list-disclosure" aria-hidden /> : null}
                     </li>
                   );
                 })}

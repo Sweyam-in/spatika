@@ -60,14 +60,10 @@ Button sizes include `touch` / `icon-touch` (≥44px) for mobile-first chrome.
 - **Composites** — AppHeader, AppSidebar, Card, EntityCard, FloatingPageChrome, CoverHero, FilterSheet, MobileTabBar, CommandSearchField, NotificationBell, Timeline, EventCalendar, EventTimeline, AmountInput, SegmentedControl, Toaster, media cards, PIN/lock chrome, SiteNav, SiteFooter, SectionHeading, Tag
 - **Charts** — install `@spatika/charts` (also re-exported from `@spatika/react`). SVG plots covering the MUI X catalog, plus `ChartContainer` composition (mixed plots, zoom/pan, brush, `syncId`, shared tooltips, dual axes, toolbar export)
 
-## Tailwind tip
+## Utility classes
 
-Prefer `@spatika/tokens/styles.css`. If you compile Tailwind in your app and only import token partials, also scan kit sources:
-
-```css
-@import "tailwindcss";
-@source "../node_modules/@spatika/react/src/**/*.{ts,tsx}";
-```
+Prefer `@spatika/tokens/styles.css`. It includes Spatika's semantic tokens, component recipes,
+and the utility classes used by the React package. No external CSS framework is required.
 
 ## Docs
 

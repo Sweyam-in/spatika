@@ -1,4 +1,4 @@
-/** Viewport widths (px) that match Tailwind and Spatika `Grid` / `Container`. */
+/** Viewport widths (px) that match Spatika `Grid` / `Container`. */
 export const BREAKPOINTS = {
   xs: 0,
   sm: 640,

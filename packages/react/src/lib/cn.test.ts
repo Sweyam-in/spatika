@@ -6,8 +6,8 @@ describe("cn", () => {
     expect(cn("px-2", "py-1")).toBe("px-2 py-1");
   });
 
-  it("resolves Tailwind conflicts via twMerge", () => {
-    expect(cn("px-2", "px-4")).toBe("px-4");
+  it("preserves explicit class order", () => {
+    expect(cn("px-2", "px-4")).toBe("px-2 px-4");
   });
 
   it("ignores falsy values", () => {

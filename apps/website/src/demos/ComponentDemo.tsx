@@ -366,9 +366,12 @@ export function ComponentDemo({ slug, compact = false, bare = false }: Component
     ),
     badge: (
       <div className="demo-row">
-        <Badge>Default</Badge>
-        <Badge variant="secondary">Secondary</Badge>
-        <Badge variant="outline">Outline</Badge>
+        <Badge variant="success" dot>
+          Live
+        </Badge>
+        <Badge variant="info">24 new</Badge>
+        <Badge variant="warning">Beta</Badge>
+        <Badge variant="outline">Draft</Badge>
       </div>
     ),
     avatar: (
@@ -637,19 +640,25 @@ export function ComponentDemo({ slug, compact = false, bare = false }: Component
       </Paper>
     ),
     grid: (
-      <Grid container spacing={2} className="w-full">
-        <Grid xs={6}>
-          <Paper className="p-3 text-center text-xs font-bold">6</Paper>
+      <Grid container spacing={2} className="w-full max-w-[360px]">
+        <Grid xs={3}>
+          <Paper className="grid-demo-cell p-3 text-center text-xs font-bold">3</Paper>
         </Grid>
         <Grid xs={6}>
-          <Paper className="p-3 text-center text-xs font-bold">6</Paper>
+          <Paper className="grid-demo-cell grid-demo-cell--accent p-3 text-center text-xs font-bold">6</Paper>
+        </Grid>
+        <Grid xs={3}>
+          <Paper className="grid-demo-cell p-3 text-center text-xs font-bold">3</Paper>
+        </Grid>
+        <Grid xs={12}>
+          <Paper className="grid-demo-cell grid-demo-cell--wide p-2 text-center text-xs font-bold">12 columns</Paper>
         </Grid>
       </Grid>
     ),
     masonry: (
       <Masonry columns={compact ? 2 : 3} spacing={8} className="w-full max-w-[360px]">
         {["h-16", "h-10", "h-20", "h-12"].map((h) => (
-          <Paper key={h} className={`${h} bg-primary/10`} />
+          <Paper key={h} className={`${h} masonry-demo-tile`} />
         ))}
       </Masonry>
     ),
@@ -792,9 +801,20 @@ export function ComponentDemo({ slug, compact = false, bare = false }: Component
       />
     ),
     "app-bar": (
-      <AppBar className="w-full rounded-xl border">
+      <AppBar position="relative" className="w-full max-w-[360px] overflow-hidden rounded-xl border">
         <Toolbar>
-          <Typography variant="subtitle2">Inbox</Typography>
+          <div className="flex min-w-0 items-center gap-2">
+            <Inbox className="size-4 text-primary" />
+            <Typography variant="subtitle2">Inbox</Typography>
+          </div>
+          <div className="flex items-center gap-1">
+            <IconButton size="sm" aria-label="Search inbox" variant="ghost">
+              <Search className="size-4" />
+            </IconButton>
+            <IconButton size="sm" aria-label="Notifications" variant="ghost">
+              <Bell className="size-4" />
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
     ),
@@ -932,17 +952,17 @@ export function ComponentDemo({ slug, compact = false, bare = false }: Component
       />
     ),
     "float-chip": (
-      <div className="demo-row">
-        <FloatChip icon="✨" title="Glass" subtitle="UI" />
-        <FloatChip icon="🎨" title="Four" subtitle="themes" />
+      <div className="float-chip-demo">
+        <FloatChip icon="✨" title="Glass UI" subtitle="Design system" />
+        <FloatChip icon="📍" title="Remote" subtitle="Global team" />
         <FloatChip live>In production</FloatChip>
       </div>
     ),
     "meta-chip": (
       <div className="demo-row">
-        <MetaChip>Next.js</MetaChip>
-        <MetaChip>React</MetaChip>
-        <MetaChip>Spatika</MetaChip>
+        <MetaChip icon="N">Next.js</MetaChip>
+        <MetaChip icon="R">React</MetaChip>
+        <MetaChip icon={<SpatikaLogo size={12} />}>Spatika</MetaChip>
       </div>
     ),
     "contact-link": (

@@ -11,7 +11,7 @@ export function Toolbar({
   return (
     <div
       data-slot="toolbar"
-      className={cn("flex flex-wrap items-center gap-2", className)}
+      className={cn("flex min-h-14 w-full flex-wrap items-center justify-between gap-2 px-4", className)}
     >
       {children}
     </div>

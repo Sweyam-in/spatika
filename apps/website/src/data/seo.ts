@@ -1,11 +1,13 @@
 import { components } from "./navigation";
 import { SITE, absoluteUrl } from "./site";
+import { LEADS } from "../showcase/data";
 
 export type SeoPage = {
   path: string;
   title: string;
   description: string;
   breadcrumbs: { name: string; path: string }[];
+  noindex?: boolean;
 };
 
 export const FAQS = [
@@ -103,40 +105,84 @@ const staticPages: SeoPage[] = [
     path: "/showcase",
     title: titled("Showcase"),
     description:
-      "A live lead-generation workspace built with Spatika UI — an application shell, data tables, and four themes you can switch on the fly.",
+      "Product demo screens built with Spatika UI — a finance dashboard, an admin console, a workspace app, a marketing landing page, and a CRM.",
     breadcrumbs: [
       { name: "Spatika UI", path: "/" },
       { name: "Showcase", path: "/showcase" },
     ],
   },
   {
-    path: "/showcase/leads",
-    title: titled("Showcase · Leads"),
+    path: "/showcase/admin",
+    title: titled("Showcase · Admin console"),
+    description: "Spatika UI showcase: an admin console with tables, filters, and app chrome.",
+    breadcrumbs: [
+      { name: "Spatika UI", path: "/" },
+      { name: "Showcase", path: "/showcase" },
+      { name: "Admin console", path: "/showcase/admin" },
+    ],
+  },
+  {
+    path: "/showcase/workspace",
+    title: titled("Showcase · Workspace app"),
+    description: "Spatika UI showcase: a workspace app shell built with Spatika UI components.",
+    breadcrumbs: [
+      { name: "Spatika UI", path: "/" },
+      { name: "Showcase", path: "/showcase" },
+      { name: "Workspace app", path: "/showcase/workspace" },
+    ],
+  },
+  {
+    path: "/showcase/landing",
+    title: titled("Showcase · Landing page"),
+    description: "Spatika UI showcase: a marketing landing page built with Spatika UI components.",
+    breadcrumbs: [
+      { name: "Spatika UI", path: "/" },
+      { name: "Showcase", path: "/showcase" },
+      { name: "Landing page", path: "/showcase/landing" },
+    ],
+  },
+  {
+    path: "/showcase/relay",
+    title: titled("Showcase · Relay CRM"),
+    description:
+      "A live lead-generation CRM workspace built with Spatika UI — an application shell, data tables, and four themes you can switch on the fly.",
+    breadcrumbs: [
+      { name: "Spatika UI", path: "/" },
+      { name: "Showcase", path: "/showcase" },
+      { name: "Relay", path: "/showcase/relay" },
+    ],
+  },
+  {
+    path: "/showcase/relay/leads",
+    title: titled("Showcase · Relay · Leads"),
     description: "Spatika UI showcase: directory, search chrome, and entity rows in a lead workspace.",
     breadcrumbs: [
       { name: "Spatika UI", path: "/" },
       { name: "Showcase", path: "/showcase" },
-      { name: "Leads", path: "/showcase/leads" },
+      { name: "Relay", path: "/showcase/relay" },
+      { name: "Leads", path: "/showcase/relay/leads" },
     ],
   },
   {
-    path: "/showcase/campaigns",
-    title: titled("Showcase · Campaigns"),
+    path: "/showcase/relay/campaigns",
+    title: titled("Showcase · Relay · Campaigns"),
     description: "Spatika UI showcase: campaign cards and layout patterns for marketing ops.",
     breadcrumbs: [
       { name: "Spatika UI", path: "/" },
       { name: "Showcase", path: "/showcase" },
-      { name: "Campaigns", path: "/showcase/campaigns" },
+      { name: "Relay", path: "/showcase/relay" },
+      { name: "Campaigns", path: "/showcase/relay/campaigns" },
     ],
   },
   {
-    path: "/showcase/insights",
-    title: titled("Showcase · Insights"),
+    path: "/showcase/relay/insights",
+    title: titled("Showcase · Relay · Insights"),
     description: "Spatika UI showcase: stats, charts, and calm surfaces in a product insights view.",
     breadcrumbs: [
       { name: "Spatika UI", path: "/" },
       { name: "Showcase", path: "/showcase" },
-      { name: "Insights", path: "/showcase/insights" },
+      { name: "Relay", path: "/showcase/relay" },
+      { name: "Insights", path: "/showcase/relay/insights" },
     ],
   },
   {
@@ -162,7 +208,29 @@ const componentPages: SeoPage[] = components.map((entry) => ({
   ],
 }));
 
-export const SEO_PAGES: SeoPage[] = [...staticPages, ...componentPages];
+const leadPages: SeoPage[] = LEADS.map((lead) => ({
+  path: `/showcase/relay/leads/${lead.id}`,
+  title: titled(`Showcase · Relay · ${lead.name}`),
+  description: `Spatika UI showcase: a lead detail view in the Relay CRM demo, rendered with Spatika UI components.`,
+  breadcrumbs: [
+    { name: "Spatika UI", path: "/" },
+    { name: "Showcase", path: "/showcase" },
+    { name: "Relay", path: "/showcase/relay" },
+    { name: "Leads", path: "/showcase/relay/leads" },
+    { name: lead.name, path: `/showcase/relay/leads/${lead.id}` },
+  ],
+  noindex: true,
+}));
+
+export const SEO_PAGES: SeoPage[] = [...staticPages, ...componentPages, ...leadPages];
+
+export const NOT_FOUND_PAGE: SeoPage = {
+  path: "/404",
+  title: `Page not found — ${TITLE_SUFFIX}`,
+  description: "The page you requested could not be found on spatika.sweyam.com.",
+  breadcrumbs: [{ name: "Spatika UI", path: "/" }],
+  noindex: true,
+};
 
 const pagesByPath = new Map(SEO_PAGES.map((page) => [page.path, page]));
 
@@ -282,6 +350,14 @@ export function applySeoToHtml(html: string, page: SeoPage): string {
     `<title data-spk-seo="title">${escapeHtml(page.title)}</title>`,
   );
   next = replaceAttr(next, "description", "content", page.description);
+  next = replaceAttr(
+    next,
+    "robots",
+    "content",
+    page.noindex
+      ? "noindex, nofollow"
+      : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+  );
   next = replaceAttr(next, "canonical", "href", url);
   next = replaceAttr(next, "og-title", "content", page.title);
   next = replaceAttr(next, "og-description", "content", page.description);
@@ -300,7 +376,7 @@ export function applySeoToHtml(html: string, page: SeoPage): string {
 }
 
 export function sitemapXml(lastmod: string): string {
-  const urls = SEO_PAGES.map((page) => {
+  const urls = SEO_PAGES.filter((page) => !page.noindex).map((page) => {
     const loc = pageUrl(page);
     const priority = page.path === "/" ? "1.0" : page.path.split("/").length <= 2 ? "0.8" : "0.6";
     const changefreq = page.path === "/" ? "weekly" : "monthly";

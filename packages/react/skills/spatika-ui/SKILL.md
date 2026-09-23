@@ -32,7 +32,7 @@ export function App() {
 - Import `@spatika/tokens/styles.css` before any component; wrap the tree in `SpatikaThemeProvider`
 - Themes: `mukta` (light, default) | `neelam` (dark) | `usha` (warm light) | `sandhya` (warm dark).
   Brand palettes: `createTheme` + `customThemes`
-- Semantic tokens only — `--spk-*` or the Tailwind bridge (`bg-surface`, `text-fg-secondary`,
+- Semantic tokens only — `--spk-*` or the Spatika utility bridge (`bg-surface`, `text-fg-secondary`,
   `border-line`, `text-title-2`). No hardcoded hex, no `bg-white` / `text-black`
 - Structure pages with `PageHeader` + `PageSection`. A `Card` is for a thing, not for a section
 - Surfaces are solid; `surface="glass"` only for chrome floating over content or media

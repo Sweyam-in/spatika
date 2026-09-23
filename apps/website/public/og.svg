@@ -1,20 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
-  <rect width="1200" height="630" fill="#0b1220"/>
+  <rect width="1200" height="630" fill="#180b05"/>
   <rect width="1200" height="630" fill="url(#bg)"/>
   <defs>
     <radialGradient id="bg" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(180 80) rotate(28) scale(980 640)">
-      <stop stop-color="#1d4ed8" stop-opacity=".45"/>
-      <stop offset="1" stop-color="#0b1220" stop-opacity="0"/>
+      <stop stop-color="#d9551d" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#180b05" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="mark" x1="72" y1="210" x2="168" y2="306">
-      <stop stop-color="#60a5fa"/>
-      <stop offset="1" stop-color="#a78bfa"/>
+    <linearGradient id="mark" x1="87" y1="219" x2="153" y2="297">
+      <stop stop-color="#d9551d"/>
+      <stop offset="1" stop-color="#9f3412"/>
     </linearGradient>
+    <linearGradient id="shine" x1="93" y1="225" x2="138" y2="273">
+      <stop stop-color="white" stop-opacity=".45"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(54 60 -60 54 102 234)">
+      <stop stop-color="white" stop-opacity=".34"/>
+      <stop offset=".62" stop-color="white" stop-opacity=".08"/>
+      <stop offset="1" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect x="72" y="210" width="96" height="96" rx="28" fill="url(#mark)"/>
-  <path d="M120 226.5L145.5 240.75V269.25L120 283.5L94.5 269.25V240.75L120 226.5Z" fill="white" fill-opacity=".12" stroke="white" stroke-opacity=".9" stroke-width="2.2" stroke-linejoin="round"/>
-  <path d="M120 226.5L94.5 240.75L120 255L145.5 240.75L120 226.5Z" fill="white" fill-opacity=".3"/>
+  <g transform="translate(72 210) scale(3)">
+    <rect x="1" y="1" width="30" height="30" rx="9" fill="url(#mark)"/>
+    <rect x="1" y="1" width="30" height="30" rx="9" fill="url(#shine)"/>
+    <rect x="1" y="1" width="30" height="30" rx="9" fill="url(#glow)"/>
+    <rect x="1.55" y="1.55" width="28.9" height="28.9" rx="8.45" stroke="white" stroke-opacity=".18"/>
+    <path d="M16 5.15C18.35 8.76 18.35 10.94 16 13.28C13.65 10.94 13.65 8.76 16 5.15Z" fill="white" fill-opacity=".7"/>
+    <path d="M26.85 16C23.24 18.35 21.06 18.35 18.72 16C21.06 13.65 23.24 13.65 26.85 16Z" fill="white" fill-opacity=".7"/>
+    <path d="M16 26.85C13.65 23.24 13.65 21.06 16 18.72C18.35 21.06 18.35 23.24 16 26.85Z" fill="white" fill-opacity=".7"/>
+    <path d="M5.15 16C8.76 13.65 10.94 13.65 13.28 16C10.94 18.35 8.76 18.35 5.15 16Z" fill="white" fill-opacity=".7"/>
+    <path d="M23.67 8.33C22.78 12.54 21.24 14.08 17.94 14.08C17.94 10.76 19.46 9.22 23.67 8.33Z" fill="white" fill-opacity=".34"/>
+    <path d="M23.67 23.67C19.46 22.78 17.94 21.24 17.94 17.92C21.24 17.92 22.78 19.46 23.67 23.67Z" fill="white" fill-opacity=".34"/>
+    <path d="M8.33 23.67C9.22 19.46 10.76 17.92 14.06 17.92C14.06 21.24 12.54 22.78 8.33 23.67Z" fill="white" fill-opacity=".34"/>
+    <path d="M8.33 8.33C12.54 9.22 14.06 10.76 14.06 14.08C10.76 14.08 9.22 12.54 8.33 8.33Z" fill="white" fill-opacity=".34"/>
+    <path d="M16 5.15C18.35 8.76 18.35 10.94 16 13.28C13.65 10.94 13.65 8.76 16 5.15ZM26.85 16C23.24 18.35 21.06 18.35 18.72 16C21.06 13.65 23.24 13.65 26.85 16ZM16 26.85C13.65 23.24 13.65 21.06 16 18.72C18.35 21.06 18.35 23.24 16 26.85ZM5.15 16C8.76 13.65 10.94 13.65 13.28 16C10.94 18.35 8.76 18.35 5.15 16Z" stroke="white" stroke-opacity=".58" stroke-width="1.05" stroke-linejoin="round"/>
+    <path d="M16 9.25V22.75M9.25 16H22.75M11.22 11.22L20.78 20.78M20.78 11.22L11.22 20.78" stroke="white" stroke-opacity=".28" stroke-width=".95" stroke-linecap="round"/>
+    <path d="M16 11.6L18.2 13.8L20.4 16L18.2 18.2L16 20.4L13.8 18.2L11.6 16L13.8 13.8L16 11.6Z" fill="#fff7ed" fill-opacity=".2" stroke="white" stroke-opacity=".78" stroke-width="1.1" stroke-linejoin="round"/>
+    <circle cx="16" cy="16" r="2.05" fill="white" fill-opacity=".92"/>
+    <circle cx="16" cy="6.3" r=".85" fill="white" fill-opacity=".62"/>
+    <circle cx="25.7" cy="16" r=".85" fill="white" fill-opacity=".62"/>
+    <circle cx="16" cy="25.7" r=".85" fill="white" fill-opacity=".62"/>
+    <circle cx="6.3" cy="16" r=".85" fill="white" fill-opacity=".62"/>
+  </g>
   <text x="192" y="248" fill="#f8fafc" font-family="ui-sans-serif, system-ui, sans-serif" font-size="64" font-weight="700" letter-spacing="-2">Spatika UI</text>
-  <text x="192" y="292" fill="#93c5fd" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="500">Glass React design system</text>
-  <text x="72" y="520" fill="#94a3b8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="22">Open source � also known as Spadik UI � spatika.sweyam.com</text>
+  <text x="192" y="292" fill="#fed7aa" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="500">Glass React design system</text>
+  <text x="72" y="520" fill="#c4b5a7" font-family="ui-sans-serif, system-ui, sans-serif" font-size="22">Open source - also known as Spadik UI - spatika.sweyam.com</text>
 </svg>

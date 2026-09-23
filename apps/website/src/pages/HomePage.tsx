@@ -226,6 +226,7 @@ function ShellPreview() {
         topbar={
           <TopBar
             title="Customers"
+            hideSidebarToggle
             actions={
               <Button size="sm" variant="secondary">
                 Export

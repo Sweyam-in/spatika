@@ -1,5 +1,20 @@
 # @spatika/charts
 
+## 2.3.0
+
+### Minor Changes
+
+- Remove the Tailwind build dependency from Spatika tokens and ship a first-party CSS utility layer generated from hand-authored token, recipe, and utility files. The package output now uses Spatika-owned `--spk-*` theme variables, reset rules, component recipes, chart/editor styles, and compatibility utility classes without invoking the Tailwind CLI or publishing Tailwind-generated `--tw-*` scaffolding.
+
+  This release also restores responsive component fidelity after the build change: DataTable phone layouts now render as compact record rows, panel headers regain token-driven spacing, gallery/detail previews have more reliable sizing, and shell previews no longer open escaped mobile drawers from embedded demos.
+
+  The docs theme has been refreshed with a whiter Usha canvas and a new rangoli-inspired Spatika mark across the site logo, favicon, and Open Graph image.
+
+### Patch Changes
+
+- Updated dependencies
+  - @spatika/tokens@2.3.0
+
 ## 2.2.0
 
 ### Patch Changes
@@ -38,7 +53,7 @@
   `--spk-accent*`, status, elevation, motion, density and `--spk-viz-1…8`) with per-theme base values
   and derived states. Dark themes are designed rather than inverted. All 1.x variables
   (`--primary`, `--card`, `--border`, `--radius-card`, `--glass-*`, `--chart-1`…) remain as aliases, and
-  Tailwind's `rounded-*` / `shadow-*` scales are remapped to the restrained Spatika scales.
+  Spatika's utility `rounded-*` / `shadow-*` scales are remapped to the restrained Spatika scales.
 
   **Surfaces.** Glass is no longer the foundation: `.glass*` classes now render as calm solid material
   and translucency is opt-in through `surface="glass"` / `.spk-glass` for chrome floating over content

@@ -8,7 +8,7 @@ import {
 } from "./breakpoints";
 
 describe("breakpoints", () => {
-  it("matches Tailwind viewport widths", () => {
+  it("matches Spatika viewport widths", () => {
     expect(BREAKPOINTS).toEqual({ xs: 0, sm: 640, md: 768, lg: 1024, xl: 1280 });
     expect(BREAKPOINT_KEYS).toEqual(["xs", "sm", "md", "lg", "xl"]);
   });

@@ -22,11 +22,11 @@ const PALETTE_ROWS: { token: string; css: string; utility: string }[] = [
 ];
 
 const BREAKPOINT_ROWS = [
-  { key: "xs", width: "0px", grid: "default span (no prefix)", tailwind: "base" },
-  { key: "sm", width: "640px", grid: "sm={n}", tailwind: "sm:" },
-  { key: "md", width: "768px", grid: "md={n}", tailwind: "md:" },
-  { key: "lg", width: "1024px", grid: "lg={n}", tailwind: "lg:" },
-  { key: "xl", width: "1280px", grid: "xl={n}", tailwind: "xl:" },
+  { key: "xs", width: "0px", grid: "default span (no prefix)", utility: "base" },
+  { key: "sm", width: "640px", grid: "sm={n}", utility: "sm:" },
+  { key: "md", width: "768px", grid: "md={n}", utility: "md:" },
+  { key: "lg", width: "1024px", grid: "lg={n}", utility: "lg:" },
+  { key: "xl", width: "1280px", grid: "xl={n}", utility: "xl:" },
 ];
 
 export function CustomizePage() {
@@ -152,7 +152,7 @@ export function BrandButton(props: ButtonProps) {
         Color palette
       </h2>
       <p>
-        Palette keys are camelCase. They map onto the same CSS variables Tailwind reads, so{" "}
+        Palette keys are camelCase. They map onto the same CSS variables Spatika utilities read, so{" "}
         <code>bg-primary</code> updates when <code>palette.primary</code> changes.
       </p>
       <div className="token-table-wrap">
@@ -211,7 +211,7 @@ export function BrandButton(props: ButtonProps) {
         Breakpoints
       </h2>
       <p>
-        Spatika uses the Tailwind viewport scale. <Link to="/components/grid">Grid</Link> item props
+        Spatika uses its own viewport scale. <Link to="/components/grid">Grid</Link> item props
         and <code>BREAKPOINTS</code> share these widths:
       </p>
       <div className="token-table-wrap">
@@ -221,7 +221,7 @@ export function BrandButton(props: ButtonProps) {
               <th>Key</th>
               <th>Min width</th>
               <th>Grid prop</th>
-              <th>Tailwind prefix</th>
+              <th>Utility prefix</th>
             </tr>
           </thead>
           <tbody>
@@ -235,7 +235,7 @@ export function BrandButton(props: ButtonProps) {
                   <code>{row.grid}</code>
                 </td>
                 <td>
-                  <code>{row.tailwind}</code>
+                  <code>{row.utility}</code>
                 </td>
               </tr>
             ))}
@@ -298,7 +298,7 @@ export function BrandButton(props: ButtonProps) {
         Spacing and shape
       </h2>
       <p>
-        <Link to="/components/stack">Stack</Link> <code>spacing</code> is a Tailwind gap step (
+        <Link to="/components/stack">Stack</Link> <code>spacing</code> is a Spatika spacing step (
         <code>0</code>, <code>1</code>, <code>2</code>…<code>12</code>). Shape tokens:
       </p>
       <ul>

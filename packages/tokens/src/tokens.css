@@ -6,7 +6,7 @@
  *   2. Derived tokens      — one rule that computes hover / muted / focus / legacy aliases from
  *                            the base values. It also matches `[data-spk-theme]`, so custom themes
  *                            that override a base value get correct derived values.
- *   3. Tailwind bridge     — `@theme inline` exposes tokens as utilities (bg-surface, text-fg-secondary…).
+ *   3. Utility bridge      — Spatika exposes tokens as utilities (bg-surface, text-fg-secondary…).
  *
  * Components must consume semantic tokens. Raw hex values belong only in layer 1.
  */
@@ -344,27 +344,27 @@
   --spk-viz-axis: #30313c;
 }
 
-/* Usha — warm paper light */
+/* Usha — clear warm light */
 .usha {
   --spk-scheme: light;
 
-  --spk-canvas: #f7f5f2;
-  --spk-surface: #fffefc;
-  --spk-surface-raised: #fffefc;
-  --spk-surface-overlay: #fffefc;
-  --spk-surface-subtle: #f2efea;
-  --spk-surface-sunken: #ece8e1;
+  --spk-canvas: #fbfbfa;
+  --spk-surface: #ffffff;
+  --spk-surface-raised: #ffffff;
+  --spk-surface-overlay: #ffffff;
+  --spk-surface-subtle: #f5f4f2;
+  --spk-surface-sunken: #efeeeb;
   --spk-surface-inverse: #1d1b18;
 
   --spk-text-primary: #1d1b18;
   --spk-text-secondary: #5f5a52;
   --spk-text-tertiary: #767067;
   --spk-text-disabled: #aca69c;
-  --spk-text-inverse: #f7f5f2;
+  --spk-text-inverse: #fbfbfa;
 
-  --spk-border: #e5e0d7;
-  --spk-border-subtle: #ede9e2;
-  --spk-border-strong: #d2ccc1;
+  --spk-border: #e5e2dc;
+  --spk-border-subtle: #efede9;
+  --spk-border-strong: #d1ccc3;
 
   --spk-accent: #c2511d;
   --spk-accent-fg: #ffffff;
@@ -387,7 +387,7 @@
   --spk-facet: inset 0 1px 0 rgb(255 255 255 / 0.75);
   --spk-facet-strong: inset 0 1px 0 rgb(255 255 255 / 0.2), inset 0 -1px 0 rgb(0 0 0 / 0.12);
 
-  --spk-glass-tint: rgb(255 254 252 / 0.74);
+  --spk-glass-tint: rgb(255 255 255 / 0.74);
   --spk-glass-border: rgb(255 255 255 / 0.6);
   --spk-glass-blur: 20px;
   --spk-glass-saturate: 150%;
@@ -400,8 +400,8 @@
   --spk-viz-6: #c9607a;
   --spk-viz-7: #4a8cc1;
   --spk-viz-8: #7c9c42;
-  --spk-viz-grid: #ede9e2;
-  --spk-viz-axis: #d8d2c7;
+  --spk-viz-grid: #efede9;
+  --spk-viz-axis: #d8d4cc;
 }
 
 /* Sandhya — warm dark, flat (never blurs) */
@@ -599,153 +599,116 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
- * Layer 3 — Tailwind bridge
+ * Layer 3 — Spatika utility bridge variables
  * ──────────────────────────────────────────────────────────────────────────── */
-@theme inline {
-  /* Semantic surfaces & text */
-  --color-canvas: var(--spk-canvas);
-  --color-surface: var(--spk-surface);
-  --color-surface-raised: var(--spk-surface-raised);
-  --color-surface-overlay: var(--spk-surface-overlay);
-  --color-surface-subtle: var(--spk-surface-subtle);
-  --color-surface-sunken: var(--spk-surface-sunken);
-  --color-surface-inverse: var(--spk-surface-inverse);
-  --color-fg: var(--spk-text-primary);
-  --color-fg-secondary: var(--spk-text-secondary);
-  --color-fg-tertiary: var(--spk-text-tertiary);
-  --color-fg-disabled: var(--spk-text-disabled);
-  --color-fg-inverse: var(--spk-text-inverse);
-  --color-line: var(--spk-border);
-  --color-line-subtle: var(--spk-border-subtle);
-  --color-line-strong: var(--spk-border-strong);
-  --color-hover: var(--spk-state-hover);
-  --color-pressed: var(--spk-state-active);
+:root,
+.mukta,
+.neelam,
+.usha,
+.sandhya,
+[data-spk-theme] {
+  /* Semantic surfaces & text for the utility layer */
+  --spk-util-canvas: var(--spk-canvas);
+  --spk-util-surface: var(--spk-surface);
+  --spk-util-surface-raised: var(--spk-surface-raised);
+  --spk-util-surface-overlay: var(--spk-surface-overlay);
+  --spk-util-surface-subtle: var(--spk-surface-subtle);
+  --spk-util-surface-sunken: var(--spk-surface-sunken);
+  --spk-util-surface-inverse: var(--spk-surface-inverse);
+  --spk-util-fg: var(--spk-text-primary);
+  --spk-util-fg-secondary: var(--spk-text-secondary);
+  --spk-util-fg-tertiary: var(--spk-text-tertiary);
+  --spk-util-fg-disabled: var(--spk-text-disabled);
+  --spk-util-fg-inverse: var(--spk-text-inverse);
+  --spk-util-line: var(--spk-border);
+  --spk-util-line-subtle: var(--spk-border-subtle);
+  --spk-util-line-strong: var(--spk-border-strong);
+  --spk-util-hover: var(--spk-state-hover);
+  --spk-util-pressed: var(--spk-state-active);
 
-  --color-accent-solid: var(--spk-accent);
-  --color-accent-hover: var(--spk-accent-hover);
-  --color-accent-active: var(--spk-accent-active);
-  --color-accent-muted: var(--spk-accent-muted);
-  --color-accent-subtle: var(--spk-accent-subtle);
-  --color-accent-text: var(--spk-accent-text);
-  --color-accent-border: var(--spk-accent-border);
+  --spk-util-accent-solid: var(--spk-accent);
+  --spk-util-accent-hover: var(--spk-accent-hover);
+  --spk-util-accent-active: var(--spk-accent-active);
+  --spk-util-accent-muted: var(--spk-accent-muted);
+  --spk-util-accent-subtle: var(--spk-accent-subtle);
+  --spk-util-accent-text: var(--spk-accent-text);
+  --spk-util-accent-border: var(--spk-accent-border);
 
-  --color-success: var(--spk-success);
-  --color-success-text: var(--spk-success-text);
-  --color-success-muted: var(--spk-success-muted);
-  --color-warning: var(--spk-warning);
-  --color-warning-text: var(--spk-warning-text);
-  --color-warning-muted: var(--spk-warning-muted);
-  --color-danger: var(--spk-danger);
-  --color-danger-text: var(--spk-danger-text);
-  --color-danger-muted: var(--spk-danger-muted);
-  --color-info: var(--spk-info);
-  --color-info-text: var(--spk-info-text);
-  --color-info-muted: var(--spk-info-muted);
-  --color-positive: var(--spk-positive);
-  --color-negative: var(--spk-negative);
+  --spk-util-success: var(--spk-success);
+  --spk-util-success-text: var(--spk-success-text);
+  --spk-util-success-muted: var(--spk-success-muted);
+  --spk-util-warning: var(--spk-warning);
+  --spk-util-warning-text: var(--spk-warning-text);
+  --spk-util-warning-muted: var(--spk-warning-muted);
+  --spk-util-danger: var(--spk-danger);
+  --spk-util-danger-text: var(--spk-danger-text);
+  --spk-util-danger-muted: var(--spk-danger-muted);
+  --spk-util-info: var(--spk-info);
+  --spk-util-info-text: var(--spk-info-text);
+  --spk-util-info-muted: var(--spk-info-muted);
+  --spk-util-positive: var(--spk-positive);
+  --spk-util-negative: var(--spk-negative);
 
-  /* 1.x names */
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-input-background: var(--input-background);
-  --color-switch-background: var(--switch-background);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+  /* 1.x names retained as Spatika compatibility aliases */
+  --spk-util-background: var(--background);
+  --spk-util-foreground: var(--foreground);
+  --spk-util-card: var(--card);
+  --spk-util-card-foreground: var(--card-foreground);
+  --spk-util-popover: var(--popover);
+  --spk-util-popover-foreground: var(--popover-foreground);
+  --spk-util-primary: var(--primary);
+  --spk-util-primary-foreground: var(--primary-foreground);
+  --spk-util-secondary: var(--secondary);
+  --spk-util-secondary-foreground: var(--secondary-foreground);
+  --spk-util-muted: var(--muted);
+  --spk-util-muted-foreground: var(--muted-foreground);
+  --spk-util-accent: var(--accent);
+  --spk-util-accent-foreground: var(--accent-foreground);
+  --spk-util-destructive: var(--destructive);
+  --spk-util-destructive-foreground: var(--destructive-foreground);
+  --spk-util-border: var(--border);
+  --spk-util-input: var(--input);
+  --spk-util-input-background: var(--input-background);
+  --spk-util-switch-background: var(--switch-background);
+  --spk-util-ring: var(--ring);
+  --spk-util-chart-1: var(--chart-1);
+  --spk-util-chart-2: var(--chart-2);
+  --spk-util-chart-3: var(--chart-3);
+  --spk-util-chart-4: var(--chart-4);
+  --spk-util-chart-5: var(--chart-5);
+  --spk-util-sidebar: var(--sidebar);
+  --spk-util-sidebar-foreground: var(--sidebar-foreground);
+  --spk-util-sidebar-primary: var(--sidebar-primary);
+  --spk-util-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --spk-util-sidebar-accent: var(--sidebar-accent);
+  --spk-util-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --spk-util-sidebar-border: var(--sidebar-border);
+  --spk-util-sidebar-ring: var(--sidebar-ring);
 
-  /* Radius — Tailwind's scale is remapped so legacy `rounded-2xl` stays restrained */
-  --radius-xs: var(--spk-radius-xs);
-  --radius-sm: var(--spk-radius-xs);
-  --radius-md: var(--spk-radius-sm);
-  --radius-lg: var(--spk-radius-sm);
-  --radius-xl: var(--spk-radius-md);
-  --radius-2xl: var(--spk-radius-md);
-  --radius-3xl: var(--spk-radius-lg);
-  --radius-control: var(--spk-radius-sm);
-  --radius-card: var(--spk-radius-md);
-  --radius-sheet: var(--spk-radius-lg);
+  --spk-util-radius-xs: var(--spk-radius-xs);
+  --spk-util-radius-sm: var(--spk-radius-xs);
+  --spk-util-radius-md: var(--spk-radius-sm);
+  --spk-util-radius-lg: var(--spk-radius-sm);
+  --spk-util-radius-xl: var(--spk-radius-md);
+  --spk-util-radius-2xl: var(--spk-radius-md);
+  --spk-util-radius-3xl: var(--spk-radius-lg);
+  --spk-util-radius-control: var(--spk-radius-sm);
+  --spk-util-radius-card: var(--spk-radius-md);
+  --spk-util-radius-sheet: var(--spk-radius-lg);
 
-  /* Elevation — Tailwind shadow scale remapped to Spatika elevation */
-  --shadow-2xs: var(--spk-shadow-xs);
-  --shadow-xs: var(--spk-shadow-xs);
-  --shadow-sm: var(--spk-shadow-sm);
-  --shadow: var(--spk-shadow-sm);
-  --shadow-md: var(--spk-shadow-md);
-  --shadow-lg: var(--spk-shadow-lg);
-  --shadow-xl: var(--spk-shadow-lg);
-  --shadow-2xl: var(--spk-shadow-xl);
+  --spk-util-shadow-2xs: var(--spk-shadow-xs);
+  --spk-util-shadow-xs: var(--spk-shadow-xs);
+  --spk-util-shadow-sm: var(--spk-shadow-sm);
+  --spk-util-shadow: var(--spk-shadow-sm);
+  --spk-util-shadow-md: var(--spk-shadow-md);
+  --spk-util-shadow-lg: var(--spk-shadow-lg);
+  --spk-util-shadow-xl: var(--spk-shadow-lg);
+  --spk-util-shadow-2xl: var(--spk-shadow-xl);
 
-  /* Type */
-  --font-sans: var(--spk-font-sans);
-  --font-mono: var(--spk-font-mono);
-  --font-weight-black: 650;
-  --font-weight-extrabold: 650;
-  --text-display: var(--spk-text-display);
-  --text-display--line-height: var(--spk-text-display-lh);
-  --text-display--letter-spacing: -0.03em;
-  --text-display--font-weight: 600;
-  --text-hero: var(--spk-text-hero);
-  --text-hero--line-height: var(--spk-text-hero-lh);
-  --text-hero--letter-spacing: -0.035em;
-  --text-hero--font-weight: 650;
-  --text-hero-sm: var(--spk-text-hero-sm);
-  --text-hero-sm--line-height: var(--spk-text-hero-sm-lh);
-  --text-hero-sm--letter-spacing: -0.03em;
-  --text-hero-sm--font-weight: 650;
-  --text-title-1: var(--spk-text-title-1);
-  --text-title-1--line-height: var(--spk-text-title-1-lh);
-  --text-title-1--letter-spacing: var(--spk-tracking-tight);
-  --text-title-1--font-weight: 600;
-  --text-title-2: var(--spk-text-title-2);
-  --text-title-2--line-height: var(--spk-text-title-2-lh);
-  --text-title-2--letter-spacing: var(--spk-tracking-snug);
-  --text-title-2--font-weight: 600;
-  --text-title-3: var(--spk-text-title-3);
-  --text-title-3--line-height: var(--spk-text-title-3-lh);
-  --text-title-3--letter-spacing: var(--spk-tracking-snug);
-  --text-title-3--font-weight: 600;
-  --text-body-lg: var(--spk-text-body-lg);
-  --text-body-lg--line-height: var(--spk-text-body-lg-lh);
-  --text-body: var(--spk-text-body);
-  --text-body--line-height: var(--spk-text-body-lh);
-  --text-body-sm: var(--spk-text-body-sm);
-  --text-body-sm--line-height: var(--spk-text-body-sm-lh);
-  --text-label: var(--spk-text-label);
-  --text-label--line-height: var(--spk-text-label-lh);
-  --text-label--font-weight: 500;
-  --text-caption: var(--spk-text-caption);
-  --text-caption--line-height: var(--spk-text-caption-lh);
-  --text-overline: var(--spk-text-overline);
-  --text-overline--line-height: var(--spk-text-overline-lh);
-  --text-overline--letter-spacing: var(--spk-tracking-wide);
-  --text-overline--font-weight: 500;
+  --spk-util-font-sans: var(--spk-font-sans);
+  --spk-util-font-mono: var(--spk-font-mono);
+  --spk-util-weight-black: 650;
+  --spk-util-weight-extrabold: 650;
 
   /* Motion */
   --ease-standard: var(--spk-ease-standard);

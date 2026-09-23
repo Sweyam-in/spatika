@@ -1,7 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 
-/** Merge Tailwind class names without conflicts. */
+/** Compose Spatika class names while ignoring falsy values. */
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return clsx(inputs);
 }

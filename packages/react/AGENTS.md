@@ -26,7 +26,7 @@ export function App() {
 - Import `@spatika/tokens/styles.css` before any component
 - Wrap the app in `<SpatikaThemeProvider>`
 - Import from `@spatika/react` — never invent Spatika components
-- Use semantic tokens (`--spk-*` or the Tailwind bridge: `bg-surface`, `text-fg-secondary`, `border-line`), never hardcoded hex
+- Use semantic tokens (`--spk-*` or the Spatika utility bridge: `bg-surface`, `text-fg-secondary`, `border-line`), never hardcoded hex
 - Structure pages with `PageSection` / `PageHeader`; reach for a `Card` only when the thing *is* an object
 - Solid surfaces by default — `surface="glass"` only for chrome floating over content or media
 - Set density with `data-density="compact"` (or `<AppShell density>`) instead of resizing controls by hand

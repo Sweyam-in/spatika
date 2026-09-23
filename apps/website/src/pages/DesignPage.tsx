@@ -5,7 +5,7 @@ import { CodeBlock } from "@/components/CodeBlock";
 const themeSwatches: Record<BuiltinThemeId, { canvas: string; surface: string; accent: string; ink: string; note: string }> = {
   mukta: { canvas: "#f7f7f8", surface: "#ffffff", accent: "#4655d4", ink: "#16171d", note: "Neutral cool light. The default." },
   neelam: { canvas: "#0c0d11", surface: "#191a21", accent: "#5a68e6", ink: "#ececf1", note: "Designed dark — layered, sapphire-tinted." },
-  usha: { canvas: "#f7f5f2", surface: "#fffefc", accent: "#c2511d", ink: "#1d1b18", note: "Warm paper light, terracotta accent." },
+  usha: { canvas: "#fbfbfa", surface: "#ffffff", accent: "#c2511d", ink: "#1d1b18", note: "Clear warm light, terracotta accent." },
   sandhya: { canvas: "#100f0e", surface: "#1d1b19", accent: "#c2531f", ink: "#efebe6", note: "Warm dark, flat. Never blurs." },
 };
 

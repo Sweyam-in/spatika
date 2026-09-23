@@ -18,7 +18,7 @@ Layers, in order. Never skip one:
 ```text
 theme base values   (--spk-canvas, --spk-surface, --spk-accent … per theme)
   ↓ derived tokens  (--spk-accent-hover, --spk-focus-ring, legacy aliases)
-  ↓ Tailwind bridge (bg-surface, text-fg-secondary, border-line-subtle, text-title-2 …)
+  ↓ Spatika utility bridge (bg-surface, text-fg-secondary, border-line-subtle, text-title-2 …)
   ↓ recipes         (.spk-btn, .spk-field, .spk-item, .spk-table, .spk-surface--*)
   ↓ components      (Button, Card surface=…, DataTable, Metric …)
   ↓ patterns        (AppShell, PageSection, MetricGroup, Panel)
