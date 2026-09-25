@@ -7,6 +7,9 @@ describe("main", () => {
   const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
 
   beforeAll(async () => {
+    // Pages are code-split; load the one this suite navigates to so the route renders without
+    // waiting on a cold module transform.
+    await import("./pages/GuidesPage");
     vi.spyOn(window, "scrollTo").mockImplementation(() => {});
     const rootEl = document.createElement("div");
     rootEl.id = "root";

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { SpatikaThemeProvider } from "@spatika/react";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import App from "./App";
 
 function renderApp(path: string) {
@@ -15,6 +15,11 @@ function renderApp(path: string) {
 }
 
 describe("App", () => {
+  // Pages are code-split; load the routed page up front so lazy() resolves from the module cache.
+  beforeAll(async () => {
+    await import("./pages/CustomizePage");
+  });
+
   it("routes /customize to the customize guide", async () => {
     renderApp("/customize");
     // Pages other than home are code-split, so the heading arrives once the chunk loads.

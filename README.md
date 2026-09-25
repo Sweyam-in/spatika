@@ -71,13 +71,14 @@ GitHub Pages remains a secondary publish path (`.github/workflows/pages.yml`).
 packages/tokens   Shared CSS design tokens
 packages/react    React components
 packages/charts   Optional SVG chart package
+packages/editor   Rich-text editor (Tiptap)
 apps/website      Static documentation site
 ```
 
 ## Design language
 
 See [DESIGN.md](./DESIGN.md) for principles, tokens, themes, surfaces, density and motion.
-Upgrading from 1.x: [docs/redesign/MIGRATION.md](./docs/redesign/MIGRATION.md).
+Upgrading from 1.x: [docs/redesign/MIGRATION.md](./docs/redesign/MIGRATION.md) · 2.3 → 2.4: [docs/migrations/2.4.md](./docs/migrations/2.4.md) · 2.4 audit and gap matrix: [docs/redesign/AUDIT-2.4.md](./docs/redesign/AUDIT-2.4.md).
 
 ## Scripts
 
@@ -85,9 +86,12 @@ Upgrading from 1.x: [docs/redesign/MIGRATION.md](./docs/redesign/MIGRATION.md).
 |---|---|
 | `npm run dev` | Start the docs site |
 | `npm run build` | Build tokens, React, and docs site |
-| `npm run test` | Run charts, React, and website tests |
+| `npm run test` | Run charts, editor, React, and website tests |
 | `npm run typecheck` | Typecheck React + website |
+| `npm run test:e2e` | Playwright: responsive, axe (WCAG 2.2 AA), flows, visual baselines |
+| `npm run docs:api` / `docs:demos` | Regenerate API tables and demo sources for the docs |
 | `npm run release` | Build and publish to npm (maintainers) |
+| `npm run release:docs -- <site-dir>` | Build versioned docs for a release (does not deploy) — see [docs/releasing.md](./docs/releasing.md) |
 
 ## License
 

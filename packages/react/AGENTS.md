@@ -65,6 +65,17 @@ and `useIsMobile` / `useBreakpoint`. Guide: https://spatika.sweyam.com/customize
 | Rich text | `SpatikaEditor` from `@spatika/editor` (import `@spatika/editor/styles.css`) |
 | Calendar | `EventCalendar` · resources over time: `EventTimeline` |
 | Numbers | `formatNumber`, `formatCurrency`, `formatPercent`, `formatCompact` |
+| Number / tags / one-time code | `NumberInput`, `TagInput`, `OtpInput` |
+| File picking | `FileUpload` (dropzone + file list, `formatBytes`) |
+| Date entry | `DatePicker`, `DateRangePicker` (on `Calendar`) |
+| Hierarchy | `TreeView` |
+| Key–value record | `DescriptionList` |
+| Long list (1000s of rows) | `VirtualList` |
+| Adjustable split | `ResizablePanels` |
+| Right-click actions | `ContextMenu` (same items as `DropdownMenu`) |
+| Form-level errors | `FormErrorSummary` (focus it on submit) |
+| Outcome screen (success, error, 404) | `ResultState` · empty list: `EmptyState` |
+| Column visibility | `DataTable hiddenColumns` + `DataTableColumnsMenu` |
 
 1.x chrome (`PageShell`, `AppHeader`, `FloatingPageChromeBar`, `GlassCard`, `CoverHero`) still works
 and is restyled; prefer `AppShell` + `Card surface` in new code. See `docs/redesign/MIGRATION.md`.

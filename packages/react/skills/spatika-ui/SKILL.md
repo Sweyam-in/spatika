@@ -119,6 +119,9 @@ Breakpoints: `BREAKPOINTS` (`xs` 0 / `sm` 640 / `md` 768 / `lg` 1024 / `xl` 1280
 | Charts | `@spatika/charts`: `BarChart`, `LineChart`, `AreaChart`, `PieChart`, `SparkLineChart`, `ChartContainer` |
 | Calendar | `EventCalendar`, `EventTimeline` |
 | Rich text | `SpatikaEditor` (import `@spatika/editor/styles.css`) |
+| Specialised inputs | `NumberInput`, `TagInput`, `OtpInput`, `FileUpload`, `DatePicker`, `DateRangePicker` |
+| Structure | `TreeView`, `DescriptionList`, `VirtualList`, `ResizablePanels`, `ScrollArea`, `AspectRatio` |
+| Outcomes | `ResultState`, `FormErrorSummary` · right-click: `ContextMenu` |
 
 ## Marketing pages
 
