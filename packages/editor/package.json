@@ -1,6 +1,6 @@
 {
   "name": "@spatika/editor",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "license": "MIT",
   "description": "Spatika UI — Tiptap-powered rich text editor that matches the Spatika design language, with AI hooks and an extensible toolbar",
   "homepage": "https://spatika.sweyam.com",
@@ -64,7 +64,7 @@
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "dependencies": {
-    "@spatika/tokens": "^2.3.0",
+    "@spatika/tokens": "^2.4.0",
     "@tiptap/core": "^3.28.0",
     "@tiptap/extension-bubble-menu": "^3.28.0",
     "@tiptap/extension-color": "^3.30.5",

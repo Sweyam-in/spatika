@@ -225,9 +225,11 @@ function releaseDocs(siteDir, version, { skipTests }) {
   const prerelease = parseVersion(version).pre !== null;
   const snapshotDir = path.join(siteDir, "docs", `v${version}`);
   validateVersions(version);
+  // Build first: the API check resolves @spatika/charts and @spatika/editor through their dist/
+  // types, which a clean checkout (and the Docker context) does not have yet.
+  buildPackages();
   run(process.execPath, ["scripts/extract-api.mjs", "--entry", "packages/react/src/index.ts", "--tsconfig", "packages/react/tsconfig.json", "--out", "apps/website/src/generated/api.json", "--check"]);
   run(process.execPath, ["apps/website/scripts/sync-demo-sources.mjs", "--check"]);
-  buildPackages();
   if (!skipTests) run("npm", ["run", "test", "-w", "@spatika/website"]);
 
   // Manifest first, so both builds ship the version list that includes this release.
