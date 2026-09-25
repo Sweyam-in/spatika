@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
   BarChart,
+  SparkLineChart,
   BoxPlotChart,
   CandlestickChart,
   LineChart,
@@ -123,6 +124,19 @@ describe("chart keyboard navigation", () => {
     screen.getByRole("group", { name: "Data points" }).focus();
     await user.keyboard("{End}");
     expect(liveText()).toBe("Mar: Revenue 9. 3 of 3");
+  });
+
+  it("adds no tab stop to sparklines or to charts the page hides from assistive tech", () => {
+    render(
+      <div>
+        <SparkLineChart data={[1, 4, 2, 6]} width={160} height={48} />
+        <div aria-hidden="true">
+          <BarChart width={200} height={120} xAxis={[{ data: months }]} series={[{ label: "Views", data: [4, 3, 5] }]} />
+        </div>
+      </div>,
+    );
+    expect(document.querySelectorAll('.spk-chart-surface[tabindex]')).toHaveLength(0);
+    expect(screen.queryByRole("group", { name: "Data points" })).not.toBeInTheDocument();
   });
 
   const square = {

@@ -768,6 +768,8 @@ export function SparkLineChart({
       hover={hover}
       renderTooltip={renderTooltip}
       aria-label="Sparkline"
+      // An inline trend, often one per table row: a tab stop each would bury the page's controls.
+      navigable={false}
     >
       {({ width: w, height: h, m }) => {
         const plot = box(w, h, m);

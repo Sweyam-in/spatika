@@ -53,6 +53,8 @@ export type ChartFrameProps = {
   empty?: boolean;
   emptyText?: ReactNode;
   "aria-label"?: string;
+  /** Keyboard navigation of the plot's marks (default true). Sparklines opt out. */
+  navigable?: boolean;
   children: (plot: { width: number; height: number; m: Required<ChartMargin> }) => ReactNode;
 };
 
@@ -142,11 +144,12 @@ export function ChartFrame({
   empty,
   emptyText,
   "aria-label": ariaLabel,
+  navigable = true,
   children,
 }: ChartFrameProps) {
   const surfaceRef = useRef<HTMLDivElement>(null);
   // Named "Data points" only: it sits inside the chart's own labelled group.
-  const keyboard = useChartKeyboard(surfaceRef, { disabled: Boolean(loading || empty) });
+  const keyboard = useChartKeyboard(surfaceRef, { disabled: !navigable || Boolean(loading || empty) });
   const measured = useChartSurfaceSize(surfaceRef, width ?? 320, height, fillHeight);
   const plotWidth = width ?? measured.width;
   const plotHeight = fillHeight ? measured.height : height;

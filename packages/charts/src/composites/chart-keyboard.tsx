@@ -97,7 +97,10 @@ export function useChartKeyboard(
   useEffect(() => {
     const surface = surfaceRef.current;
     if (!surface) return;
-    const found = surface.querySelector("[data-chart-hover]") !== null;
+    // Nothing to navigate, or hidden from assistive tech by the page (aria-hidden must not
+    // contain focusable elements).
+    const found =
+      surface.querySelector("[data-chart-hover]") !== null && surface.closest('[aria-hidden="true"], [inert]') === null;
     if (found !== hasMarks) setHasMarks(found);
     for (const el of Array.from(surface.querySelectorAll("[data-chart-active]"))) el.removeAttribute("data-chart-active");
     if (!active) return;
