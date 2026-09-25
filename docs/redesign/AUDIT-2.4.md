@@ -44,7 +44,7 @@ work, and P2 is an improvement.
 | Number entry | `AmountInput` (currency) | No general numeric field | `NumberInput` (spinbutton, locale parsing, steppers) | P1 | Done |
 | Tag / code entry | — | No multi-value text entry; no OTP field | `TagInput`, `OtpInput` | P1 | Done |
 | File upload | — | None | `FileUpload` (dropzone, keyboard, limits, file list) | P1 | Done |
-| Dates | `EventCalendar` (scheduling) | No date picker | `Calendar`, `DatePicker`, `DateRangePicker` (APG date grid) | P1 | Done. Typed date entry is **open** |
+| Dates | `EventCalendar` (scheduling) | No date picker, no typed entry | `Calendar`, `DatePicker`, `DateRangePicker` (APG date grid) with typed segments, and a standalone `DateInput` | P1 | Done (`app-components.test.tsx`, e2e date flows) |
 | Hierarchy | — | None | `TreeView` (APG tree, lazy children) | P1 | Done |
 | Record details | — | None | `DescriptionList` (container-query layout) | P2 | Done |
 | Long lists | — | None | `VirtualList` | P2 | Done |
@@ -60,22 +60,25 @@ work, and P2 is an improvement.
 | Docs: playground | — | None | Props playground driven by the generated API | P2 | Done (`playground.test.ts`, e2e) |
 | Docs: search | Title match | Found nothing by task ("file browser", "date") | Ranked search with synonyms | P2 | Done (`search-index.test.ts`, e2e) |
 | Docs: versions | One site | No history, no selector, no policy | Snapshots, API archives for 1.0–2.3, selector, support policy, release script | P1 | Done (`versions-policy.test.ts`, e2e) |
-| Docs: bundle | Code-split by nothing | 2.1 MB entry chunk | Route-level code splitting (554 kB entry) | P2 | Done. The component-demo chunk is still large |
-| Cross-browser | — | Only Chromium was exercised | Playwright projects for Firefox/WebKit exist (`PW_ALL_BROWSERS=1`) | P1 | **Open**: not run here |
-| Screen readers | — | Not tested with VoiceOver/NVDA/TalkBack | — | P1 | **Open** |
-| CI | — | No workflow runs tests on PRs | — | P1 | **Open** |
-| Charts a11y | Charts have titles | Keyboard access to data points not audited | — | P2 | **Open** |
-| Time entry | — | No time picker | — | P2 | **Open** |
+| Docs: bundle | Code-split by nothing | 2.1 MB entry chunk; every component page loaded the rich-text editor | Route-level code splitting (554 kB entry); editor demos and agent Markdown load only where used (component page chunks ~370 → ~193 kB gzip) | P2 | Done |
+| Cross-browser | — | Only Chromium was exercised | CI runs the responsive, axe and flow suites in Chromium, Firefox and WebKit (desktop and phone, WebKit phone as iPhone) | P1 | Done (`.github/workflows/ci.yml`) |
+| Screen readers | — | No screen-reader checks at all | Virtual screen-reader tests of names, states and live announcements (caught toasts running title and description together); manual protocol for NVDA, JAWS, VoiceOver, TalkBack | P1 | Automated: done (`a11y/screen-reader.test.tsx`). Manual pass with real screen readers: **not yet run** (`docs/testing/screen-readers.md`) |
+| CI | — | No workflow ran tests | Unit, typecheck, docs checks, three-engine e2e, visual regression, Docker image build | P1 | Done (`.github/workflows/ci.yml`) |
+| Docker image | Built one site from the checkout | Build broke on this branch (docs pages import `docs/*.md`, never copied); `/AGENTS.md` never shipped; no versioned docs | Image carries released snapshots forward and adds the checkout (`release-docs.mjs site`) | P1 | Done; image build checked in CI |
+| Overlays | Glass-derived gradient | Top of menus, popovers and selects was 24% transparent | Solid base under the sheen | P1 | Done |
+| Editor | Tiptap wrapper | Crash when StrictMode destroyed the instance before effects ran (seen on cold loads) | Effects skip destroyed editors | P1 | Done (`use-spatika-editor.test.tsx`) |
+| Charts a11y | Charts have titles and a data table | Data points unreachable by keyboard unless clickable (then one tab stop each) | The plot is one tab stop; arrows walk points, the tooltip follows, values are announced; every chart type with marks | P2 | Done (`chart-keyboard.test.tsx`, e2e flow). WebGL scatter excluded — documented |
+| Time entry | — | No time field | `TimeInput` (locale 12/24-hour, 24-hour value) | P2 | Done |
 
 ## Inventory
 
-188 documented entries on `/components` (392 exported names, counting sub-components, hooks
+190 documented entries on `/components` (394 exported names, counting sub-components, hooks
 and helpers). New in 2.4 are marked with *.
 
 | Category | Count | Components |
 |---|---|---|
 | Primitives | 20 | Button, ButtonGroup, IconButton, Fab, Link, Typography, Badge, Avatar, AvatarGroup, Accordion, ButtonBase, Rating, Box, Chip, Tag, Wordmark, GradientText, AvailabilityBadge, Tabs, Switch |
-| Forms | 29 | Input, TextField, Autocomplete, OutlinedInput, FormControl, Select, TextareaAutosize, TransferList, Checkbox, FormControlLabel, Slider, ToggleButton, SearchField, ChipGroup, SegmentedControl, FormField, Label, Textarea, NativeSelect, RadioGroup, NumberInput*, TagInput*, OtpInput*, FileUpload*, Calendar*, DatePicker*, DateRangePicker*, AmountInput, FormErrorSummary* |
+| Forms | 31 | Input, TextField, Autocomplete, OutlinedInput, FormControl, Select, TextareaAutosize, TransferList, Checkbox, FormControlLabel, Slider, ToggleButton, SearchField, ChipGroup, SegmentedControl, FormField, Label, Textarea, NativeSelect, RadioGroup, NumberInput*, TagInput*, OtpInput*, FileUpload*, Calendar*, DateInput*, TimeInput*, DatePicker*, DateRangePicker*, AmountInput, FormErrorSummary* |
 | Layout | 25 | Paper, Grid, Masonry, Stack, Container, List, Card, GlassCard, StatCard, PageSection, Panel, SectionHeading, IconTile, CareerCard, ProjectCard, FloatChip, MetaChip, EntityCard, ListRow, PageHeader, ResizablePanels*, ScrollArea*, AspectRatio*, Separator, Toolbar |
 | Navigation | 18 | AppShell, CommandPalette, Stepper, MobileStepper, AppBar, BottomNavigation, Breadcrumb, Pagination, SpeedDial, AppHeader, SiteNav, SiteFooter, ContactLink, FloatingPageChromeBar, PageStickyHeader, MobileTabBar, FilterSheet, HeaderIconButton |
 | Overlays | 10 | Menu, Dialog, Modal, Tooltip, AlertDialog, Sheet, Popover, DropdownMenu, ContextMenu*, BottomSheet |

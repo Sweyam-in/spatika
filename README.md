@@ -63,7 +63,12 @@ The docs site is served at [spatika.sweyam.com](https://spatika.sweyam.com) via 
 ./prod-deploy/scripts/deploy-compose.sh deploy
 ```
 
-GitHub Pages remains a secondary publish path (`.github/workflows/pages.yml`).
+Each deploy carries released documentation forward: the image starts from the site the deployed
+image serves and adds this checkout (a `/docs/vX.Y.Z/` snapshot for a release, `/next/` otherwise)
+— see [docs/releasing.md](./docs/releasing.md).
+
+CI (`.github/workflows/ci.yml`) runs unit tests, typechecks, docs checks, the browser suites in
+Chromium, Firefox and WebKit, visual regression and an image build on every push.
 
 ## Monorepo layout
 
