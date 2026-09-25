@@ -16,7 +16,7 @@ describe("ComponentDemo", () => {
     );
     expect(screen.getByRole("status", { name: "Loading editor" })).toBeInTheDocument();
     // Tiptap initialises slowly in jsdom when the whole suite runs in parallel.
-    expect(await screen.findByRole("textbox", {}, { timeout: 30_000 })).toBeInTheDocument();
+    expect(await screen.findByRole("textbox", { name: "Rich text editor" }, { timeout: 30_000 })).toBeInTheDocument();
   }, 40_000);
 
   it("renders the compact button preview", () => {

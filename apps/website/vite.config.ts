@@ -12,6 +12,12 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: "@", replacement: path.resolve(__dirname, "./src") },
+      // Like the packages below, the stylesheet comes from source: a stale packages/tokens/dist
+      // (not rebuilt after a pull) would otherwise style new components with old CSS.
+      {
+        find: "@spatika/tokens/styles.css",
+        replacement: path.resolve(__dirname, "../../packages/tokens/src/build-entry.css"),
+      },
       {
         find: "@spatika/editor/styles.css",
         replacement: path.resolve(__dirname, "../../packages/editor/src/styles/editor.css"),

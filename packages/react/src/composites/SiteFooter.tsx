@@ -91,7 +91,7 @@ export function SiteFooter({
               {social ? <div className="flex flex-wrap items-center gap-2">{social}</div> : null}
             </div>
 
-            <div className="grid gap-8 sm:grid-cols-3">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(7.5rem,1fr))] gap-8">
               {columns.map((column, index) => (
                 <nav key={index} aria-label={typeof column.title === "string" ? column.title : undefined}>
                   <p className="mb-3 text-caption font-medium text-foreground">{column.title}</p>

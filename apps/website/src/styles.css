@@ -1585,32 +1585,53 @@ a.docs-sidebar-all.active {
     color-mix(in srgb, var(--background) 70%, transparent);
 }
 
+/* Gallery thumbnails: the demo lays out wide, then the stage scales it into the card. */
+.component-preview {
+  position: relative;
+  height: 11.5rem;
+  min-height: 11.5rem;
+}
+
+/* Page-width marketing bands lay out by viewport, not container: show what they are instead. */
+.component-preview-placeholder {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  color: var(--spk-text-secondary);
+  text-align: center;
+}
+
+.component-preview-placeholder svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--spk-accent-text);
+}
+
+.component-preview-placeholder strong {
+  color: var(--spk-text-primary);
+  font-size: var(--spk-text-body-sm);
+  font-weight: 600;
+}
+
+.component-preview-placeholder span {
+  font-size: var(--spk-text-caption);
+}
+
+.component-preview-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+
 .component-preview [data-slot="site-nav"],
 .demo-panel [data-slot="site-nav"],
 .showcase-frame [data-slot="site-nav"] {
   position: absolute;
-}
-
-.component-preview .showcase-frame:has([data-slot="site-nav"]) {
-  width: 126%;
-  transform: scale(0.795);
-  transform-origin: top left;
-}
-
-.component-preview .demo-panel--compact:has(> [data-slot="site-footer"]) {
-  align-items: flex-start;
-  justify-content: flex-start;
-  position: relative;
-}
-
-.component-preview .demo-panel--compact > [data-slot="site-footer"] {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  width: 38rem !important;
-  max-width: none !important;
-  transform: scale(0.43);
-  transform-origin: top left;
 }
 
 .component-link strong {

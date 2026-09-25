@@ -72,6 +72,7 @@ import {
   ChartStatusOverlay,
   ChartTooltip,
   ValueAxis,
+  spacedTicks,
   categoryLabels,
   formatSeriesValue,
   legendSitsBefore,
@@ -898,7 +899,7 @@ export function ChartsYAxis({ position = "left" }: { position?: "left" | "right"
     if (!rightAxis || rightAxis.hide) return null;
     return (
       <g data-slot="chart-y-axis-right">
-        {ticksRight.map((tick) => (
+        {spacedTicks(ticksRight, (value) => yAt(value, rightAxis.id)).map((tick) => (
           <text
             key={tick}
             className="spk-chart-tick"

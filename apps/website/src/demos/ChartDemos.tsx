@@ -44,8 +44,11 @@ import type { ReactNode } from "react";
 
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
 
+/** Chart height in the gallery's scaled card stage (compact) and on the component page. */
+const COMPACT_HEIGHT = 200;
+
 function h(compact?: boolean, full = 240) {
-  return compact ? 72 : full;
+  return compact ? COMPACT_HEIGHT : full;
 }
 
 function scatterCloud(count: number, seed: number, ox = 0, oy = 0) {
@@ -148,7 +151,7 @@ export function chartDemos(compact?: boolean): Record<string, ReactNode> {
     ),
     "chart-container": compact ? (
       <ChartContainer
-        height={72}
+        height={COMPACT_HEIGHT}
         hideLegend
         dataset={[
           { month: "Jan", views: 42, conv: 12 },
@@ -227,7 +230,7 @@ export function chartDemos(compact?: boolean): Record<string, ReactNode> {
         hideLegend={hideLegend}
         series={[
           {
-            innerRadius: compact ? 18 : 48,
+            innerRadius: compact ? 40 : 48,
             paddingAngle: 2,
             data: [
               { id: "web", value: 42, label: "Web" },
@@ -267,7 +270,7 @@ export function chartDemos(compact?: boolean): Record<string, ReactNode> {
       />
     ),
     sparkline: (
-      <SparkLineChart data={[8, 12, 9, 16, 14, 22, 18, 26, 24, 30]} height={compact ? 48 : 64} />
+      <SparkLineChart data={[8, 12, 9, 16, 14, 22, 18, 26, 24, 30]} height={compact ? 120 : 64} />
     ),
     gauge: compact ? (
       <Gauge value={72} height={height} />
@@ -285,7 +288,7 @@ export function chartDemos(compact?: boolean): Record<string, ReactNode> {
     ),
     "radar-chart": (
       <RadarChart
-        height={compact ? 72 : 280}
+        height={compact ? COMPACT_HEIGHT : 280}
         hideLegend={hideLegend}
         radar={{ metrics: ["Speed", "Reliability", "UX", "A11y", "Docs", "Theming"] }}
         series={[
@@ -440,13 +443,13 @@ export function chartDemos(compact?: boolean): Record<string, ReactNode> {
     ),
     "radial-line-chart": (
       <RadialLineChart
-        height={compact ? 72 : 260}
+        height={compact ? COMPACT_HEIGHT : 260}
         hideLegend={hideLegend}
         metrics={["Q1", "Q2", "Q3", "Q4", "Q5", "Q6"]}
         series={[{ label: "Latency", data: [40, 62, 55, 80, 48, 70] }]}
       />
     ),
-    "linear-gauge": <LinearGauge value={64} height={compact ? 40 : 48} />,
+    "linear-gauge": <LinearGauge value={64} height={48} />,
     "bubble-chart": (
       <BubbleChart
         height={height}
@@ -491,7 +494,7 @@ export function chartDemos(compact?: boolean): Record<string, ReactNode> {
     ),
     "polar-line-chart": (
       <PolarLineChart
-        height={compact ? 72 : 260}
+        height={compact ? COMPACT_HEIGHT : 260}
         hideLegend={hideLegend}
         radar={{ metrics: ["CPU", "RAM", "Disk", "Net", "GPU"] }}
         series={[{ label: "Load", data: [70, 55, 40, 80, 30] }]}
@@ -636,7 +639,7 @@ export function chartDemos(compact?: boolean): Record<string, ReactNode> {
     ),
     "chart-data-grid": (
       <ChartDataGrid
-        height={compact ? 72 : 180}
+        height={compact ? COMPACT_HEIGHT : 180}
         categoryField="name"
         valueField="views"
         rows={gridRows}

@@ -9,6 +9,7 @@ import {
   ChartLegend,
   ChartTooltip,
   ValueAxis,
+  spacedTicks,
   categoryLabels,
   formatSeriesValue,
   resolveMargin,
@@ -210,7 +211,7 @@ describe("axes and grid", () => {
     const { container } = render(
       <svg>
         <CartesianGrid ticks={[0, 10]} scale={(v) => 100 - v} left={20} right={200} top={10} bottom={90} />
-        <ValueAxis ticks={[0, 10]} scale={(v) => 100 - v} left={20} format={(v) => `${v}%`} />
+        <ValueAxis ticks={[0, 10]} scale={(v) => 100 - v * 5} left={20} format={(v) => `${v}%`} />
         <CategoryAxis labels={["Jan", "Feb"]} position={(i) => 40 + i * 80} y={90} tickAngle={-45} />
       </svg>,
     );
@@ -219,6 +220,19 @@ describe("axes and grid", () => {
     expect(screen.getByText("10%")).toBeInTheDocument();
     expect(screen.getByText("Jan")).toBeInTheDocument();
     expect(screen.getByText("Jan")).toHaveAttribute("transform", "rotate(-45 40 106)");
+  });
+});
+
+describe("spacedTicks", () => {
+  it("drops labels that would overlap on a short plot", () => {
+    const scale = (v: number) => 60 - v * 0.5; // 10 units = 5px
+    expect(spacedTicks([0, 10, 20, 30, 40, 50, 60], scale)).toEqual([0, 30, 60]);
+    render(
+      <svg>
+        <ValueAxis ticks={[0, 10, 20, 30]} scale={scale} left={20} />
+      </svg>,
+    );
+    expect(document.querySelectorAll('[data-slot="chart-y-axis"] text')).toHaveLength(2);
   });
 });
 

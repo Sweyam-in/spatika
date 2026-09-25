@@ -293,6 +293,26 @@ export function CartesianGrid({
   );
 }
 
+/** Smallest vertical gap between two y-axis labels before they would overlap (tick font ~11px). */
+const MIN_TICK_GAP = 14;
+
+/**
+ * Drops tick labels that would sit closer than `minGap` pixels to the previous one, so a short
+ * plot (a card, a dashboard tile) keeps readable labels instead of stacking them.
+ */
+export function spacedTicks(ticks: number[], scale: (value: number) => number, minGap = MIN_TICK_GAP) {
+  const kept: number[] = [];
+  let last: number | null = null;
+  for (const tick of ticks) {
+    const y = scale(tick);
+    if (last === null || Math.abs(y - last) >= minGap) {
+      kept.push(tick);
+      last = y;
+    }
+  }
+  return kept;
+}
+
 export function ValueAxis({
   ticks,
   scale,
@@ -309,7 +329,7 @@ export function ValueAxis({
   const label = format ?? formatChartNumber;
   return (
     <g data-slot="chart-y-axis">
-      {ticks.map((tick) => (
+      {spacedTicks(ticks, scale).map((tick) => (
         <text
           key={tick}
           className="spk-chart-tick"
