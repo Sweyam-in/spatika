@@ -16,6 +16,7 @@ import {
   type RefObject,
 } from "react";
 import { Download, Maximize2, Move, SquareDashedMousePointer, ZoomIn, ZoomOut } from "lucide-react";
+import { useChartKeyboard } from "./chart-keyboard";
 import { cn } from "../lib/cn";
 import { exportChart } from "../lib/chart-export";
 import { publishChartSync, subscribeChartSync } from "../lib/chart-sync";
@@ -81,6 +82,7 @@ import {
 } from "./chart-ui";
 import {
   bindChartMark,
+  chartMarkData,
   seriesItemColor,
   type ChartItemEvent,
   type ChartMarkRenderContext,
@@ -675,6 +677,8 @@ export function ChartContainer({
     ariaLabel ??
     `Chart of ${resolved.map((item) => item.label).join(", ")}`;
   const isEmpty = !seriesHasPlottableData(visible);
+  // Named "Data points" only: it sits inside the chart's own labelled group.
+  const keyboard = useChartKeyboard(surfaceRef, { disabled: Boolean(loading || isEmpty) });
   const legendEl = hideLegend ? null : (
     <ChartLegend items={legend} hiddenIds={hidden} onToggle={toggleSeries} position={legendPosition} />
   );
@@ -692,13 +696,19 @@ export function ChartContainer({
         {showToolbar ? <ChartsToolbar /> : null}
         <div className={cn("spk-chart-body", `spk-chart--legend-${legendPosition}`)}>
           {legendBefore ? legendEl : null}
-          <div ref={surfaceRef} className="spk-chart-surface" style={fillHeight ? undefined : { height: plotHeight }}>
+          <div
+            ref={surfaceRef}
+            className="spk-chart-surface"
+            style={fillHeight ? undefined : { height: plotHeight }}
+            {...keyboard.surfaceProps}
+          >
             {plotWidth > 0 && plotHeight > 0 ? children ?? <DefaultChartSurface /> : null}
-            <ChartTooltip hover={hover} boundsWidth={plotWidth} render={renderTooltip} />
+            <ChartTooltip hover={keyboard.hover ?? hover} boundsWidth={plotWidth} render={renderTooltip} />
             <ChartStatusOverlay loading={loading} empty={isEmpty} emptyText={emptyText} />
           </div>
           {legendBefore ? null : legendEl}
         </div>
+        {keyboard.liveRegion}
         <ChartA11yTable />
       </div>
     </ChartContext.Provider>
@@ -1125,7 +1135,26 @@ function LineLikePlot({ types, slot }: { types: ComposedSeriesType[]; slot: stri
                     </g>
                   );
                 })
-              : null}
+              : // No visible points: invisible anchors keep every value reachable from the keyboard
+                // (they appear only while the keyboard is on them).
+                pts.map((pt) => {
+                  const color = seriesItemColor(item.color, item.itemColors, pt.i);
+                  return (
+                    <circle
+                      key={pt.i}
+                      cx={pt.x}
+                      cy={pt.y}
+                      r={3.5}
+                      fill={color}
+                      className="spk-chart-mark spk-chart-anchor"
+                      aria-hidden
+                      {...chartMarkData(item.id, pt.i, {
+                        title: String(ctx.categories[pt.i]),
+                        items: [{ color, label: item.label, value: formatSeriesValue(pt.value, valueFormat) }],
+                      })}
+                    />
+                  );
+                })}
           </g>
         );
       })}

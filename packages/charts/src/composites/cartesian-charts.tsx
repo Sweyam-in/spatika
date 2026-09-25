@@ -51,6 +51,7 @@ import {
   type ChartReferenceLine,
   type ChartTooltipRenderer,
   type ChartTooltipTrigger,
+  hoverMark,
 } from "./chart-interaction";
 import { ScatterWebGLLayer } from "./ScatterWebGL";
 import {
@@ -1034,10 +1035,12 @@ export function ScatterChart({
                       stroke={info.color}
                       strokeWidth={bubble ? 1.25 : 0}
                       className="spk-chart-mark"
-                      onMouseEnter={(event) =>
-                        setHover({
-                          x: event.nativeEvent.offsetX,
-                          y: event.nativeEvent.offsetY,
+                      {...hoverMark({
+                        series: info.id,
+                        index: i,
+                        setHover,
+                        clear,
+                        tip: {
                           title: point.label ?? info.label,
                           items: [
                             { color: info.color, label: "x", value: formatChartNumber(point.x) },
@@ -1046,9 +1049,8 @@ export function ScatterChart({
                               ? [{ color: info.color, label: "size", value: formatChartNumber(point.z) }]
                               : []),
                           ],
-                        })
-                      }
-                      onMouseLeave={clear}
+                        },
+                      })}
                     />
                   ));
                 })
@@ -1137,15 +1139,16 @@ export function RangeBarChart({
                   rx={5}
                   fill={info.color}
                   className="spk-chart-mark"
-                  onMouseEnter={(event) =>
-                    setHover({
-                      x: event.nativeEvent.offsetX,
-                      y: event.nativeEvent.offsetY,
+                  {...hoverMark({
+                    series: info.id,
+                    index: i,
+                    setHover,
+                    clear,
+                    tip: {
                       title: String(categories[i]),
                       items: [{ color: info.color, label: info.label, value: formatSeriesValue(pair) }],
-                    })
-                  }
-                  onMouseLeave={clear}
+                    },
+                  })}
                 />
               );
             });
@@ -1216,15 +1219,17 @@ export function RangeAreaChart({
                     cy={pt.y}
                     r={3}
                     fill={info.color}
-                    onMouseEnter={() =>
-                      setHover({
-                        x: pt.x,
-                        y: pt.y,
+                    {...hoverMark({
+                      series: info.id,
+                      index: i,
+                      setHover,
+                      clear,
+                      at: { x: pt.x, y: pt.y },
+                      tip: {
                         title: String(categories[i]),
                         items: [{ color: info.color, label: info.label, value: formatSeriesValue(item.data[i] ?? undefined) }],
-                      })
-                    }
-                    onMouseLeave={clear}
+                      },
+                    })}
                   />
                 ))}
               </g>
@@ -1308,10 +1313,12 @@ export function WaterfallChart({
                   rx={5}
                   fill={fill}
                   className="spk-chart-mark"
-                  onMouseEnter={(event) =>
-                    setHover({
-                      x: event.nativeEvent.offsetX,
-                      y: event.nativeEvent.offsetY,
+                  {...hoverMark({
+                    series: "waterfall",
+                    index: i,
+                    setHover,
+                    clear,
+                    tip: {
                       title: String(categories[i]),
                       items: [
                         {
@@ -1320,9 +1327,8 @@ export function WaterfallChart({
                           value: formatChartNumber(bar.value),
                         },
                       ],
-                    })
-                  }
-                  onMouseLeave={clear}
+                    },
+                  })}
                 />
               </g>
             );
@@ -1397,10 +1403,12 @@ export function BoxPlotChart({
               return (
                 <g
                   key={`${info.id}-${i}`}
-                  onMouseEnter={(event) =>
-                    setHover({
-                      x: event.nativeEvent.offsetX,
-                      y: event.nativeEvent.offsetY,
+                  {...hoverMark({
+                    series: info.id,
+                    index: i,
+                    setHover,
+                    clear,
+                    tip: {
                       title: String(categories[i]),
                       items: [
                         { color: info.color, label: "min", value: formatChartNumber(boxStat.min) },
@@ -1409,9 +1417,8 @@ export function BoxPlotChart({
                         { color: info.color, label: "q3", value: formatChartNumber(boxStat.q3) },
                         { color: info.color, label: "max", value: formatChartNumber(boxStat.max) },
                       ],
-                    })
-                  }
-                  onMouseLeave={clear}
+                    },
+                  })}
                 >
                   <line
                     x1={cx}
@@ -1518,10 +1525,12 @@ export function CandlestickChart({
             return (
               <g
                 key={i}
-                onMouseEnter={(event) =>
-                  setHover({
-                    x: event.nativeEvent.offsetX,
-                    y: event.nativeEvent.offsetY,
+                {...hoverMark({
+                  series: "candles",
+                  index: i,
+                  setHover,
+                  clear,
+                  tip: {
                     title: String(categories[i]),
                     items: [
                       { color, label: "open", value: formatChartNumber(candle.open) },
@@ -1529,9 +1538,8 @@ export function CandlestickChart({
                       { color, label: "low", value: formatChartNumber(candle.low) },
                       { color, label: "close", value: formatChartNumber(candle.close) },
                     ],
-                  })
-                }
-                onMouseLeave={clear}
+                  },
+                })}
               >
                 <line x1={cx} x2={cx} y1={yAt(candle.high)} y2={yAt(candle.low)} stroke={color} strokeWidth={wickW} />
                 {variant === "ohlc" ? (

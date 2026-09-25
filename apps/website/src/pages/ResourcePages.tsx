@@ -226,7 +226,11 @@ export function AccessibilityPage() {
       </h2>
       <ul className="docs-guidelines">
         <li>VirtualList only renders the rows in view, so browser find-in-page cannot see off-screen rows.</li>
-        <li>Charts expose a data table and item focus, but complex charts (sankey, chord) need a written summary from you.</li>
+        <li>
+          Charts are keyboard-navigable point by point and carry a data table, but a chart's message (the trend, the
+          outlier) still needs a written summary from you. The WebGL scatter renderer has no per-point navigation — pair it
+          with a table.
+        </li>
         <li>Right-to-left layouts are not verified across all components.</li>
       </ul>
       <p>

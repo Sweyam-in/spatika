@@ -6,6 +6,7 @@ import {
   type GeoJsonFeatureCollection,
   type GeoProjectionKind,
 } from "../lib/geo";
+import { hoverMark } from "./chart-interaction";
 import { ChartFrame, useChartHover } from "./chart-ui";
 
 export type MapShapeDatum = {
@@ -89,23 +90,18 @@ export function MapChart({
                   d={d}
                   fill={fill}
                   className="spk-chart-map-region spk-chart-mark"
-                  onMouseEnter={(event) =>
-                    setHover({
-                      x: event.nativeEvent.offsetX,
-                      y: event.nativeEvent.offsetY,
+                  {...hoverMark({
+                    series: "regions",
+                    index: i,
+                    setHover,
+                    clear,
+                    tip: {
                       title: label,
                       items: datum
-                        ? [
-                            {
-                              color: fill,
-                              label: label,
-                              value: formatChartNumber(datum.value),
-                            },
-                          ]
+                        ? [{ color: fill, label: label, value: formatChartNumber(datum.value) }]
                         : [{ color: fill, label: label, value: "—" }],
-                    })
-                  }
-                  onMouseLeave={clear}
+                    },
+                  })}
                 />
               );
             })}

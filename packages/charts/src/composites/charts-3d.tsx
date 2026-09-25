@@ -16,6 +16,7 @@ import {
   useChartHover,
   useHiddenSeries,
 } from "./chart-ui";
+import { hoverMark } from "./chart-interaction";
 import type { NumericSeries } from "./cartesian-charts";
 
 function box(width: number, height: number, m: Required<ChartMargin>) {
@@ -140,10 +141,12 @@ export function BarChart3D({
                   <g
                     key={`${info.id}-${i}`}
                     className="spk-chart-mark"
-                    onMouseEnter={(event) =>
-                      setHover({
-                        x: event.nativeEvent.offsetX,
-                        y: event.nativeEvent.offsetY,
+                    {...hoverMark({
+                      series: info.id,
+                      index: i,
+                      setHover,
+                      clear,
+                      tip: {
                         title: String(categories[i]),
                         items: [
                           {
@@ -152,9 +155,8 @@ export function BarChart3D({
                             value: formatSeriesValue(value),
                           },
                         ],
-                      })
-                    }
-                    onMouseLeave={clear}
+                      },
+                    })}
                   >
                     <path d={faces.side} fill={`color-mix(in srgb, ${color} 78%, black)`} />
                     <path d={faces.top} fill={`color-mix(in srgb, ${color} 72%, white)`} />
@@ -271,10 +273,12 @@ export function PieChart3D({
               <g
                 key={info.id}
                 className="spk-chart-mark"
-                onMouseEnter={(event) =>
-                  setHover({
-                    x: event.nativeEvent.offsetX,
-                    y: event.nativeEvent.offsetY,
+                {...hoverMark({
+                  series: "slices",
+                  index: meta.indexOf(info),
+                  setHover,
+                  clear,
+                  tip: {
                     title: info.label,
                     items: [
                       {
@@ -283,9 +287,8 @@ export function PieChart3D({
                         value: `${formatChartNumber(item.value)} (${Math.round(slice.percent * 100)}%)`,
                       },
                     ],
-                  })
-                }
-                onMouseLeave={clear}
+                  },
+                })}
               >
                 <path
                   d={ellipseSlicePath(cx, cy, rx, ry, slice.startAngle, slice.endAngle)}

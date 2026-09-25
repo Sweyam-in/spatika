@@ -920,6 +920,13 @@ function defaultA11y(entry: ComponentEntry): string[] {
   if (entry.category === "Feedback") {
     return ["Keep copy short. Don't rely on color alone to convey status."];
   }
+  if (entry.category === "Charts") {
+    return [
+      "The plot is one tab stop: ← → move through the points of a series (or the slices of a pie), ↑ ↓ switch series, Home / End jump to the ends, Enter activates `onItemClick`, Escape clears. The focused point shows its tooltip and its value is announced.",
+      "The chart is a group named by `aria-label`; say what it shows (\"Revenue by month, 2026\") and state the takeaway in the surrounding text — navigation reads values, not conclusions.",
+      "Series are distinguished by more than colour where it matters: keep the legend, use labels, or vary `strokeDasharray`.",
+    ];
+  }
   return [];
 }
 

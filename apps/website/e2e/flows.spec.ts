@@ -165,3 +165,19 @@ test("the playground updates the live component and its code, and resets", async
   await expect(preview).toHaveText("Save changes");
   await expect(playground.locator(".playground-frame")).toHaveClass(/mukta/);
 });
+
+test("a chart is read point by point from the keyboard", async ({ page }) => {
+  await gotoThemed(page, "/components/bar-chart");
+  const demo = page.locator(".demo-block").first();
+  const plot = demo.getByRole("group", { name: "Data points" }).first();
+  await plot.focus();
+  await expect(plot).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  const live = demo.locator('[aria-live="polite"]').first();
+  await expect(live).toHaveText(/^Jan: .+\. 1 of \d+$/);
+  await expect(demo.getByRole("tooltip")).toBeVisible();
+  await page.keyboard.press("End");
+  await expect(live).toHaveText(/^Jun: /);
+  await page.keyboard.press("Escape");
+  await expect(demo.getByRole("tooltip")).toHaveCount(0);
+});
