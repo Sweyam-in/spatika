@@ -17,7 +17,7 @@ import {
   useChartHover,
   useHiddenSeries,
 } from "./chart-ui";
-import { bindChartMark, type ChartItemEvent, type ChartTooltipRenderer } from "./chart-interaction";
+import { bindChartMark, hoverMark, type ChartItemEvent, type ChartTooltipRenderer } from "./chart-interaction";
 
 export type PieDatum = {
   id?: string | number;
@@ -517,10 +517,13 @@ export function RadarChart({
                       cy={p.y}
                       r={3.2}
                       fill={info.color}
-                      onMouseEnter={() =>
-                        setHover({
-                          x: p.x,
-                          y: p.y,
+                      {...hoverMark({
+                        series: info.id,
+                        index: i,
+                        setHover,
+                        clear,
+                        at: { x: p.x, y: p.y },
+                        tip: {
                           title: radar.metrics[i],
                           items: [
                             {
@@ -529,9 +532,8 @@ export function RadarChart({
                               value: formatSeriesValue(item.data[i]),
                             },
                           ],
-                        })
-                      }
-                      onMouseLeave={clear}
+                        },
+                      })}
                     />
                   ))}
                 </g>
@@ -616,15 +618,16 @@ export function RadialBarChart({
                     d={arcPath(cx, cy, r0, r1, startAngle, a1)}
                     fill={info.color}
                     className="spk-chart-mark"
-                    onMouseEnter={(event) =>
-                      setHover({
-                        x: event.nativeEvent.offsetX,
-                        y: event.nativeEvent.offsetY,
+                    {...hoverMark({
+                      series: "bars",
+                      index: i,
+                      setHover,
+                      clear,
+                      tip: {
                         title: info.label,
                         items: [{ color: info.color, label: info.label, value: formatChartNumber(item.value) }],
-                      })
-                    }
-                    onMouseLeave={clear}
+                      },
+                    })}
                   />
                 </g>
               );

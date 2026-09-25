@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { ExternalLink, Github, Menu, Package, X } from "lucide-react";
 import { SpatikaLogo } from "@/components/SpatikaLogo";
@@ -6,6 +6,9 @@ import { DocsSidebar } from "@/components/DocsSidebar";
 import { topNav, type NavItem } from "@/data/navigation";
 import { SITE } from "@/data/site";
 import { ThemeToolbar } from "./ThemeToolbar";
+import { DocsSearch } from "./DocsSearch";
+import { RouteFallback } from "./RouteFallback";
+import { VersionBanner, VersionSelector } from "./VersionSelector";
 
 type DocsLayoutProps = {
   sidebar?: {
@@ -42,7 +45,13 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
           </nav>
 
           <div className="site-header-actions">
-            <ThemeToolbar />
+            <DocsSearch />
+            <span className="header-version">
+              <VersionSelector />
+            </span>
+            <span className="header-theme">
+              <ThemeToolbar />
+            </span>
             <a
               href={SITE.github}
               className="icon-link"
@@ -54,7 +63,7 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
             </a>
             <a
               href={SITE.npmOrg}
-              className="icon-link"
+              className="icon-link header-npm-link"
               target="_blank"
               rel="noreferrer"
               aria-label="npm packages"
@@ -63,7 +72,7 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
             </a>
             <a
               href={SITE.npmReact}
-              className="icon-link"
+              className="icon-link header-npm-link"
               target="_blank"
               rel="noreferrer"
               aria-label="View on npm"
@@ -97,24 +106,37 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
               {item.label}
             </NavLink>
           ))}
+          {/* On phones the version menu and theme switch live here instead of the header. */}
+          <div className="mobile-nav-settings">
+            <VersionSelector />
+            <ThemeToolbar />
+          </div>
         </nav>
       </header>
+
+      <VersionBanner />
 
       <div className="site-content">
         {sidebar ? (
           <div className="docs-layout">
             <DocsSidebar title={sidebar.title} items={sidebar.items} groups={sidebar.groups} />
             <main className="docs-main">
-              <Outlet />
+              <Suspense fallback={<RouteFallback />}>
+                <Outlet />
+              </Suspense>
             </main>
           </div>
         ) : wide ? (
           <main>
-            <Outlet />
+            <Suspense fallback={<RouteFallback />}>
+              <Outlet />
+            </Suspense>
           </main>
         ) : (
           <main className="page-narrow">
-            <Outlet />
+            <Suspense fallback={<RouteFallback />}>
+              <Outlet />
+            </Suspense>
           </main>
         )}
       </div>

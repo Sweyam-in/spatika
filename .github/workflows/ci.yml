@@ -1,0 +1,165 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Unit tests, typecheck, docs checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build packages
+        run: |
+          npm run build -w @spatika/tokens
+          npm run build -w @spatika/charts
+          npm run build -w @spatika/editor
+          npm run build -w @spatika/react
+      - name: Typecheck
+        run: npm run typecheck
+      # Includes: generated API and demo sources are current, every docs example compiles,
+      # theme contrast, utility coverage, version policy.
+      - name: Unit and component tests
+        run: npm test
+      - name: Build docs site
+        run: npm run build -w @spatika/website
+
+  e2e:
+    name: Browser tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build packages
+        run: |
+          npm run build -w @spatika/tokens
+          npm run build -w @spatika/charts
+          npm run build -w @spatika/editor
+          npm run build -w @spatika/react
+      - name: Install ${{ matrix.browser }}
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+        working-directory: apps/website
+      - name: Responsive, accessibility (axe) and flow tests
+        run: npx playwright test responsive a11y flows screen-reader
+        working-directory: apps/website
+        env:
+          PW_BROWSERS: ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-${{ matrix.browser }}-results
+          path: apps/website/test-results
+          retention-days: 7
+
+  docker:
+    name: Docker image (versioned docs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DOCKER_BUILDKIT: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build from an empty site
+        run: docker build -t spatika-site:first .
+      - name: Build again, carrying the first image's site forward
+        run: docker build --build-arg PREVIOUS_SITE_IMAGE=spatika-site:first -t spatika-site:second .
+      - name: Serve and check the versioned URLs
+        run: |
+          docker run -d --name site -p 8080:80 spatika-site:second
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8080/health >/dev/null && break; sleep 1; done
+          check() { code=$(curl -sL -o /dev/null -w '%{http_code}' "http://127.0.0.1:8080$1"); echo "$1 -> $code"; [ "$code" = "200" ]; }
+          check /
+          check /components/date-picker
+          check /next/
+          check /next/components/button
+          check /versions.json
+          check /docs/v2.3.0/archive.json
+          check /docs/v2.3.0/components/button
+          check /AGENTS.md
+          check /changelog
+          docker exec site cat /usr/share/nginx/html/docs-root.json
+      - name: Container logs
+        if: failure()
+        run: docker logs site || true
+
+  visual:
+    name: Visual regression (chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      # CI renders with the runner's fonts, so its baselines live apart from local ones.
+      VISUAL_BASELINES: ci
+      # Opt-in: a pushed commit whose message contains [update-visual-baselines] re-renders the
+      # CI baselines and commits them to the same branch, where they are reviewed in the diff.
+      UPDATE_BASELINES: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[update-visual-baselines]') }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build packages
+        run: |
+          npm run build -w @spatika/tokens
+          npm run build -w @spatika/charts
+          npm run build -w @spatika/editor
+          npm run build -w @spatika/react
+      - name: Install chromium
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/website
+      - name: Compare against baselines
+        if: env.UPDATE_BASELINES != 'true'
+        working-directory: apps/website
+        run: |
+          if [ ! -d e2e/__screenshots__/ci ]; then
+            echo "::error::No CI visual baselines are committed. Push a commit with [update-visual-baselines] in its message to render them, then review the images in that commit."
+            exit 1
+          fi
+          npx playwright test visual
+      - name: Render and commit baselines
+        if: env.UPDATE_BASELINES == 'true'
+        working-directory: apps/website
+        run: |
+          npx playwright test visual --update-snapshots
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add e2e/__screenshots__/ci
+          if git diff --cached --quiet; then
+            echo "Baselines unchanged."
+          else
+            git commit -m "test(visual): CI baselines rendered by run ${{ github.run_id }}" -m "Review every image in this commit before merging."
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: visual-diffs
+          path: apps/website/test-results
+          if-no-files-found: ignore
+          retention-days: 7

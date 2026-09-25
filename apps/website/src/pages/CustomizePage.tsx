@@ -8,7 +8,7 @@ import {
   RECIPE_CUSTOMIZE_ONE_OFF,
   RECIPE_RESPONSIVE,
   RECIPE_THEMING,
-} from "@/data/agent-docs";
+} from "@/data/recipes";
 
 const PALETTE_ROWS: { token: string; css: string; utility: string }[] = [
   { token: "background / foreground", css: "--background, --foreground", utility: "bg-background, text-foreground" },
@@ -353,9 +353,14 @@ export function BrandButton(props: ButtonProps) {
         z-index
       </h2>
       <p>
-        Overlays use <code>OVERLAY_Z_INDEX</code>: popover <code>90</code>, menu <code>10000</code>,
-        modal <code>11000</code>. Import that map instead of inventing stacking values — menus need
-        to sit above fullscreen product chrome.
+        Overlays use <code>OVERLAY_Z_INDEX</code>: popover <code>90</code>, select <code>200</code>,
+        menu <code>10000</code>, modal <code>11000</code>, toast <code>12000</code>, tooltip{" "}
+        <code>13000</code>. The same scale is exposed to CSS as <code>--spk-z-sticky</code>,{" "}
+        <code>--spk-z-chrome</code>, <code>--spk-z-popover</code>, <code>--spk-z-select</code>,{" "}
+        <code>--spk-z-menu</code>, <code>--spk-z-modal</code>, <code>--spk-z-toast</code> and{" "}
+        <code>--spk-z-tooltip</code>. Import the map (or read the variables) instead of inventing
+        stacking values — menus need to sit above fullscreen product chrome, and popovers, selects
+        and menus opened inside a Dialog, Sheet or BottomSheet escalate above it automatically.
       </p>
     </article>
   );

@@ -22,7 +22,7 @@ import {
   useChartHover,
   useHiddenSeries,
 } from "./chart-ui";
-import { bindChartMark, type ChartItemEvent, type ChartTooltipRenderer } from "./chart-interaction";
+import { bindChartMark, hoverMark, type ChartItemEvent, type ChartTooltipRenderer } from "./chart-interaction";
 
 export type HeatDatum = { x: number; y: number; value: number };
 
@@ -315,10 +315,12 @@ export function FunnelChart({
                       stroke={primary ? "none" : info.color}
                       strokeWidth={primary ? 0 : 1.75}
                       className="spk-chart-mark"
-                      onMouseEnter={(event) =>
-                        setHover({
-                          x: event.nativeEvent.offsetX,
-                          y: event.nativeEvent.offsetY,
+                      {...hoverMark({
+                        series: String(seriesIndex),
+                        index: i,
+                        setHover,
+                        clear,
+                        tip: {
                           title: row.label,
                           items: [
                             {
@@ -327,9 +329,8 @@ export function FunnelChart({
                               value: formatChartNumber(row.value),
                             },
                           ],
-                        })
-                      }
-                      onMouseLeave={clear}
+                        },
+                      })}
                     />
                     {inside ? (
                       <text
@@ -400,10 +401,12 @@ export function SankeyChart({ series, height = 300, width, colors, className }: 
                 fill={chartColor(i, colors)}
                 fillOpacity={0.28}
                 className="spk-chart-mark"
-                onMouseEnter={(event) =>
-                  setHover({
-                    x: event.nativeEvent.offsetX,
-                    y: event.nativeEvent.offsetY,
+                {...hoverMark({
+                  series: "links",
+                  index: i,
+                  setHover,
+                  clear,
+                  tip: {
                     title: `${link.source} → ${link.target}`,
                     items: [
                       {
@@ -412,9 +415,8 @@ export function SankeyChart({ series, height = 300, width, colors, className }: 
                         value: formatChartNumber(link.value),
                       },
                     ],
-                  })
-                }
-                onMouseLeave={clear}
+                  },
+                })}
               />
             ))}
             {layout.nodes.map((node, i) => (
@@ -479,10 +481,12 @@ export function Treemap({ series, height = 280, width, colors, className }: Tree
                   rx={8}
                   fill={rect.color ?? chartColor(i, colors)}
                   className="spk-chart-mark"
-                  onMouseEnter={(event) =>
-                    setHover({
-                      x: event.nativeEvent.offsetX,
-                      y: event.nativeEvent.offsetY,
+                  {...hoverMark({
+                    series: "cells",
+                    index: i,
+                    setHover,
+                    clear,
+                    tip: {
                       title: rect.label,
                       items: [
                         {
@@ -491,9 +495,8 @@ export function Treemap({ series, height = 280, width, colors, className }: Tree
                           value: formatChartNumber(rect.value),
                         },
                       ],
-                    })
-                  }
-                  onMouseLeave={clear}
+                    },
+                  })}
                 />
                 {rect.w > 56 && rect.h > 28 ? (
                   <text
@@ -549,10 +552,12 @@ export function SunburstChart({ series, height = 300, width, colors, className }
                 stroke="var(--background)"
                 strokeWidth={1.5}
                 className="spk-chart-mark"
-                onMouseEnter={(event) =>
-                  setHover({
-                    x: event.nativeEvent.offsetX,
-                    y: event.nativeEvent.offsetY,
+                {...hoverMark({
+                  series: "slices",
+                  index: i,
+                  setHover,
+                  clear,
+                  tip: {
                     title: slice.label,
                     items: [
                       {
@@ -561,9 +566,8 @@ export function SunburstChart({ series, height = 300, width, colors, className }
                         value: formatChartNumber(slice.value),
                       },
                     ],
-                  })
-                }
-                onMouseLeave={clear}
+                  },
+                })}
               />
             ))}
           </svg>
@@ -613,10 +617,12 @@ export function ChordChart({ series, height = 300, width, colors, className }: C
                 fill={chartColor(ribbon.source, colors)}
                 fillOpacity={0.28}
                 className="spk-chart-mark"
-                onMouseEnter={(event) =>
-                  setHover({
-                    x: event.nativeEvent.offsetX,
-                    y: event.nativeEvent.offsetY,
+                {...hoverMark({
+                  series: "ribbons",
+                  index: i,
+                  setHover,
+                  clear,
+                  tip: {
                     title: `${series.data[ribbon.source]} → ${series.data[ribbon.target]}`,
                     items: [
                       {
@@ -625,9 +631,8 @@ export function ChordChart({ series, height = 300, width, colors, className }: C
                         value: formatChartNumber(ribbon.value),
                       },
                     ],
-                  })
-                }
-                onMouseLeave={clear}
+                  },
+                })}
               />
             ))}
             {layout.groups.map((group) => (

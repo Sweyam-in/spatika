@@ -2,7 +2,17 @@ import * as React from "react";
 import type { ReactNode } from "react";
 import { ChevronRight, X } from "lucide-react";
 import { cn } from "../lib/cn";
+import { Columns3 } from "lucide-react";
+import { Button } from "../primitives/Button";
 import { Checkbox } from "../primitives/Checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../primitives/DropdownMenu";
 import { Skeleton } from "../primitives/Skeleton";
 import { TableHead, type SortDirection, type TableDensity } from "../primitives/Table";
 import { EmptyState } from "./EmptyState";
@@ -20,6 +30,8 @@ export type DataTableColumn<T> = {
   /** Custom cell. Falls back to the accessor value. */
   cell?: (row: T, index: number) => ReactNode;
   sortable?: boolean;
+  /** Set false to keep the column visible in `DataTableColumnsMenu`. */
+  hideable?: boolean;
   sortFn?: (a: T, b: T) => number;
   align?: "left" | "center" | "right";
   /** Right-aligned tabular numerals. */
@@ -82,6 +94,10 @@ export type DataTableProps<T> = {
   totalRows?: number;
   /* chrome */
   toolbar?: ReactNode;
+  /** Ids of hidden columns (controlled). Pair with `DataTableColumnsMenu` in the toolbar. */
+  hiddenColumns?: string[];
+  defaultHiddenColumns?: string[];
+  onHiddenColumnsChange?: (ids: string[]) => void;
   /** `list` (default) stacks rows into a list on phones; `scroll` keeps the table with horizontal scroll. */
   responsive?: "list" | "scroll";
   className?: string;
@@ -141,7 +157,7 @@ function isInteractiveTarget(target: EventTarget | null) {
  */
 export function DataTable<T>({
   data,
-  columns,
+  columns: allColumns,
   getRowId,
   "aria-label": ariaLabel,
   caption,
@@ -170,9 +186,17 @@ export function DataTable<T>({
   onPageChange,
   totalRows,
   toolbar,
+  hiddenColumns: hiddenProp,
+  defaultHiddenColumns = [],
+  onHiddenColumnsChange,
   responsive = "list",
   className,
 }: DataTableProps<T>) {
+  const [hiddenColumns] = useControlled(hiddenProp, defaultHiddenColumns, onHiddenColumnsChange);
+  const columns = React.useMemo(
+    () => allColumns.filter((column) => !hiddenColumns.includes(column.id)),
+    [allColumns, hiddenColumns],
+  );
   const [selected, setSelected] = useControlled(selectedProp, defaultSelectedIds, onSelectedIdsChange);
   const [sort, setSort] = useControlled<DataTableSort>(sortProp, defaultSort, onSortChange);
   const [page, setPage] = useControlled(pageProp, defaultPage, onPageChange);
@@ -546,5 +570,61 @@ export function DataTable<T>({
         </div>
       ) : null}
     </div>
+  );
+}
+
+/* ─── Column visibility ─────────────────────────────────────────────────── */
+
+export type DataTableColumnsMenuProps = {
+  columns: { id: string; header: ReactNode; hideable?: boolean }[];
+  hiddenColumns: string[];
+  onHiddenColumnsChange: (ids: string[]) => void;
+  label?: string;
+  className?: string;
+};
+
+/**
+ * "Columns" menu for a DataTable toolbar: a checkbox per column that toggles `hiddenColumns`.
+ * Columns with `hideable: false` stay listed but cannot be hidden, and the last visible
+ * column can never be turned off.
+ */
+export function DataTableColumnsMenu({
+  columns,
+  hiddenColumns,
+  onHiddenColumnsChange,
+  label = "Columns",
+  className,
+}: DataTableColumnsMenuProps) {
+  const visibleCount = columns.filter((column) => !hiddenColumns.includes(column.id)).length;
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" leadingIcon={<Columns3 className="size-4" aria-hidden />} className={className}>
+          {label}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Show columns</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {columns.map((column) => {
+          const visible = !hiddenColumns.includes(column.id);
+          return (
+            <DropdownMenuCheckboxItem
+              key={column.id}
+              checked={visible}
+              disabled={column.hideable === false || (visible && visibleCount === 1)}
+              onSelect={(event) => event.preventDefault()}
+              onCheckedChange={(checked) =>
+                onHiddenColumnsChange(
+                  checked ? hiddenColumns.filter((id) => id !== column.id) : [...hiddenColumns, column.id],
+                )
+              }
+            >
+              {column.header}
+            </DropdownMenuCheckboxItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

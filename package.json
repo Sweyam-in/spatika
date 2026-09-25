@@ -15,12 +15,19 @@
     "build": "npm run build -w @spatika/tokens && npm run build -w @spatika/charts && npm run build -w @spatika/editor && npm run build -w @spatika/react && npm run build -w @spatika/website",
     "build:website": "npm run build -w @spatika/website",
     "preview": "npm run preview -w @spatika/website",
-    "typecheck": "npm run typecheck -w @spatika/charts && npm run build -w @spatika/charts && npm run typecheck -w @spatika/editor && npm run build -w @spatika/editor && npm run typecheck -w @spatika/react && npm run typecheck -w @spatika/website",
-    "test": "npm run test -w @spatika/charts && npm run test -w @spatika/editor && npm run test -w @spatika/react && npm run test -w @spatika/website && python3 -m unittest discover -s .cursor/hooks -p 'test_*.py'",
+    "typecheck": "npm run typecheck -w @spatika/charts && npm run build -w @spatika/charts && npm run typecheck -w @spatika/editor && npm run build -w @spatika/editor && npm run typecheck -w @spatika/react && npm run build -w @spatika/react && npm run typecheck -w @spatika/website",
+    "test": "npm run test -w @spatika/charts && npm run test -w @spatika/editor && npm run test -w @spatika/react && npm run test -w @spatika/website",
+    "test:e2e": "npm run test:e2e -w @spatika/website",
     "test:coverage": "npm run test:coverage -w @spatika/react",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "npm run build -w @spatika/tokens && npm run build -w @spatika/charts && npm run build -w @spatika/editor && npm run build -w @spatika/react && changeset publish"
+    "release": "npm run build -w @spatika/tokens && npm run build -w @spatika/charts && npm run build -w @spatika/editor && npm run build -w @spatika/react && changeset publish",
+    "docs:api": "node scripts/extract-api.mjs --entry packages/react/src/index.ts --tsconfig packages/react/tsconfig.json --out apps/website/src/generated/api.json",
+    "docs:demos": "node apps/website/scripts/sync-demo-sources.mjs",
+    "docs:archive": "node scripts/docs-archive.mjs --all",
+    "docs:versions": "node scripts/release-docs.mjs manifest",
+    "release:docs": "node scripts/release-docs.mjs release --site-dir",
+    "release:docs:next": "node scripts/release-docs.mjs next --site-dir"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.1"

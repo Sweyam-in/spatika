@@ -76,6 +76,10 @@ export type ChartMarkBind = {
   className: string;
   role?: "button";
   tabIndex?: number;
+  /** Read by the chart's keyboard navigation (see `useChartKeyboard`). */
+  "data-chart-series": string;
+  "data-chart-index": number;
+  "data-chart-hover": string;
   "aria-label"?: string;
   onClick?: (event: { stopPropagation(): void }) => void;
   onKeyDown?: (event: { key: string; preventDefault(): void }) => void;
@@ -100,9 +104,53 @@ export function chartItemAriaLabel(event: ChartItemEvent): string {
   return category;
 }
 
+/** Tooltip content a mark shows (and the keyboard announces). */
+export type ChartMarkTip = { title?: string; items: ChartTooltipItem[] };
+
+/**
+ * Attributes that make a mark reachable by the chart's keyboard navigation (`useChartKeyboard`):
+ * its series, its position in that series, and the tooltip content to show and announce.
+ */
+export function chartMarkData(series: string, index: number, tip: ChartMarkTip) {
+  return {
+    "data-chart-series": series,
+    "data-chart-index": index,
+    "data-chart-hover": JSON.stringify({ title: tip.title, items: tip.items }),
+  };
+}
+
+/**
+ * Hover handlers plus keyboard data for a mark whose tooltip is anchored at the pointer (or at
+ * `at`). For marks that also take clicks, use `bindChartMark`.
+ */
+export function hoverMark({
+  series,
+  index,
+  tip,
+  setHover,
+  clear,
+  at,
+}: {
+  series: string;
+  index: number;
+  tip: ChartMarkTip;
+  setHover: (hover: ChartHover) => void;
+  clear: () => void;
+  at?: { x: number; y: number };
+}) {
+  return {
+    ...chartMarkData(series, index, tip),
+    onMouseEnter: (event: { nativeEvent: { offsetX: number; offsetY: number } }) =>
+      setHover({ x: at?.x ?? event.nativeEvent.offsetX, y: at?.y ?? event.nativeEvent.offsetY, ...tip }),
+    onMouseLeave: clear,
+  };
+}
+
 /**
  * Pointer, keyboard, and hover bindings for an SVG mark.
  * Adds a button role only when `onItemClick` is set so legends stay the sole named buttons.
+ * Marks are not tab stops: the plot is one tab stop and the arrow keys move between marks
+ * (`useChartKeyboard`), which reads the `data-chart-*` attributes stamped here.
  */
 export function bindChartMark({
   event,
@@ -141,7 +189,8 @@ export function bindChartMark({
   return {
     className: cn("spk-chart-mark", clickable && "spk-chart-mark--interactive"),
     role: clickable ? "button" : undefined,
-    tabIndex: clickable ? 0 : undefined,
+    tabIndex: clickable ? -1 : undefined,
+    ...chartMarkData(event.seriesId, event.dataIndex, { title: hover.title, items: hover.items }),
     "aria-label": clickable ? chartItemAriaLabel(event) : undefined,
     onClick: clickable
       ? (native) => {

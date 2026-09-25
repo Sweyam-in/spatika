@@ -38,6 +38,12 @@ export type CommandPaletteProps = {
   emptyMessage?: ReactNode;
   /** Show the keyboard legend. */
   footer?: boolean;
+  /**
+   * Custom ranking `(value, search, keywords) => score`; 0 hides the item. The default is
+   * cmdk's fuzzy match, which suits short command lists; large indexes (docs search) usually
+   * want word-aware matching.
+   */
+  filter?: (value: string, search: string, keywords?: string[]) => number;
 };
 
 /** Data-driven command palette on top of `CommandDialog`. Pair with `SearchTrigger` for ⌘K. */
@@ -48,9 +54,10 @@ export function CommandPalette({
   placeholder = "Type a command or search…",
   emptyMessage = "No results found.",
   footer = true,
+  filter,
 }: CommandPaletteProps) {
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange}>
+    <CommandDialog open={open} onOpenChange={onOpenChange} filter={filter}>
       <CommandInput placeholder={placeholder} autoFocus />
       <CommandList>
         <CommandEmpty>{emptyMessage}</CommandEmpty>
@@ -68,8 +75,8 @@ export function CommandPalette({
                 }}
               >
                 {item.icon}
-                <span className="truncate">{item.label}</span>
-                {item.description ? <span className="truncate text-body-sm text-fg-tertiary">{item.description}</span> : null}
+                <span className="spk-command-label">{item.label}</span>
+                {item.description ? <span className="spk-command-description">{item.description}</span> : null}
                 {item.shortcut ? (
                   <CommandShortcut>
                     {item.shortcut.map((key) => (

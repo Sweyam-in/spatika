@@ -5,6 +5,7 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
+import { useChartKeyboard } from "./chart-keyboard";
 import { cn } from "../lib/cn";
 import {
   DEFAULT_CHART_MARGIN,
@@ -52,6 +53,8 @@ export type ChartFrameProps = {
   empty?: boolean;
   emptyText?: ReactNode;
   "aria-label"?: string;
+  /** Keyboard navigation of the plot's marks (default true). Sparklines opt out. */
+  navigable?: boolean;
   children: (plot: { width: number; height: number; m: Required<ChartMargin> }) => ReactNode;
 };
 
@@ -141,9 +144,12 @@ export function ChartFrame({
   empty,
   emptyText,
   "aria-label": ariaLabel,
+  navigable = true,
   children,
 }: ChartFrameProps) {
   const surfaceRef = useRef<HTMLDivElement>(null);
+  // Named "Data points" only: it sits inside the chart's own labelled group.
+  const keyboard = useChartKeyboard(surfaceRef, { disabled: !navigable || Boolean(loading || empty) });
   const measured = useChartSurfaceSize(surfaceRef, width ?? 320, height, fillHeight);
   const plotWidth = width ?? measured.width;
   const plotHeight = fillHeight ? measured.height : height;
@@ -167,13 +173,15 @@ export function ChartFrame({
           ref={surfaceRef}
           className="spk-chart-surface"
           style={fillHeight ? undefined : { height: plotHeight }}
+          {...keyboard.surfaceProps}
         >
           {plotWidth > 0 && plotHeight > 0 ? children({ width: plotWidth, height: plotHeight, m }) : null}
-          <ChartTooltip hover={hover ?? null} boundsWidth={plotWidth} render={renderTooltip} />
+          <ChartTooltip hover={keyboard.hover ?? hover ?? null} boundsWidth={plotWidth} render={renderTooltip} />
           <ChartStatusOverlay loading={loading} empty={empty} emptyText={emptyText} />
         </div>
         {before ? null : legendEl}
       </div>
+      {keyboard.liveRegion}
     </div>
   );
 }

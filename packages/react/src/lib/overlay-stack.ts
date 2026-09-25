@@ -13,8 +13,12 @@ export const OVERLAY_Z_INDEX = {
   select: 200,
   /** Dropdown menus (including menus opened inside fullscreen editors). */
   menu: 10000,
-  /** Modal overlays + dialog/sheet/alert content. */
+  /** Modal overlays + dialog/sheet/alert/bottom-sheet content. */
   modal: 11000,
+  /** Toast and snackbar stacks — above modals so feedback fired from a dialog stays visible. */
+  toast: 12000,
+  /** Tooltips — above everything, including tooltips on controls inside modals. */
+  tooltip: 13000,
 } as const;
 
 /**

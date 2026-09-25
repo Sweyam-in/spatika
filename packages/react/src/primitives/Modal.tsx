@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Portal } from "../lib/portal";
 import { useFocusTrap } from "../lib/use-focus-trap";
+import { useDismissLayer } from "../lib/layer-stack";
 import { cn } from "../lib/cn";
 import { ModalDepthProvider, OVERLAY_Z_INDEX, fixedLayerStyle } from "../lib/overlay-stack";
 import { Backdrop } from "./Backdrop";
@@ -31,14 +32,11 @@ function Modal({
   const contentRef = React.useRef<HTMLDivElement | null>(null);
   useFocusTrap(contentRef, open);
 
-  React.useEffect(() => {
-    if (!open || disableEscapeKeyDown || !onClose) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, disableEscapeKeyDown, onClose]);
+  useDismissLayer({
+    enabled: open,
+    refs: [contentRef],
+    onEscapeKeyDown: disableEscapeKeyDown ? undefined : () => onClose?.(),
+  });
 
   if (!open && !keepMounted) return null;
 

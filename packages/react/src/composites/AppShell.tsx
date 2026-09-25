@@ -204,6 +204,9 @@ export type NavSectionProps = {
   action?: ReactNode;
 };
 
+/** True inside a NavSection's `<ul>` — NavItem only renders an `<li>` there. */
+const NavListContext = React.createContext(false);
+
 export function NavSection({ title, children, className, action }: NavSectionProps) {
   const shell = useAppShell();
   const collapsed = shell?.collapsed ?? false;
@@ -217,7 +220,7 @@ export function NavSection({ title, children, className, action }: NavSectionPro
         </div>
       ) : null}
       <ul aria-labelledby={title && !collapsed ? id : undefined} className="flex flex-col gap-px">
-        {children}
+        <NavListContext.Provider value>{children}</NavListContext.Provider>
       </ul>
     </div>
   );
@@ -242,6 +245,7 @@ export const NavItem = React.forwardRef<HTMLButtonElement, NavItemProps>(functio
   ref,
 ) {
   const shell = useAppShell();
+  const inList = React.useContext(NavListContext);
   const collapsed = shell?.collapsed ?? false;
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
@@ -284,18 +288,16 @@ export const NavItem = React.forwardRef<HTMLButtonElement, NavItemProps>(functio
     );
   }
 
-  return (
-    <li className="list-none">
-      {collapsed ? (
-        <Tooltip delayDuration={100}>
-          <TooltipTrigger asChild>{element}</TooltipTrigger>
-          <TooltipContent side="right">{label}</TooltipContent>
-        </Tooltip>
-      ) : (
-        element
-      )}
-    </li>
+  const item = collapsed ? (
+    <Tooltip delayDuration={100}>
+      <TooltipTrigger asChild>{element}</TooltipTrigger>
+      <TooltipContent side="right">{label}</TooltipContent>
+    </Tooltip>
+  ) : (
+    element
   );
+  // Outside a NavSection (e.g. a sidebar footer) there is no list to be an item of.
+  return inList ? <li className="list-none">{item}</li> : item;
 });
 
 /* ─── TopBar ────────────────────────────────────────────────────────────── */

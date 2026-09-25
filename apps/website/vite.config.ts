@@ -25,7 +25,8 @@ export default defineConfig({
     port: Number(process.env.PORT ?? 5190),
   },
   build: {
-    outDir: "dist",
+    // scripts/release-docs.mjs builds versioned snapshots into their own directories.
+    outDir: process.env.DOCS_OUT_DIR ?? "dist",
     emptyOutDir: true,
   },
 });

@@ -1,11 +1,39 @@
 import * as React from "react";
+import { lockScroll } from "./layer-stack";
 
-const FOCUSABLE_SELECTOR =
-  'a[href],button:not([disabled]),textarea:not([disabled]),input:not([disabled]),select:not([disabled]),[tabindex]:not([tabindex="-1"])';
+const FOCUSABLE_SELECTOR = [
+  "a[href]",
+  "area[href]",
+  "button:not([disabled])",
+  "textarea:not([disabled])",
+  "input:not([disabled]):not([type=hidden])",
+  "select:not([disabled])",
+  "summary",
+  "iframe",
+  "audio[controls]",
+  "video[controls]",
+  '[contenteditable]:not([contenteditable="false"])',
+  "[tabindex]",
+].join(",");
+
+/** Focusable, tabbable descendants in DOM order (skips `hidden`, `inert` and tabindex=-1). */
+export function getTabbable(container: HTMLElement): HTMLElement[] {
+  return Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
+    (el) =>
+      el.tabIndex >= 0 &&
+      !el.hasAttribute("disabled") &&
+      !el.closest("[hidden],[inert]") &&
+      el.getAttribute("aria-hidden") !== "true",
+  );
+}
+
+/** Only the most recently opened trap handles Tab, so nested dialogs keep their focus. */
+const traps: symbol[] = [];
 
 /**
- * Locks body scroll and restores focus to the previously focused element on cleanup.
- * Also traps Tab within the container while enabled.
+ * Traps Tab within the container while enabled, locks page scroll, moves focus inside
+ * (to `[data-autofocus]` / `[autofocus]` first, else the first tabbable element, else the
+ * container) and restores focus to the previously focused element on close.
  */
 export function useFocusTrap(
   containerRef: React.RefObject<HTMLElement | null>,
@@ -14,33 +42,28 @@ export function useFocusTrap(
   React.useEffect(() => {
     if (!enabled) return;
 
+    const trap = Symbol("focus-trap");
+    traps.push(trap);
     const previouslyFocused = document.activeElement as HTMLElement | null;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockScroll();
 
     const focusFirst = () => {
       const container = containerRef.current;
-      if (!container) return;
-      const focusable = container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
-      if (focusable.length > 0) {
-        focusable[0].focus();
-      } else {
-        container.focus();
-      }
+      if (!container || container.contains(document.activeElement)) return;
+      const preferred = container.querySelector<HTMLElement>("[data-autofocus],[autofocus]");
+      const target = preferred ?? getTabbable(container)[0] ?? container;
+      target.focus({ preventScroll: true });
     };
 
     // Defer so portal content is mounted.
     const id = window.setTimeout(focusFirst, 0);
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Tab") return;
+      if (event.key !== "Tab" || traps[traps.length - 1] !== trap) return;
       const container = containerRef.current;
       if (!container) return;
 
-      const focusable = Array.from(
-        container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      ).filter((el) => !el.hasAttribute("disabled") && el.tabIndex !== -1);
-
+      const focusable = getTabbable(container);
       if (focusable.length === 0) {
         event.preventDefault();
         return;
@@ -66,8 +89,10 @@ export function useFocusTrap(
     return () => {
       window.clearTimeout(id);
       document.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
-      previouslyFocused?.focus?.();
+      const index = traps.indexOf(trap);
+      if (index >= 0) traps.splice(index, 1);
+      unlock();
+      if (previouslyFocused?.isConnected) previouslyFocused.focus({ preventScroll: true });
     };
   }, [containerRef, enabled]);
 }

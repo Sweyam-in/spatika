@@ -66,6 +66,18 @@ and `useIsMobile` / `useBreakpoint`. Guide: https://spatika.sweyam.com/customize
 | Rich text | `SpatikaEditor` from `@spatika/editor` (import `@spatika/editor/styles.css`) |
 | Calendar | `EventCalendar` · resources over time: `EventTimeline` |
 | Numbers | `formatNumber`, `formatCurrency`, `formatPercent`, `formatCompact` |
+| Number / tags / one-time code | `NumberInput`, `TagInput`, `OtpInput` |
+| File picking | `FileUpload` (dropzone + file list, `formatBytes`) |
+| Date entry | `DatePicker`, `DateRangePicker` (typed + calendar) · typed only: `DateInput` |
+| Time entry | `TimeInput` (value is 24-hour `HH:mm`) |
+| Hierarchy | `TreeView` |
+| Key–value record | `DescriptionList` |
+| Long list (1000s of rows) | `VirtualList` |
+| Adjustable split | `ResizablePanels` |
+| Right-click actions | `ContextMenu` (same items as `DropdownMenu`) |
+| Form-level errors | `FormErrorSummary` (focus it on submit) |
+| Outcome screen (success, error, 404) | `ResultState` · empty list: `EmptyState` |
+| Column visibility | `DataTable hiddenColumns` + `DataTableColumnsMenu` |
 
 ### Marketing pages
 
@@ -131,13 +143,32 @@ Token layering, in order — never skip one:
 Interaction states (hover, focus, pressed, selected, disabled) belong in the recipe layer, not in
 per-component class strings.
 
-When adding a component:
-1. Export it from `packages/react/src/index.ts`
-2. Add a catalog row in `apps/website/src/data/navigation.ts`
-3. Add a live demo in `apps/website/src/demos/`
-4. Add a canonical snippet in `apps/website/src/data/agent-snippets.ts`
-5. Add API rows in `apps/website/src/docs/api.ts` and an intro in `docs/intros.ts`
+Overlays share one dismissable-layer stack (`lib/layer-stack.ts`: `useDismissLayer`, `lockScroll`)
+and one z-index scale (`--spk-z-*` = `OVERLAY_Z_INDEX`). New overlays must use both — never
+hand-roll Escape or outside-click listeners.
 
-Run `npm test` and `npm run typecheck` before opening a PR.
+When adding a component:
+1. Export it from `packages/react/src/index.ts` (TSDoc on props becomes the API table)
+2. Add a demo file in `apps/website/src/demos/app/<slug>.tsx` — it is both the live preview and the
+   code shown on the page — and a docs entry in `apps/website/src/docs/app-catalog.ts`
+3. Regenerate: `npm run docs:api` (props from TypeScript) and `npm run docs:demos` (demo sources)
+4. Add a canonical snippet in `apps/website/src/data/agent-snippets.ts`
+5. If it uses a utility class with no rule, the utilities-coverage test fails — add the rule in
+   `packages/tokens/src/utilities.css`, or a recipe in `app-components.css`
+6. Add a changeset: `npx changeset` (a new component is `minor`)
+
+Checks (run before opening a PR):
+
+| Command | What it proves |
+|---|---|
+| `npm test` | Unit and component tests; generated API and demo sources are current; every docs example compiles; theme contrast; utility coverage |
+| `npm run typecheck` | Packages and website typecheck |
+| `npm run test:e2e` | Playwright in Chromium (desktop, tablet, phone): responsive overflow, axe WCAG 2.2 AA, flows, visual baselines. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to use a system Chromium; `PW_BROWSERS=chromium,firefox,webkit` adds Firefox and WebKit (desktop + phone). CI (`.github/workflows/ci.yml`) runs all three engines |
+| `npm run test:e2e -- --update-snapshots` | Only after reviewing an intended visual change (local baselines) |
+| commit message containing `[update-visual-baselines]` | CI re-renders its own baselines (`e2e/__screenshots__/ci`) and commits them to the branch — review the images in that commit |
+
+Versioned docs (see `docs/releasing.md`): `npm run release:docs -- <site-dir>` builds the root and an
+immutable `/docs/vX.Y.Z/` snapshot after `npm run version-packages`; `npm run release:docs:next -- <site-dir>`
+builds `/next/`. Neither publishes or deploys. Never edit or delete an existing `docs/v*` snapshot.
 
 Design language: [`DESIGN.md`](DESIGN.md) · Audit and rationale: [`docs/redesign/AUDIT.md`](docs/redesign/AUDIT.md)

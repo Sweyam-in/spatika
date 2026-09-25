@@ -7,6 +7,9 @@ describe("main", () => {
   const originalScrollIntoView = HTMLElement.prototype.scrollIntoView;
 
   beforeAll(async () => {
+    // Pages are code-split; load the one this suite navigates to so the route renders without
+    // waiting on a cold module transform.
+    await import("./pages/GuidesPage");
     vi.spyOn(window, "scrollTo").mockImplementation(() => {});
     const rootEl = document.createElement("div");
     rootEl.id = "root";
@@ -49,8 +52,9 @@ describe("main", () => {
 
     await user.click(screen.getByRole("link", { name: "Get started" }));
 
-    expect(screen.getByRole("heading", { level: 1, name: "Guides" })).toBeInTheDocument();
-    expect(scrollIntoView).toHaveBeenCalled();
-    expect(window.scrollTo).not.toHaveBeenCalled();
+    expect(await screen.findByRole("heading", { level: 1, name: "Guides" })).toBeInTheDocument();
+    // The Guides page loads lazily: the page starts at the top, then jumps to the linked anchor
+    // once it renders.
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
   });
 });

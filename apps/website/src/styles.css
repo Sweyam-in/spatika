@@ -1792,7 +1792,9 @@ a.docs-sidebar-all.active {
   place-items: center;
 }
 
-.demo-block-preview > * {
+/* Zero specificity: a default that keeps demos inside the panel without overriding a
+ * demo's own max-w-* utility. */
+:where(.demo-block-preview > *) {
   max-width: 100%;
 }
 
@@ -1891,6 +1893,7 @@ a.docs-sidebar-all.active {
 }
 
 .api-table-wrap {
+  container-type: inline-size;
   overflow-x: auto;
   border-radius: 0.8rem;
   border: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
@@ -1933,6 +1936,66 @@ a.docs-sidebar-all.active {
   font-size: 0.75em;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* Narrow containers (phones, the 3-column docs layout) stack each prop into a labelled
+ * block instead of squeezing four columns into a few characters each. */
+@container (max-width: 34rem) {
+  .api-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .api-table,
+  .api-table tbody,
+  .api-table tr,
+  .api-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .api-table tr {
+    padding: 0.7rem 0.85rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+  }
+
+  .api-table tr:last-child {
+    border-bottom: 0;
+  }
+
+  .api-table td,
+  .api-table td:nth-child(1),
+  .api-table td:nth-child(2),
+  .api-table td:nth-child(3) {
+    padding: 0.15rem 0;
+    border: 0;
+    white-space: normal;
+  }
+
+  .api-table td[data-label]:not([data-label="Name"])::before {
+    content: attr(data-label) " ";
+    display: inline-block;
+    min-width: 5.5rem;
+    color: var(--muted-foreground);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .api-table td[data-label="Name"] code {
+    font-weight: 600;
+  }
+
+  .api-table td[data-label="Description"] {
+    padding-top: 0.35rem;
+  }
+
+  .api-table td[data-label="Description"]::before {
+    display: block;
+  }
 }
 
 .related-chips {
@@ -4150,4 +4213,248 @@ pre {
   border-radius: var(--spk-radius-sm);
   border-color: var(--spk-border-subtle);
   background: var(--spk-surface-subtle);
+}
+
+/* ── Docs search ─────────────────────────────────────────────────────────── */
+
+.docs-search-trigger {
+  width: 14rem;
+}
+
+.docs-search-icon {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .docs-search-trigger {
+    display: none;
+  }
+
+  .docs-search-icon {
+    display: inline-flex;
+  }
+}
+
+/* ── Versions ────────────────────────────────────────────────────────────── */
+
+.docs-version-trigger {
+  font-variant-numeric: tabular-nums;
+}
+
+.docs-version-menu {
+  min-width: 15rem;
+}
+
+.docs-version-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem 0.75rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--spk-border-subtle);
+  background: var(--spk-warning-muted);
+  color: var(--spk-text-primary);
+  font-size: var(--spk-text-body-sm);
+  text-align: center;
+}
+
+.docs-version-banner a {
+  color: var(--spk-accent-text);
+  font-weight: var(--spk-weight-medium);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.version-table code {
+  white-space: nowrap;
+}
+
+/* ── Resource pages ──────────────────────────────────────────────────────── */
+
+.resource-page {
+  min-width: 0;
+  max-width: 52rem;
+}
+
+.resource-policy {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.resource-policy > div {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--spk-border-subtle);
+}
+
+.resource-policy dt {
+  font-weight: var(--spk-weight-semibold);
+}
+
+.resource-policy dd {
+  margin: 0;
+  color: var(--spk-text-secondary);
+}
+
+/* The header also carries search and the version menu: keep the four-way theme picker for wide
+ * screens and use the compact theme button below that. */
+@media (max-width: 1439px) {
+  .theme-picker {
+    display: none !important;
+  }
+
+  .theme-picker-mobile {
+    display: inline-flex !important;
+  }
+}
+
+/* Header fit: the full nav, search field and npm links need ~1180px next to the version menu
+ * and theme switch. Below that the menu toggle and search icon take over; below 560px the
+ * version menu and theme switch move into the menu panel. */
+.header-version,
+.header-theme {
+  display: inline-flex;
+  align-items: center;
+}
+
+.mobile-nav-settings {
+  display: none;
+}
+
+@media (max-width: 1179px) {
+  .site-nav {
+    display: none !important;
+  }
+
+  .mobile-nav-toggle {
+    display: inline-flex !important;
+  }
+
+  .header-npm-link {
+    display: none !important;
+  }
+
+  .docs-search-trigger {
+    display: none !important;
+  }
+
+  .docs-search-icon {
+    display: inline-flex !important;
+  }
+}
+
+@media (max-width: 559px) {
+  .header-version,
+  .header-theme {
+    display: none;
+  }
+
+  .mobile-nav-settings {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--spk-border-subtle);
+  }
+}
+
+/* Long URLs (the agent Markdown link on long slugs) wrap instead of widening the page. */
+.component-doc-main p a,
+.resource-page p a {
+  overflow-wrap: anywhere;
+}
+
+/* ── Playground ──────────────────────────────────────────────────────────── */
+
+.playground {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.playground-stage {
+  overflow: hidden;
+  border: 1px solid var(--spk-border);
+  border-radius: var(--spk-radius-md);
+}
+
+.playground-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--spk-border-subtle);
+  background: var(--spk-surface-subtle);
+}
+
+.playground-theme {
+  width: 8.5rem;
+}
+
+.playground-toolbar > :last-child {
+  margin-left: auto;
+}
+
+.playground-canvas {
+  padding: 1rem;
+  background: var(--spk-surface-sunken);
+}
+
+.playground-frame {
+  display: grid;
+  place-items: center;
+  min-height: 9rem;
+  margin-inline: auto;
+  padding: 1.5rem;
+  border: 1px solid var(--spk-border-subtle);
+  border-radius: var(--spk-radius-sm);
+  background: var(--spk-canvas);
+  color: var(--spk-text-primary);
+  transition: max-width var(--spk-motion-layout);
+}
+
+.playground-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.75rem 1rem;
+  align-items: end;
+}
+
+.playground-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-height: var(--spk-control-h-sm);
+  padding: 0 0.625rem;
+  border: 1px solid var(--spk-border-subtle);
+  border-radius: var(--spk-radius-sm);
+  font-size: var(--spk-text-body-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playground-frame {
+    transition: none;
+  }
+}
+
+.route-fallback {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 52rem;
+  margin: 3rem auto;
+  padding: 0 1.25rem;
+}
+
+/* Placeholder while a code-split demo (the editor) loads. */
+.demo-loading {
+  min-height: 12rem;
+  border-radius: var(--spk-radius-md);
+  background: var(--spk-surface-sunken);
 }

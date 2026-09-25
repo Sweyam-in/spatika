@@ -1,3 +1,5 @@
+import { APP_DOCS } from "../docs/app-catalog";
+
 export type NavItem = { label: string; to: string };
 
 export const topNav: NavItem[] = [
@@ -6,6 +8,7 @@ export const topNav: NavItem[] = [
   { label: "Customize", to: "/customize" },
   { label: "Guides", to: "/guides" },
   { label: "Showcase", to: "/showcase" },
+  { label: "Resources", to: "/changelog" },
 ];
 
 export const designNav: NavItem[] = [
@@ -43,6 +46,14 @@ export const guideNav: NavItem[] = [
   { label: "Contribute", to: "/guides#contribute" },
 ];
 
+/** Release notes, versions, migration and project resources. */
+export const resourcesNav: NavItem[] = [
+  { label: "Release notes", to: "/changelog" },
+  { label: "Versions & support", to: "/versions" },
+  { label: "Migration guide", to: "/migration" },
+  { label: "Accessibility", to: "/accessibility" },
+];
+
 export type ComponentEntry = {
   slug: string;
   name: string;
@@ -51,6 +62,7 @@ export type ComponentEntry = {
     | "Layout"
     | "Navigation"
     | "Feedback"
+    | "Overlays"
     | "Media"
     | "Forms"
     | "Data"
@@ -79,7 +91,7 @@ export function componentImportCode(entry: ComponentEntry): string {
   return lines.join("\n");
 }
 
-export const components: ComponentEntry[] = [
+const baseComponents: ComponentEntry[] = [
   { slug: "button", name: "Button", category: "Primitives", description: "Actions in five weights — primary, secondary, ghost, soft and destructive — with density-aware sizes and a loading state.", importName: "Button" },
   { slug: "button-group", name: "ButtonGroup", category: "Primitives", description: "A row of related actions that read as one control — perfect for toolbars and split decisions.", importName: "ButtonGroup" },
   { slug: "icon-button", name: "IconButton", category: "Primitives", description: "A compact square button for icons only — pair it with aria-label so everyone knows what it does.", importName: "IconButton" },
@@ -140,7 +152,7 @@ export const components: ComponentEntry[] = [
   { slug: "mobile-stepper", name: "MobileStepper", category: "Navigation", description: "Compact step progress for small screens — dots, text, or a thin bar.", importName: "MobileStepper" },
   { slug: "app-bar", name: "AppBar", category: "Navigation", description: "A flexible sticky bar if you're building chrome from scratch — most apps start with AppHeader instead.", importName: "AppBar" },
   { slug: "bottom-navigation", name: "BottomNavigation", category: "Navigation", description: "Labeled icon tabs along the bottom — MobileTabBar is what we use in Spatika product shells.", importName: "BottomNavigation" },
-  { slug: "menu", name: "Menu", category: "Navigation", description: "An anchored menu of actions — click the trigger, pick an item, focus returns cleanly.", importName: "Menu" },
+  { slug: "menu", name: "Menu", category: "Overlays", description: "An anchored menu of actions — click the trigger, pick an item, focus returns cleanly.", importName: "Menu" },
   { slug: "breadcrumb", name: "Breadcrumb", category: "Navigation", description: "Show where someone is in a hierarchy — chevrons between clickable crumbs.", importName: "Breadcrumb" },
   { slug: "pagination", name: "Pagination", category: "Navigation", description: "Step through pages of results — prev and next with room for page numbers.", importName: "Pagination" },
   { slug: "speed-dial", name: "SpeedDial", category: "Navigation", description: "A FAB that fans out related shortcuts — secondary actions without cluttering the bar.", importName: "SpeedDial" },
@@ -164,9 +176,9 @@ export const components: ComponentEntry[] = [
   { slug: "empty-state", name: "EmptyState", category: "Feedback", description: "What people see when there's nothing yet — illustration, copy, and a clear next step.", importName: "EmptyState" },
   { slug: "toast", name: "Toaster", category: "Feedback", description: "Transient notifications that stack in a corner — quick confirmations and gentle nudges.", importName: "Toaster" },
   { slug: "snackbar", name: "Snackbar", category: "Feedback", description: "One anchored message with an optional action — Undo, Retry, that kind of thing.", importName: "Snackbar" },
-  { slug: "dialog", name: "Dialog", category: "Feedback", description: "A titled modal over a dimmed backdrop — confirmations, forms, and focused tasks.", importName: "Dialog" },
-  { slug: "modal", name: "Modal", category: "Feedback", description: "A low-level overlay when you need a custom surface — reach for Dialog first if you want chrome.", importName: "Modal" },
-  { slug: "tooltip", name: "Tooltip", category: "Feedback", description: "A short hint on hover or focus — great for icon buttons, not for essential instructions.", importName: "Tooltip" },
+  { slug: "dialog", name: "Dialog", category: "Overlays", description: "A titled modal over a dimmed backdrop — confirmations, forms, and focused tasks.", importName: "Dialog" },
+  { slug: "modal", name: "Modal", category: "Overlays", description: "A low-level overlay when you need a custom surface — reach for Dialog first if you want chrome.", importName: "Modal" },
+  { slug: "tooltip", name: "Tooltip", category: "Overlays", description: "A short hint on hover or focus — great for icon buttons, not for essential instructions.", importName: "Tooltip" },
   { slug: "data-table", name: "DataTable", category: "Data", description: "Sorting, selection with bulk actions, pinned columns, sticky header, expandable rows and a stacked list on phones.", importName: "DataTable" },
   { slug: "metric", name: "Metric", category: "Data", description: "A typography-led KPI — value, delta, comparison caption and optional sparkline, with tabular numerals.", importName: "Metric" },
   { slug: "table", name: "Table", category: "Data", description: "Semantic tables with header, body, and footer — data grids that screen readers understand.", importName: "Table" },
@@ -231,12 +243,25 @@ export const components: ComponentEntry[] = [
   { slug: "rich-text-editor", name: "RichTextEditor", category: "Editor", description: "Still here for older screens. For anything new, SpatikaEditor is the way to go.", importName: "RichTextEditor" },
 ];
 
+/** Every documented component: the hand-maintained rows plus the demo-file catalog. */
+export const components: ComponentEntry[] = [
+  ...baseComponents,
+  ...APP_DOCS.map(({ slug, name, category, description, importName }) => ({
+    slug,
+    name,
+    category,
+    description,
+    importName,
+  })),
+];
+
 export const componentCategories = [
   "Primitives",
   "Forms",
   "Layout",
   "Navigation",
   "Feedback",
+  "Overlays",
   "Media",
   "Data",
   "Marketing",

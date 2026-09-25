@@ -185,7 +185,12 @@ function FinanceScreen() {
                 <IconButton aria-label="Notifications" size="sm">
                   <Bell />
                 </IconButton>
-                <Button size="sm" leadingIcon={<Plus />} onClick={() => toast({ title: "New transaction", description: "The form would open here." })}>
+                <Button
+                  size="sm"
+                  aria-label="Add transaction"
+                  leadingIcon={<Plus />}
+                  onClick={() => toast({ title: "New transaction", description: "The form would open here." })}
+                >
                   <span className="max-sm:hidden">Add transaction</span>
                 </Button>
               </>
@@ -264,7 +269,7 @@ function FinanceScreen() {
               <Metric label="Cash" value={40_570.55} format="currency" precision={0} delta={0.012} caption="2 accounts" chart={<SparkLineChart data={[38, 39.2, 38.6, 40.1, 39.7, 40.6]} height={28} color="var(--spk-viz-2)" />} />
               <Metric label="Investments" value={191_240.32} format="currency" precision={0} delta={0.052} caption="YTD +11.4%" chart={<SparkLineChart data={[170, 174, 176, 181, 186, 191]} height={28} color="var(--spk-viz-4)" />} />
               <Metric label="Credit card" value={2_184.1} format="currency" precision={0} delta={0.14} deltaIntent="inverse" caption="Due Sep 28" chart={<SparkLineChart data={[1.6, 2.4, 1.9, 2.8, 2.1, 2.18]} height={28} color="var(--spk-viz-6)" />} />
-              <Metric label="Spent this month" value={spendTotal} format="currency" precision={0} delta={-0.06} deltaIntent="inverse" caption="of $4,500 budget" chart={<Progress value={spendTotal} max={4_500} size="xs" />} />
+              <Metric label="Spent this month" value={spendTotal} format="currency" precision={0} delta={-0.06} deltaIntent="inverse" caption="of $4,500 budget" chart={<Progress value={spendTotal} max={4_500} size="xs" aria-label="Monthly budget used" />} />
             </MetricGroup>
           </Card>
 
@@ -377,7 +382,13 @@ function FinanceScreen() {
                     <p className="spk-numeric" style={{ margin: 0 }}>
                       <strong>{money(goal.saved, 0)}</strong> <span className="screen-muted">of {money(goal.target, 0)}</span>
                     </p>
-                    <Progress value={goal.saved} max={goal.target} tone={pct > 0.8 ? "success" : pct < 0.45 ? "warning" : "accent"} />
+                    <Progress
+                      value={goal.saved}
+                      max={goal.target}
+                      tone={pct > 0.8 ? "success" : pct < 0.45 ? "warning" : "accent"}
+                      aria-label={`${goal.name} saved`}
+                      aria-valuetext={`${money(goal.saved, 0)} of ${money(goal.target, 0)}`}
+                    />
                     <p className="screen-muted" style={{ margin: 0 }}>
                       {goal.note}
                     </p>

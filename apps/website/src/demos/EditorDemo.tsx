@@ -1,5 +1,5 @@
 import { EditorContent } from "@tiptap/react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { EditorToolbar, SpatikaEditor, useSpatikaEditor } from "@spatika/editor";
 import { RichTextEditor } from "@spatika/react";
 
@@ -8,6 +8,12 @@ const MENTIONS = [
   { id: "dev", label: "Dev Kapoor", subtitle: "Engineering" },
   { id: "mira", label: "Mira Shah", subtitle: "Product" },
 ];
+
+/** One editor demo by slug — the default export ComponentDemo loads lazily (Tiptap is large). */
+export default function EditorDemo({ slug, compact }: { slug: string; compact: boolean }) {
+  const demos: Record<string, ReactNode> = editorDemo(compact);
+  return <>{demos[slug] ?? null}</>;
+}
 
 export function editorDemo(compact: boolean) {
   return {

@@ -10,6 +10,7 @@ import {
 } from "react";
 import { AlertTriangle, CheckCircle2, Info, OctagonAlert, X } from "lucide-react";
 import { cn } from "../lib/cn";
+import { OVERLAY_Z_INDEX } from "../lib/overlay-stack";
 
 export type ToastTone = "default" | "success" | "warn" | "danger" | "info";
 
@@ -112,10 +113,11 @@ export function Toaster({ children, className, position = "bottom-right" }: Toas
         aria-label="Notifications"
         aria-live="polite"
         className={cn(
-          "pointer-events-none fixed z-[200] flex w-[min(calc(100vw-2rem),22rem)] flex-col gap-2",
+          "pointer-events-none fixed flex w-[min(calc(100vw-2rem),22rem)] flex-col gap-2",
           positionClass,
           className,
         )}
+        style={{ zIndex: OVERLAY_Z_INDEX.toast }}
       >
         {toasts.map((t) => {
           const tone = t.tone ?? "default";
@@ -124,13 +126,20 @@ export function Toaster({ children, className, position = "bottom-right" }: Toas
               key={t.id}
               data-slot="toast"
               data-tone={tone}
-              role={tone === "danger" ? "alert" : "status"}
+              // The persistent section is the polite live region; only danger interrupts.
+              role={tone === "danger" ? "alert" : undefined}
               className="spk-overlay spk-animate-toast pointer-events-auto flex items-start gap-2.5 p-3"
             >
               {toneIcon[tone] ? <span className="mt-0.5 shrink-0">{toneIcon[tone]}</span> : null}
               <div className="min-w-0 flex-1">
                 <p className="text-body font-medium text-fg">{t.title}</p>
-                {t.description ? <p className="mt-0.5 text-body-sm text-fg-secondary">{t.description}</p> : null}
+                {/* The space keeps title and description apart in the live region's announcement. */}
+                {t.description ? (
+                  <>
+                    {" "}
+                    <p className="mt-0.5 text-body-sm text-fg-secondary">{t.description}</p>
+                  </>
+                ) : null}
               </div>
               {t.action ? (
                 <button

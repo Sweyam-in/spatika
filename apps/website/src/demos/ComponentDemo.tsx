@@ -1,3 +1,4 @@
+import { appDemos } from "./AppDemos";
 import { systemDemos } from "./SystemDemos";
 import { marketingDemos } from "./MarketingDemos";
 import {
@@ -153,7 +154,6 @@ import {
 } from "@spatika/react";
 import { SpatikaLogo } from "@/components/SpatikaLogo";
 import { chartDemos } from "@/demos/ChartDemos";
-import { editorDemo } from "@/demos/EditorDemo";
 import {
   AlignCenter,
   AlignLeft,
@@ -170,7 +170,12 @@ import {
   SlidersHorizontal,
   User,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { lazy, Suspense, useState, type ReactNode } from "react";
+
+// Tiptap is the largest dependency on the site; only the editor pages load it. Keep in step with
+// editorDemo() (ComponentDemo.test checks).
+const EditorDemo = lazy(() => import("@/demos/EditorDemo"));
+export const EDITOR_SLUGS = ["spatika-editor", "use-spatika-editor", "rich-text-editor"];
 
 type ComponentDemoProps = {
   slug: string;
@@ -1319,7 +1324,15 @@ export function ComponentDemo({ slug, compact = false, bare = false }: Component
     ...systemDemos(compact),
     ...marketingDemos(compact),
     ...chartDemos(compact),
-    ...editorDemo(compact),
+    ...Object.fromEntries(
+      EDITOR_SLUGS.map((editorSlug) => [
+        editorSlug,
+        <Suspense key={editorSlug} fallback={<div className="demo-loading" role="status" aria-label="Loading editor" />}>
+          <EditorDemo slug={editorSlug} compact={compact} />
+        </Suspense>,
+      ]),
+    ),
+    ...appDemos,
   };
 
   const preview = demos[slug] ?? <p>Preview coming soon.</p>;

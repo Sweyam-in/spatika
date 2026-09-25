@@ -171,13 +171,16 @@ export function useSpatikaEditor(options: UseSpatikaEditorOptions) {
     editorRef.current = editor;
   }, [editor]);
 
+  // useEditor can hand back an instance that React StrictMode's delayed cleanup has already
+  // destroyed (its schema is gone); touching it throws, so the sync effects skip it and run
+  // again with the replacement instance.
   useEffect(() => {
-    if (!editor) return;
+    if (!editor || editor.isDestroyed) return;
     editor.setEditable(!options.disabled);
   }, [editor, options.disabled]);
 
   useEffect(() => {
-    if (!editor) return;
+    if (!editor || editor.isDestroyed) return;
     const current = editor.getHTML();
     if (options.value !== current) {
       editor.commands.setContent(options.value, { emitUpdate: false });

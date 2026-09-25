@@ -47,6 +47,7 @@ function lookupFile(urlPath: string) {
 }
 
 export function spatikaAgentDocsPlugin(): Plugin {
+  let outDir = path.resolve(__dirname, "dist");
   return {
     name: "spatika-agent-docs",
     configureServer(server) {
@@ -64,8 +65,11 @@ export function spatikaAgentDocsPlugin(): Plugin {
         res.end(file.body);
       });
     },
+    configResolved(config) {
+      outDir = path.resolve(config.root, config.build.outDir);
+    },
     closeBundle() {
-      const dist = path.resolve(__dirname, "dist");
+      const dist = outDir;
       if (!fs.existsSync(dist)) return;
       writeGenerated(dist);
     },

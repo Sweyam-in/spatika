@@ -55,11 +55,11 @@ function Snackbar({
         role="status"
         data-slot="snackbar"
         className={cn(
-          "spk-overlay spk-animate-toast fixed z-[11000] flex max-w-sm items-center gap-3 px-3.5 py-2.5 text-body",
+          "spk-overlay spk-animate-toast fixed flex max-w-sm items-center gap-3 px-3.5 py-2.5 text-body",
           originClass[key],
           className,
         )}
-        style={fixedLayerStyle(OVERLAY_Z_INDEX.modal)}
+        style={fixedLayerStyle(OVERLAY_Z_INDEX.toast)}
         {...props}
       >
         <div className="min-w-0 flex-1">{message ?? children}</div>

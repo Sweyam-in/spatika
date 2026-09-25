@@ -213,6 +213,30 @@
     outline-offset: 2px;
   }
 
+  /* Keyboard navigation: the plot is one tab stop; the point being read is outlined. */
+  .spk-chart-surface:focus-visible {
+    outline: 2px solid var(--spk-focus);
+    outline-offset: 4px;
+    border-radius: var(--spk-radius-sm);
+  }
+
+  /* Keyboard anchors on lines drawn without point marks. */
+  .spk-chart-anchor {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .spk-chart-anchor[data-chart-active] {
+    opacity: 1;
+  }
+
+  /* The focus colour meets 3:1 against every surface (theme contrast test). */
+  .spk-chart-mark[data-chart-active],
+  .spk-chart-mark[data-chart-active] > * {
+    stroke: var(--spk-focus);
+    stroke-width: 3px;
+  }
+
   .spk-chart-ref-line {
     stroke-width: 1;
     stroke-dasharray: 4 3;

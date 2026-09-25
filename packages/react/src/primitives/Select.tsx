@@ -21,6 +21,21 @@ type SelectContextValue = {
   registerItemText: (value: string, text: string) => void;
   labelsVersion: number;
   disabled?: boolean;
+  contentId: string;
+  /** Field wiring from a wrapping FormField, applied to the trigger. */
+  fieldProps: SelectFieldProps;
+};
+
+/**
+ * Attributes a FormField (or any wrapper) injects into its child. Select has no DOM root, so
+ * they are forwarded to the trigger — the element that needs the label and description.
+ */
+type SelectFieldProps = {
+  id?: string;
+  "aria-labelledby"?: string;
+  "aria-describedby"?: string;
+  "aria-invalid"?: boolean | "true" | "false";
+  "aria-required"?: boolean | "true" | "false";
 };
 
 const SelectContext = React.createContext<SelectContextValue | null>(null);
@@ -33,7 +48,7 @@ function useSelectContext(component: string) {
   return ctx;
 }
 
-type SelectProps = {
+type SelectProps = SelectFieldProps & {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -53,6 +68,7 @@ function Select({
   onOpenChange,
   disabled,
   children,
+  ...fieldProps
 }: SelectProps) {
   const [value, setValue] = useControllableState({
     prop: valueProp,
@@ -68,6 +84,7 @@ function Select({
   const contentRef = React.useRef<HTMLDivElement | null>(null);
   const itemTextByValue = React.useRef(new Map<string, string>());
   const [labelsVersion, setLabelsVersion] = React.useState(0);
+  const contentId = `${React.useId()}-listbox`;
 
   const registerItemText = React.useCallback((itemValue: string, text: string) => {
     const prev = itemTextByValue.current.get(itemValue);
@@ -90,6 +107,8 @@ function Select({
         registerItemText,
         labelsVersion,
         disabled,
+        contentId,
+        fieldProps,
       }}
     >
       {children}
@@ -132,16 +151,25 @@ const SelectTrigger = React.forwardRef<
     size?: "sm" | "default";
   }
 >(({ className, size = "default", children, onClick, disabled: disabledProp, ...props }, ref) => {
-  const { open, setOpen, triggerRef, disabled } = useSelectContext("SelectTrigger");
+  const { open, setOpen, triggerRef, disabled, contentId, fieldProps } = useSelectContext("SelectTrigger");
+  // Name = label + current value ("Plan, Pro"): labelled by the field label and by itself.
+  const labelledBy =
+    fieldProps["aria-labelledby"] && fieldProps.id
+      ? `${fieldProps["aria-labelledby"]} ${fieldProps.id}`
+      : fieldProps["aria-labelledby"];
 
   return (
     <button
       ref={composeRefs(ref, triggerRef)}
+      {...fieldProps}
+      aria-labelledby={labelledBy}
       type="button"
       data-slot="select-trigger"
       data-size={size}
       data-state={open ? "open" : "closed"}
+      aria-haspopup="listbox"
       aria-expanded={open}
+      aria-controls={open ? contentId : undefined}
       disabled={disabled || disabledProp}
       className={cn(
         "spk-field justify-between gap-2 overflow-hidden text-left whitespace-nowrap data-[size=sm]:h-[var(--spk-control-h-sm)] *:data-[placeholder]:text-fg-tertiary *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:min-w-0 *:data-[slot=select-value]:flex-1 *:data-[slot=select-value]:overflow-hidden *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -174,9 +202,22 @@ const SelectContent = React.forwardRef<
     position?: "popper" | "item-aligned";
   }
 >(({ className, children, position = "popper", style, ...props }, ref) => {
-  const { open, setOpen, triggerRef, contentRef, registerItemText } =
+  const { open, setOpen, triggerRef, contentRef, registerItemText, contentId } =
     useSelectContext("SelectContent");
   const zIndex = useOverlayZIndex(OVERLAY_Z_INDEX.select);
+  const typeahead = React.useRef({ query: "", timer: 0 });
+
+  // Escape, Tab and outside presses unmount the list; hand focus back to the trigger.
+  React.useEffect(() => {
+    if (!open) return;
+    const list = contentRef.current;
+    return () => {
+      const active = document.activeElement;
+      if (!active || active === document.body || list?.contains(active)) {
+        triggerRef.current?.focus({ preventScroll: true });
+      }
+    };
+  }, [open, contentRef, triggerRef]);
 
   const floating = useFloatingPosition({
     open,
@@ -192,15 +233,6 @@ const SelectContent = React.forwardRef<
     onDismiss: () => setOpen(false),
     refs: [triggerRef, contentRef],
   });
-
-  React.useEffect(() => {
-    if (!open) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, setOpen]);
 
   // While closed, register option labels without mounting visible item text in the DOM.
   React.useEffect(() => {
@@ -261,6 +293,17 @@ const SelectContent = React.forwardRef<
       (document.activeElement as HTMLElement | null)?.click();
     } else if (event.key === "Tab") {
       setOpen(false);
+    } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      // Type-ahead: jump to the next option whose label starts with the typed text.
+      const state = typeahead.current;
+      window.clearTimeout(state.timer);
+      state.query += event.key.toLowerCase();
+      state.timer = window.setTimeout(() => {
+        state.query = "";
+      }, 500);
+      const query = /^(.)\1+$/.test(state.query) ? state.query[0] : state.query;
+      const ordered = [...options.slice(index + 1), ...options.slice(0, index + 1)];
+      ordered.find((option) => (option.textContent ?? "").trim().toLowerCase().startsWith(query))?.focus();
     }
   };
 
@@ -283,10 +326,11 @@ const SelectContent = React.forwardRef<
         data-slot="select-content"
         data-state="open"
         data-side={floating?.side ?? "bottom"}
+        id={contentId}
         role="listbox"
         onKeyDown={handleListKeyDown}
         className={cn(
-          "spk-overlay spk-animate-pop relative z-[200] max-h-[min(20rem,var(--select-available-height,20rem))] min-w-[8rem] overflow-x-hidden overflow-y-auto",
+          "spk-overlay spk-animate-pop relative max-h-[min(20rem,var(--select-available-height,20rem))] min-w-[8rem] overflow-x-hidden overflow-y-auto",
           className,
         )}
         {...props}

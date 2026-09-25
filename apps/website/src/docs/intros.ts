@@ -1,4 +1,5 @@
 import type { ComponentEntry } from "../data/navigation";
+import { getAppDoc } from "./app-catalog";
 
 const intros: Record<string, string> = {
   "lead-form": "LeadForm is the email capture that does the actual converting — the newsletter row under a hero, the waitlist block, the \"talk to us\" form. Hand it an `onSubmit` that returns a promise and it handles the rest: the button goes pending, success is announced politely through a live region, and a rejection flips it to an error state. Extra fields go in as `children` and submit with it; pass `formAction` instead if you are posting straight to a Formspree or Mailchimp endpoint.",
@@ -258,7 +259,7 @@ const intros: Record<string, string> = {
 };
 
 export function getIntro(entry: ComponentEntry): string {
-  const named = intros[entry.slug];
+  const named = intros[entry.slug] ?? getAppDoc(entry.slug)?.intro;
   if (named) return named;
   const lead = entry.description.endsWith(".") ? entry.description : `${entry.description}.`;
   const pkg =

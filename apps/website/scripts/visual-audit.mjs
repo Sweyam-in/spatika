@@ -27,6 +27,7 @@ const routeFilter = args
   .filter(Boolean);
 
 const viewports = [
+  { name: "small-mobile", width: 320, height: 568 },
   { name: "mobile", width: 390, height: 844 },
   { name: "tablet", width: 768, height: 1024 },
   { name: "desktop", width: 1280, height: 900 },
@@ -34,6 +35,11 @@ const viewports = [
 
 const fixedRoutes = [
   "/",
+  "/changelog",
+  "/versions",
+  "/migration",
+  "/accessibility",
+  "/docs/v2.3.0/components/button",
   "/design",
   "/components",
   "/customize",
@@ -104,7 +110,10 @@ async function main() {
 
   const componentRoutes = (await readComponentSlugs()).map((slug) => `/components/${slug}`);
   const routes = routeFilter?.length ? routeFilter : [...fixedRoutes, ...componentRoutes];
-  const browser = await chromium.launch();
+  // PLAYWRIGHT_CHROMIUM_EXECUTABLE lets CI images with a preinstalled Chromium skip the download.
+  const browser = await chromium.launch({
+    executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined,
+  });
   const failures = [];
   const report = [];
   const totalChecks = routes.length * viewports.length;
@@ -113,6 +122,14 @@ async function main() {
   for (const viewport of viewports) {
     const context = await browser.newContext({ viewport });
     const page = await context.newPage();
+    // Only the site under test matters: stub third-party requests (fonts, analytics) so an
+    // offline or sandboxed runner doesn't report their network failures as page errors.
+    const origin = new URL(baseUrl).origin;
+    await page.route("**/*", (route) =>
+      new URL(route.request().url()).origin === origin || route.request().url().startsWith("data:")
+        ? route.continue()
+        : route.fulfill({ status: 204, body: "" }),
+    );
 
     for (const route of routes) {
       const url = new URL(route, baseUrl).toString();

@@ -5,6 +5,8 @@ import { Portal } from "../lib/portal";
 import { Slot } from "../lib/slot";
 import { useControllableState } from "../lib/use-controllable-state";
 import { useFocusTrap } from "../lib/use-focus-trap";
+import { useDismissLayer } from "../lib/layer-stack";
+import { useIsomorphicLayoutEffect } from "../lib/use-isomorphic-layout-effect";
 import { cn } from "../lib/cn";
 import { ModalDepthProvider, OVERLAY_Z_INDEX, fixedLayerStyle } from "../lib/overlay-stack";
 
@@ -14,7 +16,21 @@ type DialogContextValue = {
   contentRef: React.RefObject<HTMLDivElement | null>;
   titleId: string;
   descriptionId: string;
+  /** Ids of the mounted title / description, so aria references never dangle. */
+  labelledBy?: string;
+  describedBy?: string;
+  registerTitle: (id: string | undefined) => void;
+  registerDescription: (id: string | undefined) => void;
 };
+
+/** Reports a mounted title / description id to the dialog so `aria-*` references stay valid. */
+function useRegisterId(register: ((id: string | undefined) => void) | undefined, id: string | undefined) {
+  useIsomorphicLayoutEffect(() => {
+    if (!register) return;
+    register(id);
+    return () => register(undefined);
+  }, [register, id]);
+}
 
 const DialogContext = React.createContext<DialogContextValue | null>(null);
 
@@ -39,6 +55,8 @@ const Dialog = ({ open: openProp, defaultOpen, onOpenChange, children }: DialogP
   });
   const contentRef = React.useRef<HTMLDivElement | null>(null);
   const id = React.useId();
+  const [labelledBy, registerTitle] = React.useState<string | undefined>();
+  const [describedBy, registerDescription] = React.useState<string | undefined>();
 
   // Provider-only root — no DOM wrapper (matches Radix Root / Select / DropdownMenu).
   return (
@@ -49,6 +67,10 @@ const Dialog = ({ open: openProp, defaultOpen, onOpenChange, children }: DialogP
         contentRef,
         titleId: `${id}-title`,
         descriptionId: `${id}-description`,
+        labelledBy,
+        describedBy,
+        registerTitle,
+        registerDescription,
       }}
     >
       {children}
@@ -144,6 +166,10 @@ const DialogContent = React.forwardRef<
     mobileLayout?: "sheet" | "dialog";
     /** `top` anchors near the top of the viewport (command palettes, search). */
     position?: "center" | "top";
+    /** Called when Escape would close the dialog. `event.preventDefault()` keeps it open. */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /** Called when the scrim is clicked. `event.preventDefault()` keeps the dialog open. */
+    onInteractOutside?: (event: React.MouseEvent<HTMLDivElement>) => void;
   }
 >(
   (
@@ -157,36 +183,34 @@ const DialogContent = React.forwardRef<
       hideClose,
       mobileLayout = "sheet",
       position = "center",
+      onEscapeKeyDown,
+      onInteractOutside,
       ...props
     },
     ref,
   ) => {
-    const { open, setOpen, contentRef, titleId, descriptionId } = useDialogContext("DialogContent");
+    const { open, setOpen, contentRef, labelledBy, describedBy } = useDialogContext("DialogContent");
     useFocusTrap(contentRef, open);
-
-    React.useEffect(() => {
-      if (!open) return;
-      const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === "Escape") {
-          event.stopPropagation();
-          setOpen(false);
-        }
-      };
-      document.addEventListener("keydown", handleKeyDown);
-      return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [open, setOpen]);
+    useDismissLayer({
+      enabled: open,
+      refs: [contentRef],
+      onEscapeKeyDown: (event) => {
+        onEscapeKeyDown?.(event);
+        if (!event.defaultPrevented) setOpen(false);
+      },
+    });
 
     if (!open) return null;
 
     return (
       <DialogPortal>
-        <DialogOverlay className={overlayClassName} />
+        <DialogOverlay className={overlayClassName} onClick={onInteractOutside} />
         <div
           ref={composeRefs(ref, contentRef)}
           role="dialog"
           aria-modal="true"
-          aria-labelledby={titleId}
-          aria-describedby={descriptionId}
+          aria-labelledby={labelledBy}
+          aria-describedby={describedBy}
           data-slot="dialog-content"
           data-mobile={mobileLayout}
           data-position={position}
@@ -241,10 +265,12 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
 const DialogTitle = React.forwardRef<HTMLHeadingElement, React.ComponentPropsWithoutRef<"h2">>(
   ({ className, id, ...props }, ref) => {
     const ctx = React.useContext(DialogContext);
+    const resolvedId = id ?? ctx?.titleId;
+    useRegisterId(ctx?.registerTitle, resolvedId);
     return (
       <h2
         ref={ref}
-        id={id ?? ctx?.titleId}
+        id={resolvedId}
         data-slot="dialog-title"
         className={cn("text-title-2 text-fg", className)}
         {...props}
@@ -257,10 +283,12 @@ DialogTitle.displayName = "DialogTitle";
 const DialogDescription = React.forwardRef<HTMLParagraphElement, React.ComponentPropsWithoutRef<"p">>(
   ({ className, id, ...props }, ref) => {
     const ctx = React.useContext(DialogContext);
+    const resolvedId = id ?? ctx?.descriptionId;
+    useRegisterId(ctx?.registerDescription, resolvedId);
     return (
       <p
         ref={ref}
-        id={id ?? ctx?.descriptionId}
+        id={resolvedId}
         data-slot="dialog-description"
         className={cn("text-body text-fg-secondary", className)}
         {...props}

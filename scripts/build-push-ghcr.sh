@@ -98,10 +98,17 @@ fi
 
 echo "Building and pushing ${IMAGE_REPO}: ${GHCR_REGISTRY}/${GHCR_OWNER}/${IMAGE_REPO}:${IMAGE_TAG} (${PLATFORMS})"
 
+# Versioned docs carry forward from the image currently deployed (set by deploy-compose.sh).
+build_args=()
+if [[ -n "${PREVIOUS_SITE_IMAGE:-}" ]]; then
+  build_args+=(--build-arg "PREVIOUS_SITE_IMAGE=${PREVIOUS_SITE_IMAGE}")
+fi
+
 docker buildx build \
   --platform "${PLATFORMS}" \
   --push \
   "${cache_flags[@]+"${cache_flags[@]}"}" \
+  "${build_args[@]+"${build_args[@]}"}" \
   "${IMAGE_TAG_ARGS[@]}" \
   -f "${ROOT}/Dockerfile" \
   "${ROOT}"

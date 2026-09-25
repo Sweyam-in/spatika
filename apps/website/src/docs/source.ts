@@ -1,6 +1,75 @@
+import { appDemoSource } from "./app-catalog";
 import type { ComponentEntry } from "../data/navigation";
 
 const SOURCE: Record<string, string> = {
+  "app-shell": `import { AppShell, NavItem, NavSection, Sidebar, TopBar } from "@spatika/react";
+import { Home, Settings, Users } from "lucide-react";
+
+export default function Demo() {
+  return (
+    <AppShell
+      sidebar={
+        <Sidebar>
+          <NavSection title="Workspace">
+            <NavItem icon={<Home />} label="Overview" active />
+            <NavItem icon={<Users />} label="Customers" />
+            <NavItem icon={<Settings />} label="Settings" />
+          </NavSection>
+        </Sidebar>
+      }
+      topbar={<TopBar title="Overview" />}
+    >
+      <p>Page content</p>
+    </AppShell>
+  );
+}`,
+  "scatter-webgl": `import { ScatterChart } from "@spatika/charts";
+
+const cloud = Array.from({ length: 5000 }, (_, i) => ({ x: Math.sin(i) * 50 + 50, y: Math.cos(i * 1.3) * 40 + 50 }));
+
+export default function Demo() {
+  return <ScatterChart height={280} renderer="webgl" series={[{ label: "Sessions", data: cloud }]} />;
+}`,
+  "map-chart": `import { MapChart, type GeoJsonFeatureCollection } from "@spatika/charts";
+
+const regions: GeoJsonFeatureCollection = {
+  type: "FeatureCollection",
+  features: [
+    { type: "Feature", id: "north", properties: { name: "North" }, geometry: { type: "Polygon", coordinates: [[[0, 1], [1, 1], [1, 2], [0, 2], [0, 1]]] } },
+    { type: "Feature", id: "south", properties: { name: "South" }, geometry: { type: "Polygon", coordinates: [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]] } },
+  ],
+};
+
+export default function Demo() {
+  return (
+    <MapChart
+      height={280}
+      geoData={regions}
+      series={[{ data: [{ id: "north", value: 64, label: "North" }, { id: "south", value: 31, label: "South" }] }]}
+    />
+  );
+}`,
+  "bar-chart-3d": `import { BarChart3D } from "@spatika/charts";
+
+export default function Demo() {
+  return (
+    <BarChart3D
+      height={260}
+      xAxis={[{ data: ["Jan", "Feb", "Mar", "Apr"] }]}
+      series={[{ label: "Views", data: [42, 38, 51, 46] }]}
+    />
+  );
+}`,
+  "pie-chart-3d": `import { PieChart3D } from "@spatika/charts";
+
+export default function Demo() {
+  return (
+    <PieChart3D
+      height={260}
+      series={[{ data: [{ id: "web", value: 42, label: "Web" }, { id: "ios", value: 28, label: "iOS" }, { id: "and", value: 18, label: "Android" }] }]}
+    />
+  );
+}`,
   "lead-form": `import { LeadForm } from "@spatika/react";
 
 export default function Demo() {
@@ -579,7 +648,7 @@ export default function Demo() {
       label="Movie"
       options={["Inception", "Heat", "Her"]}
       value={movie}
-      onChange={setMovie}
+      onChange={(value) => setMovie(typeof value === "string" ? value : null)}
       placeholder="Search films…"
     />
   );
@@ -719,7 +788,12 @@ import { useState } from "react";
 export default function Demo() {
   const [align, setAlign] = useState<string | null>("left");
   return (
-    <ToggleButtonGroup exclusive value={align} onValueChange={setAlign} aria-label="Alignment">
+    <ToggleButtonGroup
+      exclusive
+      value={align}
+      onValueChange={(value) => setAlign(typeof value === "string" ? value : null)}
+      aria-label="Alignment"
+    >
       <ToggleButton value="left" aria-label="Align left"><AlignLeft /></ToggleButton>
       <ToggleButton value="center" aria-label="Align center"><AlignCenter /></ToggleButton>
       <ToggleButton value="right" aria-label="Align right"><AlignRight /></ToggleButton>
@@ -1598,7 +1672,7 @@ export default function Demo() {
   return (
     <RadarChart
       height={280}
-      radar={{ metrics: [{ name: "Speed" }, { name: "UX" }, { name: "Scale" }] }}
+      radar={{ metrics: ["Speed", "UX", "Scale"] }}
       series={[{ label: "Spatika", data: [8, 9, 7] }]}
     />
   );
@@ -1655,10 +1729,14 @@ export default function Demo() {
   return (
     <PyramidChart
       height={240}
-      data={[
-        { label: "Awareness", value: 100 },
-        { label: "Consideration", value: 55 },
-        { label: "Purchase", value: 18 },
+      series={[
+        {
+          data: [
+            { label: "Awareness", value: 100 },
+            { label: "Consideration", value: 55 },
+            { label: "Purchase", value: 18 },
+          ],
+        },
       ]}
     />
   );
@@ -1669,8 +1747,13 @@ export default function Demo() {
   return (
     <SankeyChart
       height={240}
-      nodes={[{ id: "a", label: "Ads" }, { id: "b", label: "Site" }, { id: "c", label: "Paid" }]}
-      links={[{ source: "a", target: "b", value: 80 }, { source: "b", target: "c", value: 20 }]}
+      series={{
+        data: [{ id: "ads", label: "Ads" }, { id: "site", label: "Site" }, { id: "paid", label: "Paid" }],
+        links: [
+          { source: "ads", target: "site", value: 80 },
+          { source: "site", target: "paid", value: 20 },
+        ],
+      }}
     />
   );
 }`,
@@ -1681,7 +1764,7 @@ export default function Demo() {
     <RangeBarChart
       height={240}
       xAxis={[{ data: ["Q1", "Q2", "Q3"] }]}
-      series={[{ label: "Range", data: [{ low: 12, high: 28 }, { low: 18, high: 36 }, { low: 10, high: 22 }] }]}
+      series={[{ label: "Range", data: [[12, 28], [18, 36], [10, 22]] }]}
     />
   );
 }`,
@@ -1702,7 +1785,20 @@ export default function Demo() {
   "radial-bar-chart": `import { RadialBarChart } from "@spatika/charts";
 
 export default function Demo() {
-  return <RadialBarChart height={240} series={[{ data: [70, 55, 40] }]} />;
+  return (
+    <RadialBarChart
+      height={240}
+      series={[
+        {
+          data: [
+            { label: "Mukta", value: 70 },
+            { label: "Neelam", value: 55 },
+            { label: "Usha", value: 40 },
+          ],
+        },
+      ]}
+    />
+  );
 }`,
   "radial-line-chart": `import { RadialLineChart } from "@spatika/charts";
 
@@ -1731,7 +1827,7 @@ export default function Demo() {
     <RangeAreaChart
       height={240}
       xAxis={[{ data: ["Jan", "Feb", "Mar"] }]}
-      series={[{ data: [{ low: 8, high: 18 }, { low: 10, high: 22 }, { low: 6, high: 16 }] }]}
+      series={[{ label: "Temperature", data: [[8, 18], [10, 22], [6, 16]] }]}
     />
   );
 }`,
@@ -1741,21 +1837,28 @@ export default function Demo() {
   return (
     <Treemap
       height={240}
-      data={{
-        name: "root",
-        children: [
-          { name: "Product", value: 40 },
-          { name: "Marketing", value: 24 },
-          { name: "Ops", value: 16 },
-        ],
-      }}
+      series={[
+        {
+          data: [
+            { label: "Product", value: 40 },
+            { label: "Marketing", value: 24 },
+            { label: "Ops", value: 16 },
+          ],
+        },
+      ]}
     />
   );
 }`,
   "polar-line-chart": `import { PolarLineChart } from "@spatika/charts";
 
 export default function Demo() {
-  return <PolarLineChart height={240} series={[{ data: [6, 9, 7, 11, 8] }]} />;
+  return (
+    <PolarLineChart
+      height={240}
+      radar={{ metrics: ["CPU", "RAM", "Disk", "Net", "GPU"] }}
+      series={[{ label: "Load", data: [6, 9, 7, 11, 8] }]}
+    />
+  );
 }`,
   "chord-chart": `import { ChordChart } from "@spatika/charts";
 
@@ -1763,8 +1866,14 @@ export default function Demo() {
   return (
     <ChordChart
       height={280}
-      labels={["A", "B", "C"]}
-      data={[[0, 8, 3], [4, 0, 6], [2, 5, 0]]}
+      series={{
+        data: ["Docs", "App", "API"],
+        matrix: [
+          [0, 8, 3],
+          [4, 0, 6],
+          [2, 5, 0],
+        ],
+      }}
     />
   );
 }`,
@@ -1786,10 +1895,16 @@ export default function Demo() {
     <BoxPlotChart
       height={240}
       xAxis={[{ data: ["A", "B"] }]}
-      series={[{ data: [
-        { min: 4, q1: 8, median: 12, q3: 16, max: 22 },
-        { min: 6, q1: 10, median: 14, q3: 18, max: 24 },
-      ] }]}
+      series={[
+        {
+          label: "Latency (ms)",
+          // Raw samples — quartiles and outliers are computed for you.
+          data: [
+            [4, 8, 11, 12, 14, 16, 22],
+            [6, 10, 13, 14, 16, 18, 24],
+          ],
+        },
+      ]}
     />
   );
 }`,
@@ -1813,13 +1928,20 @@ export default function Demo() {
   return (
     <SunburstChart
       height={280}
-      data={{
-        name: "Org",
-        children: [
-          { name: "Eng", value: 40, children: [{ name: "FE", value: 18 }, { name: "BE", value: 22 }] },
-          { name: "Design", value: 16 },
-        ],
-      }}
+      series={[
+        {
+          data: [
+            {
+              label: "Eng",
+              children: [
+                { label: "Frontend", value: 18 },
+                { label: "Backend", value: 22 },
+              ],
+            },
+            { label: "Design", value: 16 },
+          ],
+        },
+      ]}
     />
   );
 }`,
@@ -1828,6 +1950,7 @@ export default function Demo() {
 export function basicSource(entry: ComponentEntry): string {
   return (
     SOURCE[entry.slug] ??
+    appDemoSource(entry.slug) ??
     `import { ${entry.importName} } from "@spatika/react";\n\nexport default function Demo() {\n  return <${entry.importName} />;\n}\n`
   );
 }

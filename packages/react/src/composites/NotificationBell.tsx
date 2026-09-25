@@ -1,6 +1,7 @@
-import { useEffect, type ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 import { Bell } from "lucide-react";
 import { cn } from "../lib/cn";
+import { useDismissLayer } from "../lib/layer-stack";
 import { Button } from "../primitives/Button";
 import { HeaderIconButton } from "./HeaderIconButton";
 
@@ -39,19 +40,20 @@ export function NotificationBell({
   panelClassName,
   title = "Notifications",
 }: NotificationBellProps) {
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onOpenChange(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onOpenChange]);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  useDismissLayer({
+    enabled: open,
+    refs: [rootRef],
+    onEscapeKeyDown: () => {
+      onOpenChange(false);
+      rootRef.current?.querySelector<HTMLElement>("button[aria-haspopup]")?.focus();
+    },
+  });
 
   const label = unreadCount > 0 ? `${title}, ${unreadCount} unread` : title;
 
   return (
-    <div data-slot="notification-bell" className={cn("relative z-20", className)}>
+    <div ref={rootRef} data-slot="notification-bell" className={cn("relative z-20", className)}>
       <HeaderIconButton
         badge={unreadCount > 0 ? (unreadCount > 99 ? "99+" : unreadCount) : undefined}
         active={open}
