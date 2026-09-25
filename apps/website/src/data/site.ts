@@ -1,9 +1,9 @@
 export const SITE = {
   name: "Spatika",
   brand: "Spatika UI",
-  tagline: "A calm, precise React design system for serious product UI.",
+  tagline: "An AI-first React toolkit for serious product UI.",
   description:
-    "Spatika UI is an open-source React design system for SaaS, finance, productivity and data-heavy products — semantic tokens, density control, an application shell, data tables, SVG charts (@spatika/charts), a Tiptap editor (@spatika/editor), and scheduling (EventCalendar). You may also know it as Spadik UI.",
+    "Spatika UI is an AI-first, open-source React toolkit for SaaS, finance, productivity and data-heavy products — semantic tokens, density control, an application shell, data tables, SVG charts (@spatika/charts), a Tiptap editor (@spatika/editor), scheduling (EventCalendar), and agent-ready docs through llms.txt, a reusable skill, and @spatika/mcp.",
   url: "https://spatika.sweyam.com",
   ogImage: "https://spatika.sweyam.com/og.png",
   author: "Sreelal Chalil",

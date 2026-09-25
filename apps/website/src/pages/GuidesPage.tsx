@@ -146,6 +146,21 @@ export function GuidesPage() {
         The skill auto-invokes when you&apos;re building UI. Registry JSON is at{" "}
         <a href="/docs/components.json">/docs/components.json</a>.
       </p>
+      <p>
+        MCP-capable agents can use the Spatika server to read the same docs as resources and search
+        the component catalog:
+      </p>
+      <CodeBlock code={`npm run mcp:build && npm --silent run mcp`} />
+      <CodeBlock
+        code={`{
+  "mcpServers": {
+    "spatika": {
+      "command": "npx",
+      "args": ["@spatika/mcp"]
+    }
+  }
+}`}
+      />
 
       <h2 className="section-title" id="publishing">
         Publishing

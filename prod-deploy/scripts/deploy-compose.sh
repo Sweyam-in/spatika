@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Top-level flag: 1 = build linux/arm64 too, 0 = amd64 only. Override with BUILD_ARM=1.
+export BUILD_ARM="${BUILD_ARM:-0}"
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEPLOY_ENV="${ATLAS_DEPLOY_ENV:-$ROOT/atlas.deploy.env}"
 ACTION="${1:-deploy}"

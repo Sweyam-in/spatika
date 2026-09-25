@@ -18,8 +18,9 @@ describe("AiFirstSection", () => {
   it("explains the agent catalog and links to llms.txt", () => {
     renderSection();
     expect(
-      screen.getByRole("heading", { name: "An AI-first component library" }),
+      screen.getByRole("heading", { name: "An AI-first React toolkit" }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/reusable Spatika skill, and an MCP server/i)).toBeInTheDocument();
     const llms = screen.getByRole("link", { name: "Open llms.txt" });
     expect(llms).toHaveAttribute("href", "/llms.txt");
     expect(llms.className).toMatch(/min-h-11|h-11/);
@@ -30,7 +31,7 @@ describe("AiFirstSection", () => {
     );
   });
 
-  it("points agents at the setup guide and Cursor skill copy command", () => {
+  it("points agents at the setup guide, skill copy command, and MCP package", () => {
     renderSection();
     expect(screen.getByRole("link", { name: "Agent setup" })).toHaveAttribute(
       "href",
@@ -41,5 +42,6 @@ describe("AiFirstSection", () => {
         "cp -R node_modules/@spatika/react/skills/spatika-ui .cursor/skills/spatika-ui",
       ),
     ).toBeInTheDocument();
+    expect(screen.getByText("npx @spatika/mcp")).toBeInTheDocument();
   });
 });

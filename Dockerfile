@@ -21,6 +21,7 @@ COPY packages/tokens/package.json packages/tokens/
 COPY packages/charts/package.json packages/charts/
 COPY packages/editor/package.json packages/editor/
 COPY packages/react/package.json packages/react/
+COPY packages/mcp/package.json packages/mcp/
 COPY apps/website/package.json apps/website/
 
 RUN npm ci

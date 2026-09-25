@@ -10,6 +10,8 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @spatika/website",
+    "mcp": "node packages/mcp/dist/server.js",
+    "mcp:build": "npm run build -w @spatika/mcp",
     "build": "npm run build -w @spatika/tokens && npm run build -w @spatika/charts && npm run build -w @spatika/editor && npm run build -w @spatika/react && npm run build -w @spatika/website",
     "build:website": "npm run build -w @spatika/website",
     "preview": "npm run preview -w @spatika/website",

@@ -1,0 +1,54 @@
+{
+  "name": "@spatika/mcp",
+  "version": "2.3.0",
+  "license": "MIT",
+  "description": "MCP server exposing Spatika UI agent docs, component metadata, and skills",
+  "homepage": "https://spatika.sweyam.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sweyam-in/spatika.git",
+    "directory": "packages/mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/Sweyam-in/spatika/issues"
+  },
+  "author": "Sreelal Chalil",
+  "keywords": [
+    "spatika",
+    "spatika-ui",
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "codex",
+    "design-system",
+    "react"
+  ],
+  "type": "module",
+  "bin": {
+    "spatika-mcp": "./dist/server.js"
+  },
+  "main": "./dist/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.24.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "~5.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
