@@ -4,7 +4,7 @@
  * catch a subset of problems — keyboard and screen-reader testing is still manual.
  */
 import AxeBuilder from "@axe-core/playwright";
-import { expect, gotoThemed, test, type Theme } from "./fixtures";
+import { expect, gotoThemed, layout, test, type Theme } from "./fixtures";
 
 const PAGES = [
   "/",
@@ -25,7 +25,7 @@ const THEMES: Theme[] = ["mukta", "neelam"];
 
 test.describe("axe", () => {
   test.beforeEach(({}, testInfo) => {
-    testInfo.skip(testInfo.project.name === "tablet", "Desktop and phone cover the layouts axe checks.");
+    testInfo.skip(layout(testInfo) === "tablet", "Desktop and phone cover the layouts axe checks.");
   });
 
   for (const theme of THEMES) {

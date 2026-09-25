@@ -3,7 +3,7 @@
  * one component — not a whole page — so an unrelated layout change does not invalidate every
  * image. Refresh intentionally with `--update-snapshots` and review the diff before committing.
  */
-import { expect, gotoThemed, test, type Theme } from "./fixtures";
+import { expect, gotoThemed, layout, test, type Theme } from "./fixtures";
 
 const COMPONENTS = [
   "button",
@@ -22,7 +22,7 @@ const THEMES: Theme[] = ["mukta", "neelam"];
 
 test.describe("component previews", () => {
   test.beforeEach(({}, testInfo) => {
-    testInfo.skip(testInfo.project.name === "tablet", "Desktop and phone baselines bracket the layouts.");
+    testInfo.skip(layout(testInfo) === "tablet", "Desktop and phone baselines bracket the layouts.");
   });
 
   for (const theme of THEMES) {

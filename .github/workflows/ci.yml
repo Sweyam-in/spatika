@@ -1,0 +1,131 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Unit tests, typecheck, docs checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build packages
+        run: |
+          npm run build -w @spatika/tokens
+          npm run build -w @spatika/charts
+          npm run build -w @spatika/editor
+          npm run build -w @spatika/react
+      - name: Typecheck
+        run: npm run typecheck
+      # Includes: generated API and demo sources are current, every docs example compiles,
+      # theme contrast, utility coverage, version policy.
+      - name: Unit and component tests
+        run: npm test
+      - name: Build docs site
+        run: npm run build -w @spatika/website
+
+  e2e:
+    name: Browser tests (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build packages
+        run: |
+          npm run build -w @spatika/tokens
+          npm run build -w @spatika/charts
+          npm run build -w @spatika/editor
+          npm run build -w @spatika/react
+      - name: Install ${{ matrix.browser }}
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+        working-directory: apps/website
+      - name: Responsive, accessibility (axe) and flow tests
+        run: npx playwright test responsive a11y flows screen-reader
+        working-directory: apps/website
+        env:
+          PW_BROWSERS: ${{ matrix.browser }}
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-${{ matrix.browser }}-results
+          path: apps/website/test-results
+          retention-days: 7
+
+  visual:
+    name: Visual regression (chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # CI renders with the runner's fonts, so its baselines live apart from local ones.
+      VISUAL_BASELINES: ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build packages
+        run: |
+          npm run build -w @spatika/tokens
+          npm run build -w @spatika/charts
+          npm run build -w @spatika/editor
+          npm run build -w @spatika/react
+      - name: Install chromium
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/website
+      - name: Compare against baselines
+        id: compare
+        working-directory: apps/website
+        run: |
+          if [ -d e2e/__screenshots__/ci ]; then
+            npx playwright test visual
+          else
+            echo "missing=true" >> "$GITHUB_OUTPUT"
+          fi
+      # First run on a new runner image: render the baselines, publish them for review and fail,
+      # so an unreviewed image never becomes the reference silently.
+      - name: Render missing baselines
+        if: steps.compare.outputs.missing == 'true'
+        working-directory: apps/website
+        run: |
+          npx playwright test visual --update-snapshots
+          echo "::error::No CI visual baselines are committed. Review the 'visual-baselines-ci' artifact and commit it to apps/website/e2e/__screenshots__/ci/."
+          exit 1
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: visual-baselines-ci
+          path: apps/website/e2e/__screenshots__/ci
+          if-no-files-found: ignore
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: visual-diffs
+          path: apps/website/test-results
+          if-no-files-found: ignore
+          retention-days: 7

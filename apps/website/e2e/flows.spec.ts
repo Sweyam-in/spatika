@@ -2,7 +2,7 @@
  * End-to-end flows through composed components, run in real Chromium on desktop, tablet and
  * phone viewports.
  */
-import { expect, gotoThemed, test } from "./fixtures";
+import { expect, gotoThemed, layout, test } from "./fixtures";
 
 test("a form lists its errors, links to each field and clears once fixed", async ({ page }) => {
   await gotoThemed(page, "/components/form-error-summary");
@@ -40,7 +40,7 @@ test("a confirmation dialog traps focus and returns it to its trigger", async ({
 });
 
 test("the docs navigation works from the menu on small screens", async ({ page }, testInfo) => {
-  testInfo.skip(testInfo.project.name === "desktop", "The menu button only shows below 1180px.");
+  testInfo.skip(layout(testInfo) === "desktop", "The menu button only shows below 1180px.");
   await gotoThemed(page, "/components/button");
   await page.getByRole("button", { name: "Open menu" }).click();
   const menu = page.getByRole("navigation", { name: "Mobile" });
@@ -106,7 +106,7 @@ test("docs search finds a component by a word it is not named after", async ({ p
 });
 
 test("the version menu opens the same page in an archived release", async ({ page }, testInfo) => {
-  testInfo.skip(testInfo.project.name === "phone", "On phones the version menu lives in the menu panel.");
+  testInfo.skip(layout(testInfo) === "phone", "On phones the version menu lives in the menu panel.");
   await gotoThemed(page, "/components/button");
   await page.getByRole("button", { name: /Documentation version/ }).click();
   await page.getByRole("menuitem", { name: /v2\.3\.0/ }).click();

@@ -148,7 +148,7 @@ Checks (run before opening a PR):
 |---|---|
 | `npm test` | Unit and component tests; generated API and demo sources are current; every docs example compiles; theme contrast; utility coverage |
 | `npm run typecheck` | Packages and website typecheck |
-| `npm run test:e2e` | Playwright in Chromium (desktop, tablet, phone): responsive overflow, axe WCAG 2.2 AA, flows, visual baselines. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to use a system Chromium; `PW_ALL_BROWSERS=1` adds Firefox and WebKit |
+| `npm run test:e2e` | Playwright in Chromium (desktop, tablet, phone): responsive overflow, axe WCAG 2.2 AA, flows, visual baselines. Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to use a system Chromium; `PW_BROWSERS=chromium,firefox,webkit` adds Firefox and WebKit (desktop + phone). CI (`.github/workflows/ci.yml`) runs all three engines |
 | `npm run test:e2e -- --update-snapshots` | Only after reviewing an intended visual change |
 
 Versioned docs (see `docs/releasing.md`): `npm run release:docs -- <site-dir>` builds the root and an

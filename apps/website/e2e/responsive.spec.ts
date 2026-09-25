@@ -3,7 +3,7 @@
  * render without errors and without horizontal page scrolling (tables and code blocks scroll
  * inside their own containers).
  */
-import { documentOverflow, expect, gotoThemed, test } from "./fixtures";
+import { documentOverflow, expect, gotoThemed, layout, test } from "./fixtures";
 
 const VIEWPORTS = [
   { name: "small-mobile", width: 320, height: 568 },
@@ -38,7 +38,7 @@ test.describe("responsive sweep", () => {
   test.describe.configure({ timeout: 240_000 });
 
   test.beforeEach(({}, testInfo) => {
-    testInfo.skip(testInfo.project.name !== "desktop", "The viewport sweep runs once, in the desktop project.");
+    testInfo.skip(layout(testInfo) !== "desktop", "The viewport sweep runs once per engine, in its desktop project.");
   });
 
   for (const viewport of VIEWPORTS) {

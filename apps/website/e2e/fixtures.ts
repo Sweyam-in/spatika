@@ -1,4 +1,4 @@
-import { test as base, expect, type Page } from "@playwright/test";
+import { test as base, expect, type Page, type TestInfo } from "@playwright/test";
 
 export type Theme = "mukta" | "neelam" | "usha" | "sandhya";
 
@@ -29,6 +29,11 @@ export const test = base.extend<{ pageErrors: string[] }>({
 });
 
 export { expect };
+
+/** The layout a project emulates. Specs branch on this, not on project names, so every engine runs them. */
+export function layout(testInfo: TestInfo): "desktop" | "tablet" | "phone" {
+  return (testInfo.project.metadata as { layout?: "desktop" | "tablet" | "phone" }).layout ?? "desktop";
+}
 
 /** Load a route in a given theme (the site persists the theme in localStorage). */
 export async function gotoThemed(page: Page, route: string, theme: Theme = "mukta") {
