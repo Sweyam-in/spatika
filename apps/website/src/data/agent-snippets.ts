@@ -657,13 +657,21 @@ const columns: DataTableColumn<Customer>[] = [
 </AppShell>`,
 
   "command-palette": `import { CommandPalette, SearchTrigger } from "@spatika/react";
+import { useState } from "react";
 
-<SearchTrigger onOpen={() => setOpen(true)} />
-<CommandPalette
-  open={open}
-  onOpenChange={setOpen}
-  groups={[{ heading: "Navigate", items: [{ id: "home", label: "Overview", shortcut: ["G", "O"], onSelect: goHome }] }]}
-/>`,
+export function Search({ goHome }: { goHome: () => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <SearchTrigger onOpen={() => setOpen(true)} />
+      <CommandPalette
+        open={open}
+        onOpenChange={setOpen}
+        groups={[{ heading: "Navigate", items: [{ id: "home", label: "Overview", shortcut: ["G", "O"], onSelect: goHome }] }]}
+      />
+    </>
+  );
+}`,
 
   "page-section": `import { Button, PageSection } from "@spatika/react";
 
@@ -868,25 +876,32 @@ import { Home, Inbox, Search, User } from "lucide-react";
 />`,
 
   "filter-sheet": `import { Button, ChipGroup, FilterSheet, toggleOptionValue } from "@spatika/react";
+import { useState } from "react";
 
-<FilterSheet
-  open={open}
-  onOpenChange={setOpen}
-  title="View & filters"
-  description="Status, owner, and source."
-  trigger={<Button variant="secondary">Open filters</Button>}
->
-  <ChipGroup
-    title="Status"
-    options={[
-      { value: "all", label: "All" },
-      { value: "open", label: "Open" },
-    ]}
-    selected={chips}
-    onToggle={(value) => setChips(toggleOptionValue(chips, value))}
-    variant="filter"
-  />
-</FilterSheet>`,
+export function Filters() {
+  const [open, setOpen] = useState(false);
+  const [chips, setChips] = useState<string[]>(["all"]);
+  return (
+    <FilterSheet
+      open={open}
+      onOpenChange={setOpen}
+      title="View & filters"
+      description="Status, owner, and source."
+      trigger={<Button variant="secondary">Open filters</Button>}
+    >
+      <ChipGroup
+        title="Status"
+        options={[
+          { value: "all", label: "All" },
+          { value: "open", label: "Open" },
+        ]}
+        selected={chips}
+        onToggle={(value) => setChips(toggleOptionValue(chips, value))}
+        variant="filter"
+      />
+    </FilterSheet>
+  );
+}`,
 
   "header-icon-button": `import { HeaderIconButton } from "@spatika/react";
 import { Bell } from "lucide-react";
@@ -974,13 +989,22 @@ function SaveButton() {
 </Toaster>`,
 
   snackbar: `import { Button, Snackbar } from "@spatika/react";
+import { useState } from "react";
 
-<Snackbar
-  open={open}
-  onClose={() => setOpen(false)}
-  message="Note archived"
-  action={<Button size="sm" variant="ghost">Undo</Button>}
-/>`,
+export function ArchiveNote() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Archive</Button>
+      <Snackbar
+        open={open}
+        onClose={() => setOpen(false)}
+        message="Note archived"
+        action={<Button size="sm" variant="ghost">Undo</Button>}
+      />
+    </>
+  );
+}`,
 
   dialog: `import {
   Button,
@@ -1005,13 +1029,22 @@ function SaveButton() {
 </Dialog>`,
 
   modal: `import { Button, Modal, Paper, Typography } from "@spatika/react";
+import { useState } from "react";
 
-<Modal open={open} onClose={() => setOpen(false)}>
-  <Paper className="w-[min(320px,90vw)] p-5">
-    <Typography variant="h6">Custom surface</Typography>
-    <Button className="mt-4" size="sm" onClick={() => setOpen(false)}>Close</Button>
-  </Paper>
-</Modal>`,
+export function CustomSurface() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open</Button>
+      <Modal open={open} onClose={() => setOpen(false)}>
+        <Paper className="w-[min(320px,90vw)] p-5">
+          <Typography variant="h6">Custom surface</Typography>
+          <Button className="mt-4" size="sm" onClick={() => setOpen(false)}>Close</Button>
+        </Paper>
+      </Modal>
+    </>
+  );
+}`,
 
   tooltip: `import { Button, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@spatika/react";
 

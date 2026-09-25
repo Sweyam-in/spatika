@@ -1,5 +1,59 @@
 import type { ApiSection, PropDoc } from "./types";
 import type { ComponentEntry } from "../data/navigation";
+import generatedApi from "../generated/api.json";
+
+/** Prop tables extracted from the package source (`npm run docs:api`). */
+type GeneratedProp = {
+  name: string;
+  type: string;
+  optional: boolean;
+  description: string;
+  default?: string;
+  deprecated?: string;
+};
+type GeneratedComponent = { description?: string; extends?: string[]; props: GeneratedProp[] };
+const GENERATED = generatedApi as Record<string, GeneratedComponent>;
+
+function fromGenerated(prop: GeneratedProp): PropDoc {
+  const notes = [
+    prop.deprecated !== undefined ? `**Deprecated.** ${prop.deprecated}`.trim() : "",
+    prop.optional ? "" : "Required.",
+    prop.description,
+  ].filter(Boolean);
+  return {
+    name: prop.name,
+    type: prop.type,
+    ...(prop.default !== undefined ? { default: prop.default } : {}),
+    description: notes.join(" ") || "—",
+  };
+}
+
+/** API section for one export, straight from the source types. */
+export function generatedSection(name: string): ApiSection | null {
+  const component = GENERATED[name];
+  if (!component) return null;
+  return {
+    name,
+    ...(component.extends?.length ? { extends: component.extends.join(", ") } : {}),
+    props: component.props.map(fromGenerated),
+  };
+}
+
+/**
+ * Hand-written sections carry the prose; any prop the source has that the prose omits is
+ * appended from the generated reference so tables never fall behind the code.
+ */
+function completeSection(section: ApiSection): ApiSection {
+  const names = section.name.split(/\s*\/\s*/).map((name) => name.replace(/\(\)$/, ""));
+  const generated = names.map((name) => GENERATED[name]).filter(Boolean);
+  if (!generated.length) return section;
+  const documented = new Set(section.props.flatMap((prop) => prop.name.split(/\s*\/\s*/)));
+  const missing = generated
+    .flatMap((component) => component.props)
+    .filter((prop, index, all) => !documented.has(prop.name) && all.findIndex((p) => p.name === prop.name) === index)
+    .map(fromGenerated);
+  return missing.length ? { ...section, props: [...section.props, ...missing] } : section;
+}
 
 function p(name: string, type: string, description: string, def?: string): PropDoc {
   return def === undefined ? { name, type, description } : { name, type, default: def, description };
@@ -1613,7 +1667,6 @@ export const apiBySlug: Record<string, ApiSection[]> = {
         p("brand", "ReactNode", "Wordmark or logo."),
         p("links", "{ href, label }[]", "Primary destinations."),
         p("contained", "boolean", "Position inside a parent instead of the viewport.", "false"),
-        p("cta", "ReactNode", "Trailing call to action."),
         className,
       ],
     },
@@ -1818,7 +1871,7 @@ export const apiBySlug: Record<string, ApiSection[]> = {
       name: "Skeleton",
       extends: "div",
       props: [
-        p("variant", '"text" | "circular" | "rectangular" | "rounded"', "Shape.", '"text"'),
+        p("shape", '"text" | "circle" | "block"', "`text` renders a line at body height; `circle` for avatars; `block` for media and cards.", '"text"'),
         className,
       ],
     },
@@ -2080,8 +2133,7 @@ export const apiBySlug: Record<string, ApiSection[]> = {
     {
       name: "PieChart",
       props: [
-        p("series", "{ data, innerRadius?, outerRadius? }[]", "Slice values. Radii are pixels, 0–1 fractions, or percent strings (`\"42%\"`)."),
-        p("innerRadius", "number | string", "Donut hole on series[0]. 0 is a full pie. Prefer `\"42%\"` so the ring stays in the plot.", "0"),
+        p("series", "PieSeries[]", "Slices as `{ data, innerRadius?, outerRadius?, paddingAngle? }`. Radii are pixels, 0–1 fractions, or percent strings — set `innerRadius: \"42%\"` on a series for a donut that stays inside the plot."),
         p("height", "number", "Plot height."),
         p("hideLegend", "boolean", "Hide the slice legend.", "false"),
         p("fillHeight", "boolean", "Plot height follows the parent.", "false"),
@@ -2102,7 +2154,7 @@ export const apiBySlug: Record<string, ApiSection[]> = {
       props: [
         p("series", "ScatterSeries[]", "Point clouds with `data: { x, y }[]`."),
         p("height", "number", "Plot height."),
-        p("showToolbar", "boolean", "Zoom and export.", "false"),
+        p("renderer", "\"svg\" | \"webgl\" | \"auto\"", "`webgl` draws tens of thousands of points; `svg` keeps every point focusable; `auto` switches on size."),
         className,
       ],
     },
@@ -2182,7 +2234,7 @@ export const apiBySlug: Record<string, ApiSection[]> = {
     {
       name: "PyramidChart",
       props: [
-        p("data", "{ label, value }[]", "Hierarchical bands."),
+        p("series", "FunnelSeries[]", "Bands as `{ data: { label, value }[] }` — widest first."),
         p("height", "number", "Plot height."),
         className,
       ],
@@ -2192,8 +2244,7 @@ export const apiBySlug: Record<string, ApiSection[]> = {
     {
       name: "SankeyChart",
       props: [
-        p("nodes", "{ id, label }[]", "Flow nodes."),
-        p("links", "{ source, target, value }[]", "Weighted ribbons."),
+        p("series", "{ data: SankeyNode[]; links: SankeyLink[] }", "Nodes (`{ id, label }`) and weighted links (`{ source, target, value }`)."),
         p("height", "number", "Plot height."),
         className,
       ],
@@ -2253,7 +2304,7 @@ export const apiBySlug: Record<string, ApiSection[]> = {
     {
       name: "Treemap",
       props: [
-        p("data", "TreemapNode", "Nested `{ name, value, children }` tree."),
+        p("series", "{ data: TreeNode[] }[]", "Nested `{ name, value, children }` trees."),
         p("height", "number", "Plot height."),
         className,
       ],
@@ -2273,8 +2324,7 @@ export const apiBySlug: Record<string, ApiSection[]> = {
     {
       name: "ChordChart",
       props: [
-        p("data", "number[][]", "Directed flow matrix."),
-        p("labels", "string[]", "Node names around the circle."),
+        p("series", "{ data: string[]; matrix: number[][] }", "Node names around the circle (`data`) and the directed flow `matrix`."),
         p("height", "number", "Plot height."),
         className,
       ],
@@ -2291,7 +2341,7 @@ export const apiBySlug: Record<string, ApiSection[]> = {
     {
       name: "SunburstChart",
       props: [
-        p("data", "SunburstNode", "Nested `{ name, value, children }` tree."),
+        p("series", "{ data: TreeNode[] }[]", "Nested `{ name, value, children }` trees; rings go outward by depth."),
         p("height", "number", "Plot height."),
         className,
       ],
@@ -2300,13 +2350,13 @@ export const apiBySlug: Record<string, ApiSection[]> = {
 };
 
 export function getApi(entry: ComponentEntry): ApiSection[] {
-  return (
-    apiBySlug[entry.slug] ?? [
-      {
-        name: entry.importName,
-        extends: "HTML attributes",
-        props: [className, children],
-      },
-    ]
-  );
+  const handWritten = apiBySlug[entry.slug];
+  if (handWritten) return handWritten.map(completeSection);
+  const sections = entry.importName
+    .split(/\s*,\s*/)
+    .map(generatedSection)
+    .filter((section): section is ApiSection => section != null && section.props.length > 0);
+  return sections.length
+    ? sections
+    : [{ name: entry.importName, extends: "HTML attributes", props: [className, children] }];
 }
