@@ -6,6 +6,7 @@ import { useDismissable } from "../lib/use-dismissable";
 import { useFloatingPosition } from "../lib/use-floating-position";
 import { cn } from "../lib/cn";
 import { OVERLAY_Z_INDEX, useOverlayZIndex } from "../lib/overlay-stack";
+import { useMenuNavigation } from "../lib/use-menu-navigation";
 
 export type MenuProps = {
   open?: boolean;
@@ -15,6 +16,9 @@ export type MenuProps = {
   anchorEl?: HTMLElement | null;
   children?: React.ReactNode;
 };
+
+/** True inside a `Menu` popup — a nested `MenuList` then renders as plain layout. */
+const InsideMenuContext = React.createContext(false);
 
 function Menu({
   open: openProp,
@@ -51,6 +55,14 @@ function Menu({
     refs: [triggerRef, contentRef],
   });
 
+  const handleKeyDown = useMenuNavigation({
+    open,
+    contentRef,
+    initialFocus: "first",
+    onClose: () => setOpen(false),
+    returnFocusRef: triggerRef,
+  });
+
   if (!open) return null;
 
   return (
@@ -58,8 +70,10 @@ function Menu({
       <div
         ref={contentRef}
         role="menu"
+        tabIndex={-1}
         data-slot="menu"
-        className="spk-overlay spk-animate-pop z-[10000] min-w-40 overflow-hidden p-1"
+        onKeyDown={handleKeyDown}
+        className="spk-overlay spk-animate-pop min-w-40 overflow-hidden p-1 outline-none"
         style={{
           position: "fixed",
           top: position?.top ?? 0,
@@ -68,15 +82,35 @@ function Menu({
           opacity: position ? 1 : 0,
         }}
       >
-        {children}
+        <InsideMenuContext.Provider value>{children}</InsideMenuContext.Provider>
       </div>
     </Portal>
   );
 }
 Menu.displayName = "Menu";
 
-function MenuList({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
-  return <div role="menu" data-slot="menu-list" className={cn("flex flex-col p-1", className)} {...props} />;
+function MenuList({ className, onKeyDown, ...props }: React.ComponentPropsWithoutRef<"div">) {
+  const insideMenu = React.useContext(InsideMenuContext);
+  const listRef = React.useRef<HTMLDivElement | null>(null);
+  const handleKeyDown = useMenuNavigation({ open: false, contentRef: listRef, onClose: () => {} });
+  if (insideMenu) {
+    return <div role="none" data-slot="menu-list" className={cn("flex flex-col p-1", className)} onKeyDown={onKeyDown} {...props} />;
+  }
+  // A standalone list is its own menu: one tab stop, arrows move between items.
+  return (
+    <div
+      ref={listRef}
+      role="menu"
+      tabIndex={0}
+      data-slot="menu-list"
+      className={cn("flex flex-col p-1 outline-none focus-visible:shadow-[var(--spk-focus-ring)]", className)}
+      {...props}
+      onKeyDown={(event) => {
+        onKeyDown?.(event);
+        handleKeyDown(event);
+      }}
+    />
+  );
 }
 MenuList.displayName = "MenuList";
 
@@ -90,6 +124,8 @@ function MenuItem({ className, selected, dense, ...props }: MenuItemProps) {
     <button
       type="button"
       role="menuitem"
+      // Roving focus: arrows move between items; Tab leaves the menu.
+      tabIndex={-1}
       data-slot="menu-item"
       data-selected={selected ? "" : undefined}
       className={cn(

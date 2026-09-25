@@ -4,6 +4,7 @@ import { Portal } from "../lib/portal";
 import { Slot } from "../lib/slot";
 import { useControllableState } from "../lib/use-controllable-state";
 import { useFocusTrap } from "../lib/use-focus-trap";
+import { useDismissLayer } from "../lib/layer-stack";
 import { cn } from "../lib/cn";
 import { ModalDepthProvider, OVERLAY_Z_INDEX, fixedLayerStyle } from "../lib/overlay-stack";
 import { buttonVariants } from "./Button";
@@ -100,22 +101,23 @@ AlertDialogOverlay.displayName = "AlertDialogOverlay";
 
 const AlertDialogContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentPropsWithoutRef<"div"> & { overlayClassName?: string }
->(({ className, overlayClassName, style, children, ...props }, ref) => {
+  React.ComponentPropsWithoutRef<"div"> & {
+    overlayClassName?: string;
+    /** Called when Escape would dismiss the alert. `event.preventDefault()` keeps it open. */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  }
+>(({ className, overlayClassName, style, children, onEscapeKeyDown, ...props }, ref) => {
   const { open, setOpen, contentRef, titleId, descriptionId } = useAlertDialogContext("AlertDialogContent");
   useFocusTrap(contentRef, open);
 
-  React.useEffect(() => {
-    if (!open) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        setOpen(false);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, setOpen]);
+  useDismissLayer({
+    enabled: open,
+    refs: [contentRef],
+    onEscapeKeyDown: (event) => {
+      onEscapeKeyDown?.(event);
+      if (!event.defaultPrevented) setOpen(false);
+    },
+  });
 
   if (!open) return null;
 

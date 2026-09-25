@@ -5,6 +5,7 @@ import { Portal } from "../lib/portal";
 import { Slot } from "../lib/slot";
 import { useControllableState } from "../lib/use-controllable-state";
 import { useFocusTrap } from "../lib/use-focus-trap";
+import { useDismissLayer } from "../lib/layer-stack";
 import { cn } from "../lib/cn";
 import { ModalDepthProvider, OVERLAY_Z_INDEX, fixedLayerStyle } from "../lib/overlay-stack";
 
@@ -119,56 +120,72 @@ const SheetContent = React.forwardRef<
     /** Extra classes for the scrim. */
     overlayClassName?: string;
     hideClose?: boolean;
+    /** Called when Escape would close the sheet. `event.preventDefault()` keeps it open. */
+    onEscapeKeyDown?: (event: KeyboardEvent) => void;
+    /** Called when the scrim is clicked. `event.preventDefault()` keeps the sheet open. */
+    onInteractOutside?: (event: React.MouseEvent<HTMLDivElement>) => void;
   }
->(({ className, children, side = "right", overlayClassName, style, hideClose, ...props }, ref) => {
-  const { open, setOpen, contentRef, titleId } = useSheetContext("SheetContent");
-  useFocusTrap(contentRef, open);
+>(
+  (
+    {
+      className,
+      children,
+      side = "right",
+      overlayClassName,
+      style,
+      hideClose,
+      onEscapeKeyDown,
+      onInteractOutside,
+      ...props
+    },
+    ref,
+  ) => {
+    const { open, setOpen, contentRef, titleId } = useSheetContext("SheetContent");
+    useFocusTrap(contentRef, open);
 
-  React.useEffect(() => {
-    if (!open) return;
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        setOpen(false);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [open, setOpen]);
+    useDismissLayer({
+      enabled: open,
+      refs: [contentRef],
+      onEscapeKeyDown: (event) => {
+        onEscapeKeyDown?.(event);
+        if (!event.defaultPrevented) setOpen(false);
+      },
+    });
 
-  if (!open) return null;
+    if (!open) return null;
 
-  return (
-    <Portal>
-      <SheetOverlay className={overlayClassName} />
-      <div
-        ref={composeRefs(ref, contentRef)}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        data-slot="sheet-content"
-        data-state="open"
-        data-side={side}
-        tabIndex={-1}
-        className={cn("spk-sheet gap-4", className)}
-        {...props}
-        style={fixedLayerStyle(OVERLAY_Z_INDEX.modal, style)}
-      >
-        <ModalDepthProvider>{children}</ModalDepthProvider>
-        {hideClose ? null : (
-          <button
-            type="button"
-            aria-label="Close"
-            className="spk-btn spk-btn--ghost spk-btn--icon-sm absolute top-3 right-3 text-fg-tertiary hover:text-fg"
-            onClick={() => setOpen(false)}
-          >
-            <XIcon className="size-4" />
-          </button>
-        )}
-      </div>
-    </Portal>
-  );
-});
+    return (
+      <Portal>
+        <SheetOverlay className={overlayClassName} onClick={onInteractOutside} />
+        <div
+          ref={composeRefs(ref, contentRef)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          data-slot="sheet-content"
+          data-state="open"
+          data-side={side}
+          tabIndex={-1}
+          className={cn("spk-sheet gap-4", className)}
+          {...props}
+          style={fixedLayerStyle(OVERLAY_Z_INDEX.modal, style)}
+        >
+          <ModalDepthProvider>{children}</ModalDepthProvider>
+          {hideClose ? null : (
+            <button
+              type="button"
+              aria-label="Close"
+              className="spk-btn spk-btn--ghost spk-btn--icon-sm absolute top-3 right-3 text-fg-tertiary hover:text-fg"
+              onClick={() => setOpen(false)}
+            >
+              <XIcon className="size-4" />
+            </button>
+          )}
+        </div>
+      </Portal>
+    );
+  },
+);
 SheetContent.displayName = "SheetContent";
 
 const SheetHeader = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<"div">>(

@@ -54,7 +54,10 @@ const buttonVariants = cva("spk-btn", {
 type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
-    /** Shows a spinner, sets `aria-busy`, and blocks interaction. */
+    /**
+     * Shows a spinner and ignores activation, so a form cannot be submitted twice. The button
+     * keeps keyboard focus (it is `aria-disabled`, not `disabled`) and announces `aria-busy`.
+     */
     loading?: boolean;
     /** Icon rendered before the label (replaced by the spinner while loading). */
     leadingIcon?: React.ReactNode;
@@ -84,11 +87,21 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       trailingIcon,
       disabled,
       children,
+      onClick,
       ...props
     },
     ref,
   ) => {
     const classes = cn(buttonVariants({ variant, size, block }), className);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (loading || (asChild && disabled)) {
+        // Blocks duplicate submits: preventing a submit button's click cancels the submission.
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      onClick?.(event);
+    };
 
     if (asChild) {
       return (
@@ -98,7 +111,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           data-variant={variant ?? "default"}
           className={classes}
           aria-disabled={disabled || loading || undefined}
+          aria-busy={loading || undefined}
+          data-loading={loading || undefined}
           {...props}
+          onClick={handleClick}
         >
           {children}
         </Slot>
@@ -112,9 +128,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         data-variant={variant ?? "default"}
         data-loading={loading || undefined}
         aria-busy={loading || undefined}
-        disabled={disabled || loading}
+        aria-disabled={(loading && !disabled) || undefined}
+        disabled={disabled}
         className={classes}
         {...props}
+        onClick={handleClick}
       >
         {loading ? <ButtonSpinner /> : leadingIcon}
         {children}

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useDismissLayer } from "./layer-stack";
 
 type UseDismissableOptions = {
   enabled?: boolean;
@@ -9,41 +10,16 @@ type UseDismissableOptions = {
 
 /**
  * Closes on Escape and pointer-down outside the provided refs.
+ * Routed through the shared layer stack, so only the topmost open overlay reacts.
  */
-export function useDismissable({
-  enabled = true,
-  onDismiss,
-  refs,
-}: UseDismissableOptions) {
-  const onDismissRef = React.useRef(onDismiss);
-  onDismissRef.current = onDismiss;
-
-  React.useEffect(() => {
-    if (!enabled) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.stopPropagation();
-        onDismissRef.current();
-      }
-    };
-
-    const handlePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null;
-      if (!target) return;
-
-      const isInside = refs.some((ref) => ref.current?.contains(target));
-      if (!isInside) {
-        onDismissRef.current();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("pointerdown", handlePointerDown, true);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("pointerdown", handlePointerDown, true);
-    };
-  }, [enabled, refs]);
+export function useDismissable({ enabled = true, onDismiss, refs }: UseDismissableOptions) {
+  useDismissLayer({
+    enabled,
+    refs,
+    onEscapeKeyDown: (event) => {
+      event.stopPropagation();
+      onDismiss();
+    },
+    onPointerDownOutside: () => onDismiss(),
+  });
 }

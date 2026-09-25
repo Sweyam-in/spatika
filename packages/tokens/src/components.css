@@ -66,6 +66,13 @@
     box-shadow: none;
   }
 
+  /* Loading is busy, not unavailable: full strength, keeps focus, activation is ignored in JS. */
+  .spk-btn[data-loading] {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: progress;
+  }
+
   .spk-btn[aria-invalid="true"] {
     border-color: var(--spk-danger);
   }

@@ -13,6 +13,7 @@ import {
 } from "../lib/use-floating-position";
 import { cn } from "../lib/cn";
 import { OVERLAY_Z_INDEX, useOverlayZIndex } from "../lib/overlay-stack";
+import { getTabbable } from "../lib/use-focus-trap";
 
 type PopoverContextValue = {
   open: boolean;
@@ -20,7 +21,16 @@ type PopoverContextValue = {
   triggerRef: React.RefObject<HTMLElement | null>;
   contentRef: React.RefObject<HTMLDivElement | null>;
   anchorRef: React.RefObject<HTMLElement | null>;
+  contentId: string;
 };
+
+/** First tabbable element after `from` in document order, outside `exclude`. */
+function nextTabbableAfter(from: HTMLElement, exclude: HTMLElement | null) {
+  const all = getTabbable(document.body).filter((el) => !exclude?.contains(el));
+  return all.find(
+    (el) => from.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING && !from.contains(el),
+  );
+}
 
 const PopoverContext = React.createContext<PopoverContextValue | null>(null);
 
@@ -53,6 +63,7 @@ const Popover = ({
   const triggerRef = React.useRef<HTMLElement | null>(null);
   const contentRef = React.useRef<HTMLDivElement | null>(null);
   const anchorRef = React.useRef<HTMLElement | null>(null);
+  const contentId = `${React.useId()}-popover`;
 
   // Provider-only root — no DOM wrapper (matches Radix Root behavior).
   return (
@@ -63,6 +74,7 @@ const Popover = ({
         triggerRef,
         contentRef,
         anchorRef,
+        contentId,
       }}
     >
       {children}
@@ -74,8 +86,8 @@ Popover.displayName = "Popover";
 const PopoverTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ComponentPropsWithoutRef<"button"> & { asChild?: boolean }
->(({ asChild = false, onClick, ...props }, ref) => {
-  const { open, setOpen, triggerRef } = usePopoverContext("PopoverTrigger");
+>(({ asChild = false, onClick, onKeyDown, ...props }, ref) => {
+  const { open, setOpen, triggerRef, contentRef, contentId } = usePopoverContext("PopoverTrigger");
   const Comp = asChild ? Slot : "button";
 
   return (
@@ -83,8 +95,21 @@ const PopoverTrigger = React.forwardRef<
       ref={composeRefs(ref, triggerRef) as React.Ref<HTMLButtonElement>}
       type={asChild ? undefined : "button"}
       data-slot="popover-trigger"
+      data-state={open ? "open" : "closed"}
+      aria-haspopup="dialog"
       aria-expanded={open}
+      aria-controls={open ? contentId : undefined}
       {...props}
+      onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented || event.key !== "Tab" || event.shiftKey || !open) return;
+        // The content is portaled to the end of <body>; bridge Tab into it.
+        const first = contentRef.current ? getTabbable(contentRef.current)[0] : undefined;
+        if (first) {
+          event.preventDefault();
+          first.focus();
+        }
+      }}
       onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
         if (!event.defaultPrevented) setOpen(!open);
@@ -117,9 +142,12 @@ const PopoverContent = React.forwardRef<
     align?: FloatingAlign;
     side?: FloatingSide;
     sideOffset?: number;
-    /** Radix compat — ignored (focus stays with the trigger by default). */
+    /**
+     * Called before focus moves into the content on open. `event.preventDefault()` keeps focus
+     * on the trigger (Tab from the trigger still enters the popover).
+     */
     onOpenAutoFocus?: (event: Event) => void;
-    /** Radix compat — ignored. */
+    /** Called before focus returns to the trigger on close. `event.preventDefault()` skips it. */
     onCloseAutoFocus?: (event: Event) => void;
   }
 >(
@@ -130,14 +158,36 @@ const PopoverContent = React.forwardRef<
       side = "bottom",
       sideOffset = 4,
       style,
-      onOpenAutoFocus: _onOpenAutoFocus,
-      onCloseAutoFocus: _onCloseAutoFocus,
+      onOpenAutoFocus,
+      onCloseAutoFocus,
+      onKeyDown,
       ...props
     },
     ref,
   ) => {
-    const { open, setOpen, triggerRef, contentRef, anchorRef } =
+    const { open, setOpen, triggerRef, contentRef, anchorRef, contentId } =
       usePopoverContext("PopoverContent");
+    const autoFocus = React.useRef({ onOpenAutoFocus, onCloseAutoFocus });
+    autoFocus.current = { onOpenAutoFocus, onCloseAutoFocus };
+
+    React.useEffect(() => {
+      if (!open) return;
+      const content = contentRef.current;
+      const id = window.requestAnimationFrame(() => {
+        const event = new Event("spatika.popover.openAutoFocus", { cancelable: true });
+        autoFocus.current.onOpenAutoFocus?.(event);
+        if (event.defaultPrevented || !content || content.contains(document.activeElement)) return;
+        (getTabbable(content)[0] ?? content).focus({ preventScroll: true });
+      });
+      return () => {
+        window.cancelAnimationFrame(id);
+        const active = document.activeElement;
+        if (active && active !== document.body && !content?.contains(active)) return;
+        const event = new Event("spatika.popover.closeAutoFocus", { cancelable: true });
+        autoFocus.current.onCloseAutoFocus?.(event);
+        if (!event.defaultPrevented) triggerRef.current?.focus({ preventScroll: true });
+      };
+    }, [open, contentRef, triggerRef]);
     const zIndex = useOverlayZIndex(OVERLAY_Z_INDEX.popover);
 
     const positionAnchor =
@@ -175,14 +225,36 @@ const PopoverContent = React.forwardRef<
       <Portal>
         <div
           ref={composeRefs(ref, contentRef)}
+          id={contentId}
+          role="dialog"
+          tabIndex={-1}
           data-slot="popover-content"
           data-state="open"
           data-side={position?.side ?? side}
           className={cn(
-            "spk-overlay spk-animate-pop z-[90] w-72 p-3",
+            "spk-overlay spk-animate-pop w-72 p-3 outline-none",
             className,
           )}
           {...props}
+          onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>) => {
+            onKeyDown?.(event);
+            if (event.defaultPrevented || event.key !== "Tab") return;
+            const content = contentRef.current;
+            const trigger = triggerRef.current;
+            if (!content || !trigger) return;
+            const tabbable = getTabbable(content);
+            const atStart = document.activeElement === (tabbable[0] ?? content);
+            const atEnd = document.activeElement === (tabbable[tabbable.length - 1] ?? content);
+            if (event.shiftKey && atStart) {
+              event.preventDefault();
+              trigger.focus();
+            } else if (!event.shiftKey && atEnd) {
+              // Leave the popover to wherever Tab would go after the trigger.
+              event.preventDefault();
+              setOpen(false);
+              (nextTabbableAfter(trigger, content) ?? trigger).focus();
+            }
+          }}
           style={
             {
               position: "fixed",
