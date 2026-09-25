@@ -11,7 +11,7 @@ describe("site", () => {
     expect(INSTALL.charts).toContain("@spatika/charts");
     expect(INSTALL.editor).toContain("@spatika/editor");
     expect(SITE.tagline).toBe("An AI-first React toolkit for serious product UI.");
-    expect(SITE.description).toMatch(/You may also know it as Spadik UI/);
+    expect(SITE.description).toMatch(/^Spatika UI is an AI-first, open-source React toolkit/);
     expect(SITE.alternateNames).toContain("Spadik UI");
     expect(SITE.sweyamUrl).toBe("https://sweyam.com");
     expect(SITE.defaultTheme).toBe("mukta");
