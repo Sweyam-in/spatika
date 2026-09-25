@@ -1,3 +1,4 @@
+import { appDemos } from "./AppDemos";
 import { systemDemos } from "./SystemDemos";
 import { marketingDemos } from "./MarketingDemos";
 import {
@@ -1320,6 +1321,7 @@ export function ComponentDemo({ slug, compact = false, bare = false }: Component
     ...marketingDemos(compact),
     ...chartDemos(compact),
     ...editorDemo(compact),
+    ...appDemos,
   };
 
   const preview = demos[slug] ?? <p>Preview coming soon.</p>;

@@ -7,6 +7,7 @@ import {
 import { INSTALL, SITE } from "./site";
 import { SNIPPETS } from "./agent-snippets";
 import { getComponentDoc } from "../docs/catalog";
+import { appDemoSource } from "../docs/app-catalog";
 
 export type AgentDocFile = {
   path: string;
@@ -254,7 +255,7 @@ function defaultSnippet(entry: ComponentEntry): string {
 }
 
 export function usageSnippet(slug: string): string {
-  const snippet = SNIPPETS[slug];
+  const snippet = SNIPPETS[slug] ?? appDemoSource(slug);
   if (snippet) return snippet;
   const entry = components.find((item) => item.slug === slug);
   if (!entry) return "";

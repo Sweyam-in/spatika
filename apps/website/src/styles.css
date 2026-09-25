@@ -1792,7 +1792,9 @@ a.docs-sidebar-all.active {
   place-items: center;
 }
 
-.demo-block-preview > * {
+/* Zero specificity: a default that keeps demos inside the panel without overriding a
+ * demo's own max-w-* utility. */
+:where(.demo-block-preview > *) {
   max-width: 100%;
 }
 

@@ -1,6 +1,7 @@
 import type { ComponentEntry } from "../data/navigation";
 import { components } from "../data/navigation";
 import { getApi } from "./api";
+import { getAppDoc } from "./app-catalog";
 import { getClasses } from "./classes";
 import { getIntro } from "./intros";
 import { getSlots } from "./slots";
@@ -851,6 +852,16 @@ const categoryUsage: Record<ComponentEntry["category"], UsageSection[]> = {
       ],
     },
   ],
+  Overlays: [
+    {
+      id: "choose-overlay",
+      title: "Which overlay",
+      paragraphs: [
+        "Use the lightest layer that does the job. Tooltip for a hint; Popover for a small non-modal panel; DropdownMenu or ContextMenu for actions; Sheet for editing a record beside the page; Dialog for a focused task; AlertDialog only to confirm something irreversible. BottomSheet is the phone-native sheet.",
+        "Overlays share one layer stack: Escape closes only the topmost, an outside press closes only the layers above the one you pressed, and anything opened inside a modal stacks above it. You never need to set z-index by hand.",
+      ],
+    },
+  ],
   Media: [
     {
       id: "covers",
@@ -913,7 +924,7 @@ function defaultA11y(entry: ComponentEntry): string[] {
 }
 
 function relatedOf(entry: ComponentEntry): string[] {
-  const explicit = relatedBySlug[entry.slug] ?? [];
+  const explicit = relatedBySlug[entry.slug] ?? getAppDoc(entry.slug)?.related ?? [];
   const neighbors = components
     .filter((item) => item.category === entry.category && item.slug !== entry.slug)
     .slice(0, 4)
@@ -934,7 +945,7 @@ export function getComponentDoc(entry: ComponentEntry): ComponentDoc {
     ...slugUsage,
     ...categoryUsage[entry.category].filter((section) => !usedUsageIds.has(section.id)),
   ];
-  const accessibility = a11yBySlug[entry.slug] ?? defaultA11y(entry);
+  const accessibility = a11yBySlug[entry.slug] ?? getAppDoc(entry.slug)?.accessibility ?? defaultA11y(entry);
 
   const examples: ExampleMeta[] = [
     {

@@ -41,6 +41,15 @@ describe("API reference sync", () => {
     ).not.toThrow();
   }, 60_000);
 
+  it("generated/demo-sources.json matches the demo files", () => {
+    expect(() =>
+      execFileSync(process.execPath, ["apps/website/scripts/sync-demo-sources.mjs", "--check"], {
+        cwd: repoRoot,
+        stdio: "pipe",
+      }),
+    ).not.toThrow();
+  });
+
   it("documents only props that exist", () => {
     const stale: string[] = [];
     for (const [slug, sections] of Object.entries(apiBySlug)) {

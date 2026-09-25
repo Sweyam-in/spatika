@@ -1,3 +1,4 @@
+import { appDemoSource } from "./app-catalog";
 import type { ComponentEntry } from "../data/navigation";
 
 const SOURCE: Record<string, string> = {
@@ -1949,6 +1950,7 @@ export default function Demo() {
 export function basicSource(entry: ComponentEntry): string {
   return (
     SOURCE[entry.slug] ??
+    appDemoSource(entry.slug) ??
     `import { ${entry.importName} } from "@spatika/react";\n\nexport default function Demo() {\n  return <${entry.importName} />;\n}\n`
   );
 }

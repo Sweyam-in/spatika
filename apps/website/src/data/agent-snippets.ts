@@ -1,5 +1,7 @@
+import { APP_DOCS, appDemoSource } from "../docs/app-catalog";
+
 /** Canonical copy-paste snippets for agent docs. Keys match `components[].slug`. */
-export const SNIPPETS: Record<string, string> = {
+const BASE_SNIPPETS: Record<string, string> = {
   "lead-form": `import { LeadForm } from "@spatika/react";
 
 <LeadForm
@@ -1526,4 +1528,13 @@ const geoData: GeoJsonFeatureCollection = {
     },
   ]}
 />`,
+};
+
+/**
+ * Canonical snippets. Components documented from demo files use that file's source, so the
+ * snippet is code that compiles and runs as shown.
+ */
+export const SNIPPETS: Record<string, string> = {
+  ...Object.fromEntries(APP_DOCS.map((doc) => [doc.slug, appDemoSource(doc.slug) ?? ""])),
+  ...BASE_SNIPPETS,
 };

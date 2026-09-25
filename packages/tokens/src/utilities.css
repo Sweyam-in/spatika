@@ -1199,5 +1199,10 @@
   .scroll-py-1\.5{scroll-padding-block:0.375rem}
   .transition-\[stroke-dashoffset\]{transition-property:stroke-dashoffset;transition-timing-function:var(--spk-ease-standard);transition-duration:var(--spk-duration-slow)}
   .empty\:hidden:empty{display:none}
+  .h-32{height:8rem}
+  .h-64{height:16rem}
+  .place-items-center{place-items:center}
+  .pt-28{padding-top:7rem}
+  .visible{visibility:visible}
   @keyframes spk-pulse { 50% { opacity: 0.5; } }
   @keyframes spk-ping { 75%, 100% { opacity: 0; transform: scale(2); } }
