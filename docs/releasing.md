@@ -79,11 +79,35 @@ Encoded in `scripts/lib/versions.mjs` and tested in `apps/website/src/data/versi
 - **Archived**: everything else. The docs stay online but are never updated.
 - **Pre-release** and **development**: labelled and banner-marked. They are never the default.
 
-## Serving
+## Serving and deploying
 
-`apps/website/nginx.conf` serves `/docs/v*/` and `/next/` with their own SPA fallbacks. Hashed
-assets are cached immutably, and `versions.json` is revalidated.
+`apps/website/nginx.conf` serves `/docs/v*/` and `/next/` with their own SPA fallbacks, caches
+hashed assets immutably and revalidates `versions.json`.
 
-The current `Dockerfile` still builds a single site from the checkout to `/`. It doesn't copy
-in the persistent site directory. Moving production to versioned docs means mounting or copying
-that directory into the image, which is a deployment decision left to the maintainers.
+The Docker image (`Dockerfile`) carries the versioned site forward from one deploy to the next:
+
+1. `PREVIOUS_SITE_IMAGE` names the image currently deployed. `prod-deploy/scripts/deploy-compose.sh`
+   reads it from `.env.production` and passes it through `scripts/build-push-ghcr.sh`. The build
+   copies that image's site as its starting point.
+2. `node scripts/release-docs.mjs site --site-dir /site --skip-tests` then brings it up to date
+   with the checkout:
+   - **Released checkout** (its version is on npm and no changesets are pending): adds the
+     `/docs/vX.Y.Z/` snapshot if it's missing, and becomes the root when it's the latest stable.
+     An existing snapshot is never rebuilt.
+   - **Anything else** (pending changesets, or a version not yet published): rebuilds `/next/`.
+     The root shows the checkout too, labelled as development, only until a release has been
+     installed there. `docs-root.json` records which build owns the root.
+3. `verify` fails the build if any version in `versions.json` no longer resolves.
+
+So deploying `main` between releases updates `/next/`, and deploying a release commit adds its
+snapshot and makes it the root. Neither step removes or rewrites an earlier snapshot.
+
+The first image built this way starts from the currently deployed image, whose root is an
+unversioned development build. That root is replaced by development docs until the first
+release (2.4.0) is deployed.
+
+`release-docs.mjs site` was exercised locally against an empty directory, a rehearsed 2.4.0
+release, an idempotent re-run and a development build after the release. The image build
+itself (the `FROM ${PREVIOUS_SITE_IMAGE}` stage and the multi-platform push) hasn't been run
+here, because Docker isn't available in the environment where this was written. Build it once
+by hand before the next production deploy.

@@ -90,8 +90,20 @@ build_release() (
     echo "Production environment still contains placeholder values." >&2
     exit 1
   fi
+  # Versioned docs: the new image starts from the site the deployed image serves, so released
+  # /docs/vX.Y.Z/ snapshots carry forward (see Dockerfile). Empty on the very first release.
+  local previous_image previous_tag previous_site=""
+  previous_image="$(sed -nE 's/^[[:space:]]*(export[[:space:]]+)?SPATIKA_IMAGE[[:space:]]*=[[:space:]]*["'"'"']?([^"'"'"'[:space:]]*).*/\2/p' "$SPATIKA_PRODUCTION_ENV" | tail -n 1)"
+  previous_tag="$(sed -nE 's/^[[:space:]]*(export[[:space:]]+)?SPATIKA_IMAGE_TAG[[:space:]]*=[[:space:]]*["'"'"']?([^"'"'"'[:space:]]*).*/\2/p' "$SPATIKA_PRODUCTION_ENV" | tail -n 1)"
+  if [[ -n "$previous_image" && -n "$previous_tag" ]] && ! grep -Eq 'replace-with|replace-me|your-org' <<<"$previous_image:$previous_tag"; then
+    previous_site="$previous_image:$previous_tag"
+    echo "Carrying versioned docs forward from $previous_site"
+  else
+    echo "No deployed image recorded; versioned docs start empty"
+  fi
+
   echo "Building and pushing release $tag (current checkout, including local changes)"
-  BUILD_PUSH_GHCR_ENV="$build_env" "$repo_root/scripts/build-push-ghcr.sh" --tag "$tag" --all
+  PREVIOUS_SITE_IMAGE="$previous_site" BUILD_PUSH_GHCR_ENV="$build_env" "$repo_root/scripts/build-push-ghcr.sh" --tag "$tag" --all
 )
 
 case "$ACTION" in
