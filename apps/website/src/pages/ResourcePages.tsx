@@ -216,8 +216,16 @@ export function AccessibilityPage() {
         <li>Theme contrast is computed from the token source for every theme on every run.</li>
         <li>Browser checks run axe-core rules on documentation pages at phone, tablet and desktop widths.</li>
         <li>
-          Screen-reader and physical-device testing is manual. Emulated viewports and automated rules do not guarantee
-          identical behaviour on real devices.
+          Screen-reader output is checked automatically with a virtual screen reader that follows the ARIA specs: names,
+          roles, states and live-region announcements for forms, dates, dialogs, tabs, trees, toasts and charts.
+        </li>
+        <li>
+          Browser checks run in Chromium, Firefox and WebKit (desktop and phone sizes) on every change.
+        </li>
+        <li>
+          Testing with real screen readers (NVDA, JAWS, VoiceOver, TalkBack) and physical devices is manual and follows a
+          written protocol in the repository (<code>docs/testing/screen-readers.md</code>). No manual pass has been
+          recorded yet; emulated viewports and automated rules do not guarantee identical behaviour on real devices.
         </li>
       </ul>
 

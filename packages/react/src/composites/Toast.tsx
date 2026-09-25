@@ -133,7 +133,13 @@ export function Toaster({ children, className, position = "bottom-right" }: Toas
               {toneIcon[tone] ? <span className="mt-0.5 shrink-0">{toneIcon[tone]}</span> : null}
               <div className="min-w-0 flex-1">
                 <p className="text-body font-medium text-fg">{t.title}</p>
-                {t.description ? <p className="mt-0.5 text-body-sm text-fg-secondary">{t.description}</p> : null}
+                {/* The space keeps title and description apart in the live region's announcement. */}
+                {t.description ? (
+                  <>
+                    {" "}
+                    <p className="mt-0.5 text-body-sm text-fg-secondary">{t.description}</p>
+                  </>
+                ) : null}
               </div>
               {t.action ? (
                 <button
