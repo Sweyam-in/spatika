@@ -47,6 +47,15 @@ function completeSection(section: ApiSection): ApiSection {
   const names = section.name.split(/\s*\/\s*/).map((name) => name.replace(/\(\)$/, ""));
   const generated = names.map((name) => GENERATED[name]).filter(Boolean);
   if (!generated.length) return section;
+  const byName = new Map(generated.flatMap((component) => component.props.map((prop) => [prop.name, prop] as const)));
+  // Types come from the source; the hand-written row keeps its description (and default,
+  // unless the source states one).
+  const props = section.props.map((prop) => {
+    const source = byName.get(prop.name);
+    if (!source) return prop;
+    return { ...prop, type: source.type, default: source.default ?? prop.default };
+  });
+  section = { ...section, props };
   const documented = new Set(section.props.flatMap((prop) => prop.name.split(/\s*\/\s*/)));
   const missing = generated
     .flatMap((component) => component.props)

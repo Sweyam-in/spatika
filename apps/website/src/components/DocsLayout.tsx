@@ -6,6 +6,8 @@ import { DocsSidebar } from "@/components/DocsSidebar";
 import { topNav, type NavItem } from "@/data/navigation";
 import { SITE } from "@/data/site";
 import { ThemeToolbar } from "./ThemeToolbar";
+import { DocsSearch } from "./DocsSearch";
+import { VersionBanner, VersionSelector } from "./VersionSelector";
 
 type DocsLayoutProps = {
   sidebar?: {
@@ -42,6 +44,8 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
           </nav>
 
           <div className="site-header-actions">
+            <DocsSearch />
+            <VersionSelector />
             <ThemeToolbar />
             <a
               href={SITE.github}
@@ -99,6 +103,8 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
           ))}
         </nav>
       </header>
+
+      <VersionBanner />
 
       <div className="site-content">
         {sidebar ? (

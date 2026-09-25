@@ -25,7 +25,10 @@ function parseArgs(argv) {
   const args = {};
   for (let i = 0; i < argv.length; i += 1) {
     const key = argv[i];
-    if (key.startsWith("--")) args[key.slice(2)] = argv[i + 1]?.startsWith("--") ? "true" : argv[++i];
+    if (!key.startsWith("--")) continue;
+    const next = argv[i + 1];
+    // A flag followed by nothing or by another flag is a boolean (`--check`).
+    args[key.slice(2)] = next === undefined || next.startsWith("--") ? "true" : argv[++i];
   }
   return args;
 }
@@ -55,7 +58,9 @@ const TYPE_FLAGS =
 function externalSource(fileName) {
   const normalized = fileName.split(path.sep).join("/");
   const match = normalized.match(/node_modules\/((?:@[^/]+\/)?[^/]+)/);
-  if (!match) return null;
+  // Spatika's own packages count as own props even when resolved from node_modules
+  // (archive builds read the published tarballs).
+  if (!match || match[1].startsWith("@spatika/")) return null;
   return match[1] === "@types/react" || match[1] === "typescript" ? "HTML attributes" : match[1];
 }
 

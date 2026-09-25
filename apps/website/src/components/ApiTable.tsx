@@ -4,6 +4,13 @@ type ApiTableProps = {
   sections: ApiSection[];
 };
 
+/** Renders `code` spans in prop descriptions (they come from JSDoc and hand-written prose). */
+function inlineCode(text: string) {
+  return text.split(/(`[^`]+`)/g).map((part, index) =>
+    part.startsWith("`") && part.endsWith("`") && part.length > 1 ? <code key={index}>{part.slice(1, -1)}</code> : part,
+  );
+}
+
 export function ApiTable({ sections }: ApiTableProps) {
   return (
     <div className="api-guide">
@@ -14,7 +21,15 @@ export function ApiTable({ sections }: ApiTableProps) {
           </h3>
           {section.extends ? (
             <p className="api-extends">
-              Extends native <code>{section.extends}</code> attributes.
+              {/attributes$/i.test(section.extends) ? (
+                <>
+                  Also accepts <code>{section.extends}</code> — they pass through to the root element.
+                </>
+              ) : (
+                <>
+                  Extends native <code>{section.extends}</code> attributes.
+                </>
+              )}
             </p>
           ) : null}
           {section.description ? <p className="demo-block-lead">{section.description}</p> : null}
@@ -31,14 +46,14 @@ export function ApiTable({ sections }: ApiTableProps) {
               <tbody>
                 {section.props.map((prop) => (
                   <tr key={prop.name}>
-                    <td>
+                    <td data-label="Name">
                       <code>{prop.name}</code>
                     </td>
-                    <td>
+                    <td data-label="Type">
                       <code>{prop.type}</code>
                     </td>
-                    <td>{prop.default ? <code>{prop.default}</code> : "—"}</td>
-                    <td>{prop.description}</td>
+                    <td data-label="Default">{prop.default ? <code>{prop.default}</code> : "—"}</td>
+                    <td data-label="Description">{inlineCode(prop.description)}</td>
                   </tr>
                 ))}
               </tbody>

@@ -20,7 +20,11 @@
     "version-packages": "changeset version",
     "release": "npm run build -w @spatika/tokens && npm run build -w @spatika/charts && npm run build -w @spatika/editor && npm run build -w @spatika/react && changeset publish",
     "docs:api": "node scripts/extract-api.mjs --entry packages/react/src/index.ts --tsconfig packages/react/tsconfig.json --out apps/website/src/generated/api.json",
-    "docs:demos": "node apps/website/scripts/sync-demo-sources.mjs"
+    "docs:demos": "node apps/website/scripts/sync-demo-sources.mjs",
+    "docs:archive": "node scripts/docs-archive.mjs --all",
+    "docs:versions": "node scripts/release-docs.mjs manifest",
+    "release:docs": "node scripts/release-docs.mjs release --site-dir",
+    "release:docs:next": "node scripts/release-docs.mjs next --site-dir"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.1"

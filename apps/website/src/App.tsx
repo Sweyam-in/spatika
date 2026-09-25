@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { DocsLayout } from "@/components/DocsLayout";
-import { componentNavGroups, customizeNav, designNav, guideNav } from "@/data/navigation";
+import { componentNavGroups, customizeNav, designNav, guideNav, resourcesNav } from "@/data/navigation";
 import { HomePage } from "@/pages/HomePage";
 import { DesignPage } from "@/pages/DesignPage";
 import { ComponentsPage } from "@/pages/ComponentsPage";
@@ -19,6 +19,8 @@ import { AdminConsole } from "@/showcase/screens/AdminConsole";
 import { WorkspaceApp } from "@/showcase/screens/WorkspaceApp";
 import { LandingPage } from "@/showcase/screens/LandingPage";
 import { EditorPlaygroundPage } from "@/pages/EditorPlaygroundPage";
+import { AccessibilityPage, ChangelogPage, MigrationPage, VersionsPage } from "@/pages/ResourcePages";
+import { ArchivePage } from "@/pages/ArchivePage";
 
 export default function App() {
   return (
@@ -47,6 +49,13 @@ export default function App() {
       </Route>
       <Route element={<DocsLayout sidebar={{ title: "Guides", items: guideNav }} />}>
         <Route path="guides" element={<GuidesPage />} />
+      </Route>
+      <Route element={<DocsLayout sidebar={{ title: "Resources", items: resourcesNav }} />}>
+        <Route path="changelog" element={<ChangelogPage />} />
+        <Route path="versions" element={<VersionsPage />} />
+        <Route path="migration" element={<MigrationPage />} />
+        <Route path="accessibility" element={<AccessibilityPage />} />
+        <Route path="docs/:version/*" element={<ArchivePage />} />
       </Route>
       <Route
         element={<DocsLayout sidebar={{ title: "Components", groups: componentNavGroups }} />}

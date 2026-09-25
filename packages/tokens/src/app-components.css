@@ -864,6 +864,27 @@
     outline-offset: 2px;
   }
 
+  /* ── Command palette rows ─────────────────────────────────────────────── */
+
+  /* The label keeps its width; a long description truncates instead of squeezing it. */
+  .spk-command-label {
+    flex-shrink: 0;
+    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .spk-command-description {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--spk-text-tertiary);
+    font-size: var(--spk-text-body-sm);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   /* ── Result / empty state tones ───────────────────────────────────────── */
 
   .spk-state-icon {

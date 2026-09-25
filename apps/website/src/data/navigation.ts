@@ -8,6 +8,7 @@ export const topNav: NavItem[] = [
   { label: "Customize", to: "/customize" },
   { label: "Guides", to: "/guides" },
   { label: "Showcase", to: "/showcase" },
+  { label: "Resources", to: "/changelog" },
 ];
 
 export const designNav: NavItem[] = [
@@ -43,6 +44,14 @@ export const guideNav: NavItem[] = [
   { label: "AI agents", to: "/guides#ai-agents" },
   { label: "Publishing", to: "/guides#publishing" },
   { label: "Contribute", to: "/guides#contribute" },
+];
+
+/** Release notes, versions, migration and project resources. */
+export const resourcesNav: NavItem[] = [
+  { label: "Release notes", to: "/changelog" },
+  { label: "Versions & support", to: "/versions" },
+  { label: "Migration guide", to: "/migration" },
+  { label: "Accessibility", to: "/accessibility" },
 ];
 
 export type ComponentEntry = {

@@ -19,25 +19,29 @@ function CommandDialog({
   description = "Search for a command to run…",
   children,
   className,
+  filter,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
   title?: string;
   description?: string;
   className?: string;
+  /** Custom ranking — see `cmdk`'s `filter`. Return 0 to hide an item. */
+  filter?: React.ComponentProps<typeof CommandPrimitive>["filter"];
 }) {
   return (
     <Dialog {...props}>
-      <DialogHeader className="sr-only">
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
       <DialogContent
         hideClose
         size="lg"
         position="top"
         className={cn("gap-0 overflow-hidden p-0 sm:max-w-[38rem]", className)}
       >
-        <Command>{children}</Command>
+        {/* Inside the dialog, so the name only exists while the palette is open. */}
+        <DialogHeader className="sr-only">
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        <Command filter={filter}>{children}</Command>
       </DialogContent>
     </Dialog>
   );

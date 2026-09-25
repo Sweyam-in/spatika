@@ -3558,6 +3558,12 @@
     "default": "\"Search for a command to run…\""
    },
    {
+    "name": "filter",
+    "type": "CommandFilter",
+    "optional": true,
+    "description": "Custom ranking — see `cmdk`'s `filter`. Return 0 to hide an item."
+   },
+   {
     "name": "onOpenChange",
     "type": "((open: boolean) => void)",
     "optional": true,
@@ -3647,6 +3653,12 @@
     "optional": true,
     "description": "",
     "default": "\"No results found.\""
+   },
+   {
+    "name": "filter",
+    "type": "((value: string, search: string, keywords?: string[]) => number)",
+    "optional": true,
+    "description": "Custom ranking `(value, search, keywords) => score`; 0 hides the item. The default is\ncmdk's fuzzy match, which suits short command lists; large indexes (docs search) usually\nwant word-aware matching."
    },
    {
     "name": "footer",

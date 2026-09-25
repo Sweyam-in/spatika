@@ -42,6 +42,7 @@ describe("component API docs", () => {
       expect(names.filter((name) => name === "series")).toEqual(["series"]);
     }
     const rangeBar = getApi(components.find((entry) => entry.slug === "range-bar-chart")!);
-    expect(rangeBar[0]?.props.find((prop) => prop.name === "series")?.type).toContain("low");
+    // Types come from the source: range series are [low, high] tuples.
+    expect(rangeBar[0]?.props.find((prop) => prop.name === "series")?.type).toBe("RangeSeries[]");
   });
 });

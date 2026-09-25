@@ -102,6 +102,46 @@ const staticPages: SeoPage[] = [
     ],
   },
   {
+    path: "/changelog",
+    title: titled("Release notes"),
+    description:
+      "Release notes for every version of @spatika/tokens, @spatika/react, @spatika/charts and @spatika/editor, classified by semantic versioning.",
+    breadcrumbs: [
+      { name: "Spatika UI", path: "/" },
+      { name: "Release notes", path: "/changelog" },
+    ],
+  },
+  {
+    path: "/versions",
+    title: titled("Versions & support"),
+    description:
+      "Documentation for every published Spatika UI release at a stable /docs/vX.Y.Z/ URL, and the support policy for current, supported and archived versions.",
+    breadcrumbs: [
+      { name: "Spatika UI", path: "/" },
+      { name: "Versions & support", path: "/versions" },
+    ],
+  },
+  {
+    path: "/migration",
+    title: titled("Migration guides"),
+    description:
+      "What changes when you upgrade Spatika UI — 2.3 to 2.4 and 1.x to 2.0 — with the one-line changes that restore previous behaviour.",
+    breadcrumbs: [
+      { name: "Spatika UI", path: "/" },
+      { name: "Migration guides", path: "/migration" },
+    ],
+  },
+  {
+    path: "/accessibility",
+    title: titled("Accessibility"),
+    description:
+      "How Spatika UI targets WCAG 2.2 AA: keyboard models, focus management, theme contrast, how it is tested, and known limitations.",
+    breadcrumbs: [
+      { name: "Spatika UI", path: "/" },
+      { name: "Accessibility", path: "/accessibility" },
+    ],
+  },
+  {
     path: "/showcase",
     title: titled("Showcase"),
     description:
