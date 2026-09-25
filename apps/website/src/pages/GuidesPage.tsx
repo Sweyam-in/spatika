@@ -8,7 +8,7 @@ import {
   RECIPE_EDITOR,
   RECIPE_SCHEDULER,
   RECIPE_THEMING,
-} from "@/data/agent-docs";
+} from "@/data/recipes";
 import { INSTALL, SITE } from "@/data/site";
 
 export function GuidesPage() {

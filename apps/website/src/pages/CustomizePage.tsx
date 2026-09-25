@@ -8,7 +8,7 @@ import {
   RECIPE_CUSTOMIZE_ONE_OFF,
   RECIPE_RESPONSIVE,
   RECIPE_THEMING,
-} from "@/data/agent-docs";
+} from "@/data/recipes";
 
 const PALETTE_ROWS: { token: string; css: string; utility: string }[] = [
   { token: "background / foreground", css: "--background, --foreground", utility: "bg-background, text-foreground" },

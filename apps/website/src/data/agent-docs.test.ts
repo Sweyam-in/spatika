@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { agentDocFiles, llmsTxt, usageSnippet } from "./agent-docs";
+import { agentDocFiles, llmsTxt } from "./agent-docs";
+import { usageSnippet } from "./usage-snippet";
 import { components } from "./navigation";
 
 describe("agent docs", () => {

@@ -10,7 +10,7 @@ import path from "node:path";
 import ts from "typescript";
 import { describe, expect, it } from "vitest";
 import { components } from "@/data/navigation";
-import { usageSnippet } from "@/data/agent-docs";
+import { usageSnippet } from "@/data/usage-snippet";
 import { getComponentDoc } from "./catalog";
 import { basicSource } from "./source";
 

@@ -4451,3 +4451,10 @@ pre {
   margin: 3rem auto;
   padding: 0 1.25rem;
 }
+
+/* Placeholder while a code-split demo (the editor) loads. */
+.demo-loading {
+  min-height: 12rem;
+  border-radius: var(--spk-radius-md);
+  background: var(--spk-surface-sunken);
+}

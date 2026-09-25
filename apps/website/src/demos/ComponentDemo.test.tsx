@@ -1,9 +1,24 @@
 import { render, screen } from "@testing-library/react";
 import { SpatikaThemeProvider } from "@spatika/react";
 import { describe, expect, it } from "vitest";
-import { ComponentDemo } from "./ComponentDemo";
+import { ComponentDemo, EDITOR_SLUGS } from "./ComponentDemo";
+import { editorDemo } from "./EditorDemo";
 
 describe("ComponentDemo", () => {
+  it("loads the editor demos lazily, for exactly the slugs the editor module provides", async () => {
+    expect([...EDITOR_SLUGS].sort()).toEqual(Object.keys(editorDemo(true)).sort());
+    // Transform the (large) module first; React.lazy still suspends on the first render.
+    await import("./EditorDemo");
+    render(
+      <SpatikaThemeProvider defaultTheme="mukta" syncDocument={false}>
+        <ComponentDemo slug="spatika-editor" compact />
+      </SpatikaThemeProvider>,
+    );
+    expect(screen.getByRole("status", { name: "Loading editor" })).toBeInTheDocument();
+    // Tiptap initialises slowly in jsdom when the whole suite runs in parallel.
+    expect(await screen.findByRole("textbox", {}, { timeout: 30_000 })).toBeInTheDocument();
+  }, 40_000);
+
   it("renders the compact button preview", () => {
     render(
       <SpatikaThemeProvider defaultTheme="mukta" syncDocument={false}>

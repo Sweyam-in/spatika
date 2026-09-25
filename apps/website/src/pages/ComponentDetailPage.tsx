@@ -4,7 +4,7 @@ import { ApiTable, ClassTable, SlotTable } from "@/components/ApiTable";
 import { CodeBlock } from "@/components/CodeBlock";
 import { DemoBlock } from "@/components/DemoBlock";
 import { DocsToc } from "@/components/DocsToc";
-import { usageSnippet } from "@/data/agent-docs";
+import { usageSnippet } from "@/data/usage-snippet";
 import { componentImportCode, components } from "@/data/navigation";
 import { SITE } from "@/data/site";
 import { getComponentDoc } from "@/docs/catalog";
