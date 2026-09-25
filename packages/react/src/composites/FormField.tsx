@@ -5,7 +5,8 @@ import { cn } from "../lib/cn";
 import { Label } from "../primitives/Label";
 
 export type FormFieldProps = {
-  id: string;
+  /** Id for the control. Generated when omitted and injected into the child if it has none. */
+  id?: string;
   label: string;
   description?: string;
   error?: string;
@@ -21,11 +22,12 @@ export type FormFieldProps = {
 };
 
 /**
- * Label + control + help/error. Wires `aria-describedby`, `aria-invalid` and `aria-required`
- * onto a single child control automatically.
+ * Label + control + help/error. Wires `id`, `aria-labelledby` (for controls a `<label>` cannot
+ * name, such as radio groups), `aria-describedby`, `aria-invalid` and `aria-required` onto a
+ * single child control automatically. Errors are announced politely as they change.
  */
 export function FormField({
-  id,
+  id: idProp,
   label,
   description,
   error,
@@ -36,17 +38,28 @@ export function FormField({
   labelAction,
   layout = "vertical",
 }: FormFieldProps) {
+  const generatedId = React.useId();
+  const childProps = (React.isValidElement(children) ? children.props : {}) as Record<string, unknown> & {
+    id?: string;
+    "aria-describedby"?: string;
+    "aria-invalid"?: boolean;
+    "aria-label"?: string;
+    "aria-labelledby"?: string;
+  };
+  const id = idProp ?? childProps.id ?? `field${generatedId.replace(/:/g, "")}`;
+  const labelId = `${id}-label`;
   const descriptionId = description ? `${id}-description` : undefined;
   const errorId = error ? `${id}-error` : undefined;
   const describedBy = [errorId, descriptionId].filter(Boolean).join(" ") || undefined;
 
   const control = React.isValidElement(children)
     ? React.cloneElement(children as React.ReactElement<Record<string, unknown>>, {
+        id: childProps.id ?? id,
+        "aria-labelledby":
+          childProps["aria-labelledby"] ?? (childProps["aria-label"] ? undefined : labelId),
         "aria-describedby":
-          [(children.props as { "aria-describedby"?: string })["aria-describedby"], describedBy]
-            .filter(Boolean)
-            .join(" ") || undefined,
-        "aria-invalid": error ? true : (children.props as { "aria-invalid"?: boolean })["aria-invalid"],
+          [childProps["aria-describedby"], describedBy].filter(Boolean).join(" ") || undefined,
+        "aria-invalid": error ? true : childProps["aria-invalid"],
         "aria-required": required || undefined,
       })
     : children;
@@ -61,7 +74,7 @@ export function FormField({
       )}
     >
       <div className={cn("flex items-center justify-between gap-2", layout === "horizontal" && "sm:items-start sm:pt-2")}>
-        <Label htmlFor={id}>
+        <Label id={labelId} htmlFor={id}>
           {label}
           {required ? (
             <span className="text-danger-text" aria-hidden>
@@ -74,12 +87,15 @@ export function FormField({
       </div>
       <div className="flex min-w-0 flex-col gap-1.5">
         {control}
-        {error ? (
-          <p id={errorId} className="flex items-start gap-1.5 text-body-sm text-danger-text" role="alert">
-            <CircleAlert className="mt-px size-3.5 shrink-0" aria-hidden />
-            {error}
-          </p>
-        ) : null}
+        {/* Always mounted so screen readers announce an error when it appears or changes. */}
+        <div data-slot="form-field-error-region" aria-live="polite" className="empty:hidden">
+          {error ? (
+            <p id={errorId} data-slot="form-field-error" className="flex items-start gap-1.5 text-body-sm text-danger-text">
+              <CircleAlert className="mt-px size-3.5 shrink-0" aria-hidden />
+              {error}
+            </p>
+          ) : null}
+        </div>
         {description ? (
           <p id={descriptionId} className="text-body-sm text-fg-tertiary">
             {description}
