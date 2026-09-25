@@ -75,8 +75,8 @@
     background:
       linear-gradient(
         180deg,
-        color-mix(in srgb, white 13%, var(--spk-accent)),
-        var(--spk-accent)
+        var(--spk-accent),
+        color-mix(in oklab, var(--spk-accent) 55%, var(--spk-accent-active))
       );
     color: var(--spk-accent-fg);
     box-shadow:
@@ -89,8 +89,8 @@
     background:
       linear-gradient(
         180deg,
-        color-mix(in srgb, white 16%, var(--spk-accent-hover)),
-        var(--spk-accent-hover)
+        var(--spk-accent-hover),
+        color-mix(in oklab, var(--spk-accent-hover) 55%, var(--spk-accent-active))
       );
     box-shadow:
       0 14px 26px -16px color-mix(in srgb, var(--spk-accent) 88%, transparent),
@@ -185,8 +185,8 @@
     background:
       linear-gradient(
         180deg,
-        color-mix(in srgb, white 12%, var(--spk-danger)),
-        var(--spk-danger)
+        var(--spk-danger),
+        color-mix(in oklab, var(--spk-danger) 55%, var(--spk-danger-hover))
       );
     color: #ffffff;
     box-shadow:
@@ -516,7 +516,7 @@
     width: 1rem;
     height: 1rem;
     padding: 0;
-    border: 1px solid var(--spk-border-strong);
+    border: 1px solid var(--spk-control-border);
     border-radius: var(--spk-radius-xs);
     background:
       linear-gradient(
@@ -558,8 +558,8 @@
     background:
       linear-gradient(
         180deg,
-        color-mix(in srgb, white 13%, var(--spk-accent)),
-        var(--spk-accent)
+        var(--spk-accent),
+        color-mix(in oklab, var(--spk-accent) 55%, var(--spk-accent-active))
       );
     border-color: var(--spk-accent);
     box-shadow: var(--spk-facet-strong);
@@ -598,7 +598,7 @@
     width: 1rem;
     height: 1rem;
     padding: 0;
-    border: 1px solid var(--spk-border-strong);
+    border: 1px solid var(--spk-control-border);
     border-radius: var(--spk-radius-full);
     background:
       linear-gradient(
@@ -651,8 +651,8 @@
     background:
       linear-gradient(
         180deg,
-        var(--spk-border-strong),
-        color-mix(in srgb, var(--spk-border-strong) 70%, var(--spk-surface-sunken))
+        var(--spk-control-border),
+        color-mix(in srgb, var(--spk-control-border) 85%, var(--spk-surface-sunken))
       );
     cursor: pointer;
     outline: none;
@@ -672,8 +672,8 @@
     background:
       linear-gradient(
         180deg,
-        color-mix(in srgb, white 12%, var(--spk-accent)),
-        var(--spk-accent)
+        var(--spk-accent),
+        color-mix(in oklab, var(--spk-accent) 55%, var(--spk-accent-active))
       );
     box-shadow:
       inset 0 0 0 1px color-mix(in srgb, white 12%, transparent),
@@ -770,7 +770,7 @@
     width: 1rem;
     height: 1rem;
     margin-left: -0.5rem;
-    border: 1px solid var(--spk-border-strong);
+    border: 1px solid var(--spk-control-border);
     border-radius: var(--spk-radius-full);
     background:
       linear-gradient(
@@ -869,8 +869,8 @@
     background:
       linear-gradient(
         180deg,
-        color-mix(in srgb, white 12%, var(--spk-accent)),
-        var(--spk-accent)
+        var(--spk-accent),
+        color-mix(in oklab, var(--spk-accent) 55%, var(--spk-accent-active))
       );
     color: var(--spk-accent-fg);
   }

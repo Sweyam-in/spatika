@@ -5,6 +5,7 @@ import { Slot } from "../lib/slot";
 import { useControllableState } from "../lib/use-controllable-state";
 import { useFloatingPosition, type FloatingSide } from "../lib/use-floating-position";
 import { cn } from "../lib/cn";
+import { OVERLAY_Z_INDEX } from "../lib/overlay-stack";
 
 type TooltipProviderProps = {
   children?: React.ReactNode;
@@ -150,8 +151,14 @@ const TooltipContent = React.forwardRef<
         data-state="open"
         data-side={position?.side ?? side}
         role="tooltip"
-        className={cn("spk-tooltip z-[10001]", className)}
-        style={{ position: "fixed", top: position?.top ?? -9999, left: position?.left ?? -9999, ...style }}
+        className={cn("spk-tooltip", className)}
+        style={{
+          position: "fixed",
+          zIndex: OVERLAY_Z_INDEX.tooltip,
+          top: position?.top ?? -9999,
+          left: position?.left ?? -9999,
+          ...style,
+        }}
         {...props}
       >
         {children}

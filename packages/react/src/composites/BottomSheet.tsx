@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Drawer as DrawerPrimitive } from "vaul";
 import { cn } from "../lib/cn";
+import { ModalDepthProvider, OVERLAY_Z_INDEX } from "../lib/overlay-stack";
 
 /**
  * Vaul drawer root.
@@ -53,10 +54,10 @@ const DrawerOverlay = React.forwardRef<
     data-slot="drawer-overlay"
     {...props}
     className={cn(
-      "fixed inset-0 z-[9998] bg-[var(--spk-overlay-scrim)]",
+      "fixed inset-0 bg-[var(--spk-overlay-scrim)]",
       className,
     )}
-    style={style}
+    style={{ zIndex: OVERLAY_Z_INDEX.modal, ...style }}
   />
 ));
 DrawerOverlay.displayName = "DrawerOverlay";
@@ -72,17 +73,18 @@ const DrawerContent = React.forwardRef<
       data-slot="drawer-content"
       {...props}
       className={cn(
-        "group/drawer-content fixed z-[9999] flex h-auto flex-col bg-surface-overlay text-fg shadow-xl outline-none",
+        "group/drawer-content fixed flex h-auto flex-col bg-surface-overlay text-fg shadow-xl outline-none",
         "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=top]:rounded-b-[var(--spk-radius-lg)] data-[vaul-drawer-direction=top]:border-b",
         "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-[var(--spk-radius-lg)] data-[vaul-drawer-direction=bottom]:border-t",
         "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=right]:border-l data-[vaul-drawer-direction=right]:sm:max-w-sm",
         "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:border-r data-[vaul-drawer-direction=left]:sm:max-w-sm",
         className,
       )}
-      style={{ touchAction: "manipulation", ...style }}
+      style={{ zIndex: OVERLAY_Z_INDEX.modal, touchAction: "manipulation", ...style }}
     >
       <div className="mx-auto mt-2.5 mb-1 hidden h-1 w-9 shrink-0 rounded-full bg-line-strong group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
-      {children}
+      {/* Selects and menus opened inside the sheet escalate above it. */}
+      <ModalDepthProvider>{children}</ModalDepthProvider>
     </DrawerPrimitive.Content>
   </DrawerPortal>
 ));

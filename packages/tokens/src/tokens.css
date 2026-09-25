@@ -11,8 +11,6 @@
  * Components must consume semantic tokens. Raw hex values belong only in layer 1.
  */
 
-@custom-variant dark (&:is(.neelam *, .sandhya *, .neelam, .sandhya));
-
 /* ─────────────────────────────────────────────────────────────────────────────
  * Theme-independent scales
  * ──────────────────────────────────────────────────────────────────────────── */
@@ -132,10 +130,18 @@
   --spk-sidebar-w: 15rem;
   --spk-sidebar-w-collapsed: 3.5rem;
   --spk-topbar-h: 3.25rem;
+  /* Layers — mirror OVERLAY_Z_INDEX in @spatika/react. Menus and modals sit above ~9999 so
+   * they clear fullscreen app chrome; toasts clear modals; tooltips clear everything. */
+  --spk-z-base: 0;
+  --spk-z-raised: 10;
   --spk-z-sticky: 30;
   --spk-z-chrome: 40;
   --spk-z-popover: 90;
-  --spk-z-toast: 200;
+  --spk-z-select: 200;
+  --spk-z-menu: 10000;
+  --spk-z-modal: 11000;
+  --spk-z-toast: 12000;
+  --spk-z-tooltip: 13000;
 
   /* App chrome (1.x names kept — used by AppHeader, MobileTabBar, cover bleed) */
   --app-header-height: 3.5rem;
@@ -238,7 +244,7 @@
 
   --spk-text-primary: #16171d;
   --spk-text-secondary: #585b68;
-  --spk-text-tertiary: #737685;
+  --spk-text-tertiary: #676a78;
   --spk-text-disabled: #a6a8b3;
   --spk-text-inverse: #f7f7f8;
 
@@ -314,7 +320,7 @@
   --spk-success-text: #5fd39a;
   --spk-warning: #e3a13a;
   --spk-warning-text: #f0bf6c;
-  --spk-danger: #e5534b;
+  --spk-danger: #cf3d36;
   --spk-danger-text: #ff8a80;
   --spk-info: #3d97e6;
   --spk-info-text: #7ab9f2;
@@ -358,7 +364,7 @@
 
   --spk-text-primary: #1d1b18;
   --spk-text-secondary: #5f5a52;
-  --spk-text-tertiary: #767067;
+  --spk-text-tertiary: #6e685f;
   --spk-text-disabled: #aca69c;
   --spk-text-inverse: #fbfbfa;
 
@@ -418,7 +424,7 @@
 
   --spk-text-primary: #efebe6;
   --spk-text-secondary: #aba49b;
-  --spk-text-tertiary: #878077;
+  --spk-text-tertiary: #8b847b;
   --spk-text-disabled: #5a554f;
   --spk-text-inverse: #171514;
 
@@ -434,7 +440,7 @@
   --spk-success-text: #6fcf98;
   --spk-warning: #dca040;
   --spk-warning-text: #eec07a;
-  --spk-danger: #e0584c;
+  --spk-danger: #c94036;
   --spk-danger-text: #ff8f84;
   --spk-info: #4d9ad8;
   --spk-info-text: #8bbfeb;
@@ -475,8 +481,10 @@
 .usha,
 .sandhya,
 [data-spk-theme] {
-  --spk-accent-hover: color-mix(in oklab, var(--spk-accent) 90%, var(--spk-text-primary));
-  --spk-accent-active: color-mix(in oklab, var(--spk-accent) 82%, var(--spk-text-primary));
+  /* Hover / pressed darken the solid fill in every theme. Mixing toward text-primary would
+   * lighten it in dark themes and erode the contrast of the white label on top. */
+  --spk-accent-hover: color-mix(in oklab, var(--spk-accent) 90%, black);
+  --spk-accent-active: color-mix(in oklab, var(--spk-accent) 82%, black);
   --spk-accent-muted: color-mix(in oklab, var(--spk-accent) 11%, transparent);
   --spk-accent-subtle: color-mix(in oklab, var(--spk-accent) 6%, transparent);
   --spk-accent-border: color-mix(in oklab, var(--spk-accent) 32%, transparent);
@@ -485,7 +493,7 @@
   --spk-warning-muted: color-mix(in oklab, var(--spk-warning) 14%, transparent);
   --spk-danger-muted: color-mix(in oklab, var(--spk-danger) 11%, transparent);
   --spk-info-muted: color-mix(in oklab, var(--spk-info) 12%, transparent);
-  --spk-danger-hover: color-mix(in oklab, var(--spk-danger) 88%, var(--spk-text-primary));
+  --spk-danger-hover: color-mix(in oklab, var(--spk-danger) 88%, black);
 
   /* Finance semantics */
   --spk-positive: var(--spk-success-text);
@@ -494,14 +502,17 @@
 
   /* Controls */
   --spk-control-bg: var(--spk-surface);
-  --spk-control-border: var(--spk-border);
-  --spk-control-border-hover: var(--spk-border-strong);
+  /* Control boundaries meet WCAG 1.4.11 (≥3:1 against the surface) in every theme,
+   * including custom themes, because they derive from the tertiary text colour. */
+  --spk-control-border: color-mix(in oklab, var(--spk-text-tertiary) 80%, var(--spk-border));
+  --spk-control-border-hover: color-mix(in oklab, var(--spk-text-secondary) 85%, var(--spk-border));
   --spk-selection: color-mix(in oklab, var(--spk-accent) 22%, transparent);
 
-  /* Focus — "crystal" ring: surface-coloured gap + accent ring */
-  --spk-focus: var(--spk-accent);
-  --spk-focus-ring: 0 0 0 2px var(--spk-surface), 0 0 0 4px
-    color-mix(in oklab, var(--spk-focus) 70%, transparent);
+  /* Focus — "crystal" ring: surface-coloured gap + full-strength accent ring.
+   * Derived from accent-text, which is held at ≥4.5:1 on surfaces, so the ring always
+   * clears the 3:1 non-text contrast minimum (WCAG 2.4.13 / 1.4.11). */
+  --spk-focus: var(--spk-accent-text);
+  --spk-focus-ring: 0 0 0 2px var(--spk-surface), 0 0 0 4px var(--spk-focus);
   --spk-focus-ring-inset: inset 0 0 0 1px var(--spk-focus), 0 0 0 3px
     color-mix(in oklab, var(--spk-focus) 22%, transparent);
   --spk-focus-ring-danger: inset 0 0 0 1px var(--spk-danger), 0 0 0 3px
