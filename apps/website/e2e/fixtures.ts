@@ -12,10 +12,15 @@ export const test = base.extend<{ pageErrors: string[] }>({
     const errors: string[] = [];
     const origin = new URL(test.info().project.use.baseURL ?? "http://127.0.0.1").origin;
     await page.route("**/*", (route) => {
-      const url = route.request().url();
-      return url.startsWith(origin) || url.startsWith("data:") || url.startsWith("blob:")
-        ? route.continue()
-        : route.fulfill({ status: 204, body: "" });
+      const request = route.request();
+      const url = request.url();
+      if (url.startsWith(origin) || url.startsWith("data:") || url.startsWith("blob:")) return route.continue();
+      // Empty bodies with the type the page asked for: WebKit refuses (and logs) a stylesheet
+      // or script served without a matching MIME type.
+      const type = request.resourceType();
+      if (type === "stylesheet") return route.fulfill({ status: 200, contentType: "text/css", body: "" });
+      if (type === "script") return route.fulfill({ status: 200, contentType: "text/javascript", body: "" });
+      return route.fulfill({ status: 204, body: "" });
     });
     page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
     page.on("console", (message) => {
@@ -46,6 +51,8 @@ export async function gotoThemed(page: Page, route: string, theme: Theme = "mukt
   }, theme);
   await page.goto(route);
   await page.waitForLoadState("networkidle");
+  // Pages are code-split: wait until the route's own content has replaced the loading state.
+  await expect(page.locator('[data-slot="route-fallback"]')).toHaveCount(0);
 }
 
 /** Horizontal overflow of the document in CSS pixels (0 = none). */

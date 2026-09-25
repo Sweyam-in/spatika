@@ -78,9 +78,14 @@ jobs:
     name: Visual regression (chromium)
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
     env:
       # CI renders with the runner's fonts, so its baselines live apart from local ones.
       VISUAL_BASELINES: ci
+      # Opt-in: a pushed commit whose message contains [update-visual-baselines] re-renders the
+      # CI baselines and commits them to the same branch, where they are reviewed in the diff.
+      UPDATE_BASELINES: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[update-visual-baselines]') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -98,30 +103,28 @@ jobs:
         run: npx playwright install --with-deps chromium
         working-directory: apps/website
       - name: Compare against baselines
-        id: compare
+        if: env.UPDATE_BASELINES != 'true'
         working-directory: apps/website
         run: |
-          if [ -d e2e/__screenshots__/ci ]; then
-            npx playwright test visual
-          else
-            echo "missing=true" >> "$GITHUB_OUTPUT"
+          if [ ! -d e2e/__screenshots__/ci ]; then
+            echo "::error::No CI visual baselines are committed. Push a commit with [update-visual-baselines] in its message to render them, then review the images in that commit."
+            exit 1
           fi
-      # First run on a new runner image: render the baselines, publish them for review and fail,
-      # so an unreviewed image never becomes the reference silently.
-      - name: Render missing baselines
-        if: steps.compare.outputs.missing == 'true'
+          npx playwright test visual
+      - name: Render and commit baselines
+        if: env.UPDATE_BASELINES == 'true'
         working-directory: apps/website
         run: |
           npx playwright test visual --update-snapshots
-          echo "::error::No CI visual baselines are committed. Review the 'visual-baselines-ci' artifact and commit it to apps/website/e2e/__screenshots__/ci/."
-          exit 1
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: visual-baselines-ci
-          path: apps/website/e2e/__screenshots__/ci
-          if-no-files-found: ignore
-          retention-days: 7
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add e2e/__screenshots__/ci
+          if git diff --cached --quiet; then
+            echo "Baselines unchanged."
+          else
+            git commit -m "test(visual): CI baselines rendered by run ${{ github.run_id }}" -m "Review every image in this commit before merging."
+            git push origin "HEAD:${{ github.ref_name }}"
+          fi
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

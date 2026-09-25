@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { ExternalLink, Github, Menu, Package, X } from "lucide-react";
 import { SpatikaLogo } from "@/components/SpatikaLogo";
@@ -7,6 +7,7 @@ import { topNav, type NavItem } from "@/data/navigation";
 import { SITE } from "@/data/site";
 import { ThemeToolbar } from "./ThemeToolbar";
 import { DocsSearch } from "./DocsSearch";
+import { RouteFallback } from "./RouteFallback";
 import { VersionBanner, VersionSelector } from "./VersionSelector";
 
 type DocsLayoutProps = {
@@ -120,16 +121,22 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
           <div className="docs-layout">
             <DocsSidebar title={sidebar.title} items={sidebar.items} groups={sidebar.groups} />
             <main className="docs-main">
-              <Outlet />
+              <Suspense fallback={<RouteFallback />}>
+                <Outlet />
+              </Suspense>
             </main>
           </div>
         ) : wide ? (
           <main>
-            <Outlet />
+            <Suspense fallback={<RouteFallback />}>
+              <Outlet />
+            </Suspense>
           </main>
         ) : (
           <main className="page-narrow">
-            <Outlet />
+            <Suspense fallback={<RouteFallback />}>
+              <Outlet />
+            </Suspense>
           </main>
         )}
       </div>

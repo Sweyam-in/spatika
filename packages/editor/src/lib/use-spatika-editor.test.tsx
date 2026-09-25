@@ -53,4 +53,16 @@ describe("useSpatikaEditor", () => {
 
     result.current.editor?.destroy();
   });
+
+  it("does not touch a destroyed editor when the value or disabled state changes", async () => {
+    const { result, rerender } = renderHook(
+      ({ value, disabled }: { value: string; disabled: boolean }) =>
+        useSpatikaEditor({ value, onChange: () => {}, disabled }),
+      { initialProps: { value: "<p>One</p>", disabled: false } },
+    );
+    await waitFor(() => expect(result.current.isReady).toBe(true));
+    // What StrictMode's deferred cleanup does to the instance the effects still hold.
+    result.current.editor?.destroy();
+    expect(() => rerender({ value: "<p>Two</p>", disabled: true })).not.toThrow();
+  });
 });

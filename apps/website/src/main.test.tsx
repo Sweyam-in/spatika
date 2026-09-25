@@ -53,7 +53,8 @@ describe("main", () => {
     await user.click(screen.getByRole("link", { name: "Get started" }));
 
     expect(await screen.findByRole("heading", { level: 1, name: "Guides" })).toBeInTheDocument();
-    expect(scrollIntoView).toHaveBeenCalled();
-    expect(window.scrollTo).not.toHaveBeenCalled();
+    // The Guides page loads lazily: the page starts at the top, then jumps to the linked anchor
+    // once it renders.
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
   });
 });

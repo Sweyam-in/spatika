@@ -1,6 +1,6 @@
 import { lazy, Suspense, type ComponentType } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Skeleton } from "@spatika/react";
+import { RouteFallback } from "@/components/RouteFallback";
 import { DocsLayout } from "@/components/DocsLayout";
 import { componentNavGroups, customizeNav, designNav, guideNav, resourcesNav } from "@/data/navigation";
 import { HomePage } from "@/pages/HomePage";
@@ -35,15 +35,6 @@ const AccessibilityPage = lazyPage(() => import("@/pages/ResourcePages"), "Acces
 const ChangelogPage = lazyPage(() => import("@/pages/ResourcePages"), "ChangelogPage");
 const MigrationPage = lazyPage(() => import("@/pages/ResourcePages"), "MigrationPage");
 const VersionsPage = lazyPage(() => import("@/pages/ResourcePages"), "VersionsPage");
-
-function RouteFallback() {
-  return (
-    <div className="route-fallback" aria-busy="true" aria-label="Loading page">
-      <Skeleton className="h-8 w-64" />
-      <Skeleton className="h-4 w-full max-w-sm" />
-    </div>
-  );
-}
 
 export default function App() {
   return (
