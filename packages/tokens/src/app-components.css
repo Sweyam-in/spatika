@@ -547,6 +547,11 @@
     color: var(--spk-accent-text);
   }
 
+  /* Tertiary text drops below 4.5:1 on the selection tint in dark themes. */
+  .spk-tree-item[aria-selected="true"] > .spk-tree-row .spk-tree-meta {
+    color: var(--spk-text-secondary);
+  }
+
   .spk-tree-item[aria-disabled="true"] > .spk-tree-row {
     color: var(--spk-text-disabled);
     cursor: not-allowed;

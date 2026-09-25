@@ -45,8 +45,12 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
 
           <div className="site-header-actions">
             <DocsSearch />
-            <VersionSelector />
-            <ThemeToolbar />
+            <span className="header-version">
+              <VersionSelector />
+            </span>
+            <span className="header-theme">
+              <ThemeToolbar />
+            </span>
             <a
               href={SITE.github}
               className="icon-link"
@@ -58,7 +62,7 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
             </a>
             <a
               href={SITE.npmOrg}
-              className="icon-link"
+              className="icon-link header-npm-link"
               target="_blank"
               rel="noreferrer"
               aria-label="npm packages"
@@ -67,7 +71,7 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
             </a>
             <a
               href={SITE.npmReact}
-              className="icon-link"
+              className="icon-link header-npm-link"
               target="_blank"
               rel="noreferrer"
               aria-label="View on npm"
@@ -101,6 +105,11 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
               {item.label}
             </NavLink>
           ))}
+          {/* On phones the version menu and theme switch live here instead of the header. */}
+          <div className="mobile-nav-settings">
+            <VersionSelector />
+            <ThemeToolbar />
+          </div>
         </nav>
       </header>
 

@@ -4310,3 +4310,61 @@ pre {
     display: inline-flex !important;
   }
 }
+
+/* Header fit: the full nav, search field and npm links need ~1180px next to the version menu
+ * and theme switch. Below that the menu toggle and search icon take over; below 560px the
+ * version menu and theme switch move into the menu panel. */
+.header-version,
+.header-theme {
+  display: inline-flex;
+  align-items: center;
+}
+
+.mobile-nav-settings {
+  display: none;
+}
+
+@media (max-width: 1179px) {
+  .site-nav {
+    display: none !important;
+  }
+
+  .mobile-nav-toggle {
+    display: inline-flex !important;
+  }
+
+  .header-npm-link {
+    display: none !important;
+  }
+
+  .docs-search-trigger {
+    display: none !important;
+  }
+
+  .docs-search-icon {
+    display: inline-flex !important;
+  }
+}
+
+@media (max-width: 559px) {
+  .header-version,
+  .header-theme {
+    display: none;
+  }
+
+  .mobile-nav-settings {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--spk-border-subtle);
+  }
+}
+
+/* Long URLs (the agent Markdown link on long slugs) wrap instead of widening the page. */
+.component-doc-main p a,
+.resource-page p a {
+  overflow-wrap: anywhere;
+}

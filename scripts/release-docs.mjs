@@ -65,7 +65,8 @@ function validateVersions(version) {
     const pkg = readJson(path.join(root, `packages/${name}/package.json`));
     if (pkg.version !== version) fail(`@spatika/${name} is ${pkg.version}, expected ${version}`);
     for (const [dep, range] of Object.entries(pkg.dependencies ?? {})) {
-      if (dep.startsWith("@spatika/") && range !== version) {
+      // Exact, ^ or ~ ranges anchored at the release version all resolve to it.
+      if (dep.startsWith("@spatika/") && range.replace(/^[\^~]/, "") !== version) {
         fail(`@spatika/${name} depends on ${dep}@${range}, expected ${version}`);
       }
     }
@@ -109,7 +110,10 @@ function writeManifest(siteDir, extraFull = [], extraPublished = []) {
   });
   const json = `${JSON.stringify(manifest, null, 2)}\n`;
   fs.writeFileSync(path.join(website, "public/versions.json"), json);
-  if (siteDir) fs.writeFileSync(path.join(siteDir, "versions.json"), json);
+  if (siteDir) {
+    fs.mkdirSync(siteDir, { recursive: true });
+    fs.writeFileSync(path.join(siteDir, "versions.json"), json);
+  }
   console.log(`versions.json: latest ${manifest.latest}, ${manifest.versions.length} entries`);
   return manifest;
 }
@@ -146,11 +150,14 @@ function installRoot(siteDir, built) {
     const from = path.join(built, entry);
     const to = path.join(siteDir, entry);
     if (entry === "docs") {
-      // Archive JSON: add missing versions, never replace an existing snapshot.
+      // /docs/ holds version folders (snapshots, archives) and the agent Markdown (/docs/*.md).
+      // Version folders are only ever added; everything else is refreshed with the new release.
       fs.mkdirSync(to, { recursive: true });
-      for (const version of fs.readdirSync(from)) {
-        const target = path.join(to, version);
-        if (!fs.existsSync(target)) fs.cpSync(path.join(from, version), target, { recursive: true });
+      for (const name of fs.readdirSync(from)) {
+        const target = path.join(to, name);
+        const isVersion = /^v\d/.test(name);
+        if (isVersion && fs.existsSync(target)) continue;
+        fs.cpSync(path.join(from, name), target, { recursive: true });
       }
       continue;
     }

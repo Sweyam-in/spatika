@@ -76,7 +76,8 @@ export function MobileTabBar({
               "group/tab relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[var(--spk-radius-md)] px-1",
               "touch-manipulation select-none outline-none transition-colors duration-[var(--spk-duration-fast)]",
               "focus-visible:shadow-[var(--spk-focus-ring)]",
-              item.active ? "text-fg" : "text-fg-tertiary hover:text-fg-secondary",
+              // Secondary, not tertiary: the bar is translucent, so labels need headroom over content behind it.
+              item.active ? "text-fg" : "text-fg-secondary hover:text-fg",
             );
             const body = (
               <>

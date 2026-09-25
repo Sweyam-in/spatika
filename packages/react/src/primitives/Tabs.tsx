@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "../lib/cn";
+import { useIsomorphicLayoutEffect } from "../lib/use-isomorphic-layout-effect";
 
 type TabsVariant = "line" | "segmented";
 
@@ -8,6 +9,12 @@ type TabsContextValue = {
   setValue: (v: string) => void;
   baseId: string;
   variant: TabsVariant;
+  /** Values with a mounted TabsContent — only those get `aria-controls`. */
+  panels: ReadonlySet<string>;
+  registerPanel: (value: string) => () => void;
+  /** Trigger values in mount order — the first stays tabbable when nothing is selected. */
+  triggers: readonly string[];
+  registerTrigger: (value: string) => () => void;
 };
 
 const TabsContext = React.createContext<TabsContextValue | null>(null);
@@ -40,8 +47,25 @@ function Tabs({
     },
     [onValueChange],
   );
+  const [panels, setPanels] = React.useState<ReadonlySet<string>>(() => new Set());
+  const [triggers, setTriggers] = React.useState<readonly string[]>([]);
+  const registerPanel = React.useCallback((panel: string) => {
+    setPanels((prev) => new Set(prev).add(panel));
+    return () =>
+      setPanels((prev) => {
+        const next = new Set(prev);
+        next.delete(panel);
+        return next;
+      });
+  }, []);
+  const registerTrigger = React.useCallback((trigger: string) => {
+    setTriggers((prev) => (prev.includes(trigger) ? prev : [...prev, trigger]));
+    return () => setTriggers((prev) => prev.filter((item) => item !== trigger));
+  }, []);
   return (
-    <TabsContext.Provider value={{ value: current, setValue, baseId, variant }}>
+    <TabsContext.Provider
+      value={{ value: current, setValue, baseId, variant, panels, registerPanel, triggers, registerTrigger }}
+    >
       <div data-slot="tabs" className={cn("w-full", className)}>
         {children}
       </div>
@@ -89,7 +113,13 @@ function TabsTrigger({ value, className, onClick, ...props }: React.ComponentPro
   const ctx = React.useContext(TabsContext);
   const active = ctx?.value === value;
   const id = ctx ? `${ctx.baseId}-tab-${safeId(value)}` : undefined;
-  const panelId = ctx ? `${ctx.baseId}-panel-${safeId(value)}` : undefined;
+  const hasPanel = ctx?.panels.has(value) ?? false;
+  const panelId = ctx && hasPanel ? `${ctx.baseId}-panel-${safeId(value)}` : undefined;
+  const registerTrigger = ctx?.registerTrigger;
+  useIsomorphicLayoutEffect(() => registerTrigger?.(value), [registerTrigger, value]);
+  // One tab stop: the selected tab, or the first tab when no value matches any tab.
+  const noneSelected = ctx ? !ctx.triggers.includes(ctx.value) : false;
+  const tabbable = active || (noneSelected && ctx?.triggers[0] === value);
   return (
     <button
       type="button"
@@ -97,7 +127,7 @@ function TabsTrigger({ value, className, onClick, ...props }: React.ComponentPro
       id={id}
       aria-selected={active}
       aria-controls={panelId}
-      tabIndex={active ? 0 : -1}
+      tabIndex={tabbable ? 0 : -1}
       data-slot="tabs-trigger"
       data-state={active ? "active" : "inactive"}
       className={cn("spk-tabs-trigger", className)}
@@ -112,7 +142,10 @@ function TabsTrigger({ value, className, onClick, ...props }: React.ComponentPro
 
 function TabsContent({ value, className, ...props }: React.ComponentProps<"div"> & { value: string }) {
   const ctx = React.useContext(TabsContext);
-  if (ctx?.value !== value) return null;
+  const active = ctx?.value === value;
+  const registerPanel = ctx?.registerPanel;
+  useIsomorphicLayoutEffect(() => (active ? registerPanel?.(value) : undefined), [active, registerPanel, value]);
+  if (!ctx || !active) return null;
   return (
     <div
       data-slot="tabs-content"
