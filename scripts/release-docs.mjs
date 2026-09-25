@@ -36,7 +36,10 @@ import { buildManifest, parseVersion } from "./lib/versions.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const website = path.join(root, "apps/website");
+/** Built for the docs site. */
 const PACKAGES = ["tokens", "charts", "editor", "react"];
+/** Released together as one version (Changesets fixed group). */
+const RELEASED = [...PACKAGES, "mcp"];
 
 function args() {
   const [command, ...rest] = process.argv.slice(2);
@@ -86,13 +89,13 @@ function packageVersion() {
   return readJson(path.join(root, "packages/react/package.json")).version;
 }
 
-/** The four packages ship as one version and pin each other to it. */
+/** The released packages ship as one version and pin each other to it. */
 function validateVersions(version) {
   const pending = pendingChangesets();
   if (pending.length) {
     fail(`Pending changesets (${pending.join(", ")}) — this checkout is not the ${version} release. Run: npm run version-packages`);
   }
-  for (const name of PACKAGES) {
+  for (const name of RELEASED) {
     const pkg = readJson(path.join(root, `packages/${name}/package.json`));
     if (pkg.version !== version) fail(`@spatika/${name} is ${pkg.version}, expected ${version}`);
     for (const [dep, range] of Object.entries(pkg.dependencies ?? {})) {

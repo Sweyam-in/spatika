@@ -1,13 +1,13 @@
 # Releasing Spatika
 
-This covers the four packages and the versioned documentation that goes with them. None of the
+This covers the five packages and the versioned documentation that goes with them. None of the
 commands below publish to npm or deploy the site on their own. Publishing is `npm run release`,
 and deploying means copying the site directory to the server. Both are separate steps that a
 maintainer runs deliberately.
 
 ## Versioning
 
-`@spatika/tokens`, `@spatika/charts`, `@spatika/editor` and `@spatika/react` are a Changesets
+`@spatika/tokens`, `@spatika/charts`, `@spatika/editor`, `@spatika/react` and `@spatika/mcp` are a Changesets
 **fixed group**, so they always share one version number. Pick the bump from what changed in
 the public API (exports, props, CSS custom properties, class names consumers target, and
 documented behaviour):
@@ -26,7 +26,7 @@ note it in the changeset.
 
 1. Every PR that changes a package adds a changeset (`npx changeset`), and CI-equivalent checks
    pass: `npm test`, `npm run typecheck`, `npm run test:e2e`.
-2. On the release commit, run `npm run version-packages`. This bumps all four packages and
+2. On the release commit, run `npm run version-packages`. This bumps all five packages and
    writes the `CHANGELOG.md` sections. Review the result, and add a guide under
    `docs/migrations/` for any minor with behaviour or visual changes users should check.
 3. Publish (maintainers, with npm credentials): `npm run release`.
@@ -36,7 +36,7 @@ note it in the changeset.
    npm run release:docs -- /srv/spatika-site
    ```
 
-   The script checks that all four packages carry the same version and that the changelog has
+   The script checks that all five packages carry the same version and that the changelog has
    its section. It also confirms `src/generated/api.json` and the demo sources match the code,
    builds the packages and runs the website tests. Then it builds:
 
