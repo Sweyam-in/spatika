@@ -10,6 +10,8 @@ import { SITE } from "@/data/site";
 import { getComponentDoc } from "@/docs/catalog";
 import { ExtraExample } from "@/docs/extra-examples";
 import { ComponentDemo } from "@/demos/ComponentDemo";
+import { Playground } from "@/components/Playground";
+import { PLAYGROUNDS } from "@/docs/playground";
 
 function InlineCode({ text }: { text: string }) {
   const parts = text.split(/(`[^`]+`)/g);
@@ -44,8 +46,10 @@ export function ComponentDetailPage() {
     .map((itemSlug) => components.find((item) => item.slug === itemSlug))
     .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
+  const playground = PLAYGROUNDS[entry.slug];
   const toc = [
     { id: "preview", label: "Preview" },
+    ...(playground ? [{ id: "playground", label: "Playground" }] : []),
     { id: "import", label: "Import" },
     { id: "usage", label: "Usage" },
     { id: "agent-markdown", label: "Agent Markdown" },
@@ -93,6 +97,19 @@ export function ComponentDetailPage() {
             )}
           </DemoBlock>
         ))}
+
+        {playground ? (
+          <>
+            <h2 className="section-title" id="playground">
+              Playground
+            </h2>
+            <p className="docs-agent">
+              Change props and see the real component update. Controls come from this version&apos;s API; the code below
+              is what you would write.
+            </p>
+            <Playground key={entry.slug} config={playground} />
+          </>
+        ) : null}
 
         <h2 className="section-title" id="import">
           Import

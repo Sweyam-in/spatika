@@ -59,3 +59,29 @@ describe("FormField", () => {
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 });
+
+describe("FormField with compound controls", () => {
+  it("labels, describes and flags a Select through its trigger", async () => {
+    const { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } = await import("../primitives/Select");
+    render(
+      <FormField label="Plan" description="Billed monthly" error="Choose a plan" required>
+        <Select>
+          <SelectTrigger>
+            <SelectValue placeholder="Select…" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="pro">Pro</SelectItem>
+          </SelectContent>
+        </Select>
+      </FormField>,
+    );
+    // Labelled by the field label and by itself, so browsers announce "Plan, <value>".
+    // (jsdom's name computation skips the self-reference; the e2e suite checks it in Chromium.)
+    const trigger = screen.getByRole("button", { name: /^Plan/ });
+    const label = screen.getByText("Plan").closest("label")!;
+    expect(trigger.getAttribute("aria-labelledby")).toBe(`${label.id} ${trigger.id}`);
+    expect(trigger).toHaveAttribute("aria-invalid", "true");
+    expect(trigger).toHaveAttribute("aria-required", "true");
+    expect(trigger).toHaveAccessibleDescription("Choose a plan Billed monthly");
+  });
+});

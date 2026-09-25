@@ -13158,6 +13158,30 @@
  "Select": {
   "props": [
    {
+    "name": "aria-describedby",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-invalid",
+    "type": "boolean | \"true\" | \"false\"",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-labelledby",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-required",
+    "type": "boolean | \"true\" | \"false\"",
+    "optional": true,
+    "description": ""
+   },
+   {
     "name": "children",
     "type": "React.ReactNode",
     "optional": true,
@@ -13178,6 +13202,12 @@
    {
     "name": "disabled",
     "type": "boolean",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "id",
+    "type": "string",
     "optional": true,
     "description": ""
    },

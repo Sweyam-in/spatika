@@ -118,3 +118,29 @@ test("the version menu opens the same page in an archived release", async ({ pag
   await page.goto("/docs/v2.3.0/components/date-picker");
   await expect(page.getByText("DatePicker is not in v2.3.0")).toBeVisible();
 });
+
+test("the playground updates the live component and its code, and resets", async ({ page }) => {
+  await gotoThemed(page, "/components/button");
+  const playground = page.locator('[data-slot="playground"]');
+  await playground.scrollIntoViewIfNeeded();
+  const preview = playground.locator(".playground-frame").getByRole("button").first();
+  await expect(preview).toHaveText("Save changes");
+
+  await playground.getByRole("textbox", { name: "children" }).fill("Delete");
+  // Labelled by the field label and its own value: "variant primary".
+  await playground.getByRole("button", { name: "variant primary" }).click();
+  await page.getByRole("option", { name: "destructive", exact: true }).click();
+  await playground.getByRole("switch", { name: "loading" }).click();
+
+  await expect(preview).toHaveText("Delete");
+  await expect(preview).toHaveAttribute("aria-busy", "true");
+  await expect(playground.locator("pre")).toContainText('<Button variant="destructive" loading>Delete</Button>');
+
+  await playground.getByRole("button", { name: "Preview theme" }).click();
+  await page.getByRole("option", { name: "Neelam" }).click();
+  await expect(playground.locator(".playground-frame")).toHaveClass(/neelam/);
+
+  await playground.getByRole("button", { name: "Reset" }).click();
+  await expect(preview).toHaveText("Save changes");
+  await expect(playground.locator(".playground-frame")).toHaveClass(/mukta/);
+});

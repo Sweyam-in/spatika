@@ -22,6 +22,20 @@ type SelectContextValue = {
   labelsVersion: number;
   disabled?: boolean;
   contentId: string;
+  /** Field wiring from a wrapping FormField, applied to the trigger. */
+  fieldProps: SelectFieldProps;
+};
+
+/**
+ * Attributes a FormField (or any wrapper) injects into its child. Select has no DOM root, so
+ * they are forwarded to the trigger — the element that needs the label and description.
+ */
+type SelectFieldProps = {
+  id?: string;
+  "aria-labelledby"?: string;
+  "aria-describedby"?: string;
+  "aria-invalid"?: boolean | "true" | "false";
+  "aria-required"?: boolean | "true" | "false";
 };
 
 const SelectContext = React.createContext<SelectContextValue | null>(null);
@@ -34,7 +48,7 @@ function useSelectContext(component: string) {
   return ctx;
 }
 
-type SelectProps = {
+type SelectProps = SelectFieldProps & {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -54,6 +68,7 @@ function Select({
   onOpenChange,
   disabled,
   children,
+  ...fieldProps
 }: SelectProps) {
   const [value, setValue] = useControllableState({
     prop: valueProp,
@@ -93,6 +108,7 @@ function Select({
         labelsVersion,
         disabled,
         contentId,
+        fieldProps,
       }}
     >
       {children}
@@ -135,11 +151,18 @@ const SelectTrigger = React.forwardRef<
     size?: "sm" | "default";
   }
 >(({ className, size = "default", children, onClick, disabled: disabledProp, ...props }, ref) => {
-  const { open, setOpen, triggerRef, disabled, contentId } = useSelectContext("SelectTrigger");
+  const { open, setOpen, triggerRef, disabled, contentId, fieldProps } = useSelectContext("SelectTrigger");
+  // Name = label + current value ("Plan, Pro"): labelled by the field label and by itself.
+  const labelledBy =
+    fieldProps["aria-labelledby"] && fieldProps.id
+      ? `${fieldProps["aria-labelledby"]} ${fieldProps.id}`
+      : fieldProps["aria-labelledby"];
 
   return (
     <button
       ref={composeRefs(ref, triggerRef)}
+      {...fieldProps}
+      aria-labelledby={labelledBy}
       type="button"
       data-slot="select-trigger"
       data-size={size}
