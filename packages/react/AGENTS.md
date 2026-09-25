@@ -67,7 +67,8 @@ and `useIsMobile` / `useBreakpoint`. Guide: https://spatika.sweyam.com/customize
 | Numbers | `formatNumber`, `formatCurrency`, `formatPercent`, `formatCompact` |
 | Number / tags / one-time code | `NumberInput`, `TagInput`, `OtpInput` |
 | File picking | `FileUpload` (dropzone + file list, `formatBytes`) |
-| Date entry | `DatePicker`, `DateRangePicker` (on `Calendar`) |
+| Date entry | `DatePicker`, `DateRangePicker` (typed + calendar) · typed only: `DateInput` |
+| Time entry | `TimeInput` (value is 24-hour `HH:mm`) |
 | Hierarchy | `TreeView` |
 | Key–value record | `DescriptionList` |
 | Long list (1000s of rows) | `VirtualList` |

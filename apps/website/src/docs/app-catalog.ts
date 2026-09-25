@@ -252,14 +252,15 @@ export const APP_DOCS: AppDoc[] = [
     name: "DatePicker",
     category: "Forms",
     importName: "DatePicker",
-    description: "A date field that opens a calendar — keyboard-first, with min, max and disabled days.",
+    description: "A date field you can type into or pick from a calendar — with min, max and disabled days.",
     intro:
-      "DatePicker is the date field for forms: a button that shows the chosen date in the reader's locale and opens a Calendar in a popover. The calendar opens on the selected day, selecting closes it, and with `name` it submits an ISO `yyyy-mm-dd` value.",
+      "DatePicker is the date field for forms. Type the date straight into its month / day / year segments (ordered for the reader's locale), or open the calendar with the button at the end — it opens on the typed day, and picking closes it. With `name` it submits an ISO `yyyy-mm-dd` value.",
     accessibility: [
-      "The trigger is a button labelled by its FormField; the calendar receives focus on open and returns it on close.",
-      "Typed date entry is not supported yet — every date is reachable from the keyboard through the grid.",
+      "Each segment is a spinbutton named by its unit and the FormField label (\"month, Due date\"); ↑ ↓ step, digits type, Backspace clears.",
+      "The calendar button is named \"Open calendar\" plus the field label; the calendar takes focus on open and returns it on close.",
+      "Dates outside `min` / `max` mark the field `aria-invalid` instead of silently changing what was typed.",
     ],
-    related: ["date-range-picker", "calendar", "form-field"],
+    related: ["date-input", "date-range-picker", "calendar", "form-field"],
     since: "2.4.0",
   },
   {
@@ -267,14 +268,45 @@ export const APP_DOCS: AppDoc[] = [
     name: "DateRangePicker",
     category: "Forms",
     importName: "DateRangePicker",
-    description: "Pick a start and end date, with presets like \"Last 30 days\".",
+    description: "Type or pick a start and end date, with presets like \"Last 30 days\".",
     intro:
-      "DateRangePicker is for reporting periods and bookings. Pick a start and an end (the span previews as you move), or apply a preset in one click. Two months show side by side and stack when the popover is narrow; with `name` it submits `name.from` and `name.to`.",
+      "DateRangePicker is for reporting periods and bookings. Type both dates (focus runs from the start date into the end date), or open the calendar and pick a start and an end — the span previews as you move — or apply a preset in one click. Two months show side by side and stack when the popover is narrow; with `name` it submits `name.from` and `name.to`.",
     accessibility: [
-      "Same keyboard model as Calendar; presets are ordinary buttons in a labelled group.",
-      "The trigger text states the whole range, so it is announced in one go.",
+      "The two halves are named \"Start date\" and \"End date\" followed by the field label; a start after the end marks the field invalid.",
+      "Same keyboard model as Calendar in the popover; presets are ordinary buttons in a labelled group.",
     ],
-    related: ["date-picker", "calendar", "chart-container"],
+    related: ["date-picker", "date-input", "calendar"],
+    since: "2.4.0",
+  },
+  {
+    slug: "date-input",
+    name: "DateInput",
+    category: "Forms",
+    importName: "DateInput",
+    description: "Typed date entry in segments — no calendar, for dates people know (birthdays, expiry).",
+    intro:
+      "DateInput is the typed half of DatePicker on its own: month, day and year segments in the locale's order. Use it where a calendar gets in the way — a date of birth, a card expiry, a date copied from a document. It reports a `Date` only once every segment is filled, clamps the day when the month changes under it, and submits ISO `yyyy-mm-dd` with `name`.",
+    accessibility: [
+      "The field is a group; each segment is a spinbutton with `aria-valuenow`, `aria-valuetext` and a name made of its unit and the field label.",
+      "Digits type and focus advances when a unit is complete; ↑ ↓ step (Page ↑ ↓ in bigger steps), Home / End jump, ← → move, Backspace clears; a separator key (/ . -) moves on.",
+      "Segments are contentEditable with a numeric `inputmode`, so phones raise the number pad; clicking the FormField label focuses the first empty segment.",
+    ],
+    related: ["date-picker", "time-input", "form-field"],
+    since: "2.4.0",
+  },
+  {
+    slug: "time-input",
+    name: "TimeInput",
+    category: "Forms",
+    importName: "TimeInput",
+    description: "Typed time entry — 12- or 24-hour by locale, always a 24-hour value.",
+    intro:
+      "TimeInput takes a time of day in hour, minute (optionally second) and AM/PM segments, following the reader's clock convention while the value stays a 24-hour `HH:mm` string — the format of `<input type=\"time\">` and most APIs. `minuteStep` sets how far the arrow keys move; `min` / `max` mark out-of-range times invalid.",
+    accessibility: [
+      "Same segment model as DateInput; the AM/PM segment takes A or P (or the locale's first letter) and ↑ ↓.",
+      "With `name` it submits the 24-hour value, so server code never parses a locale format.",
+    ],
+    related: ["date-input", "date-picker", "form-field"],
     since: "2.4.0",
   },
   {

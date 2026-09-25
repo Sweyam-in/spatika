@@ -1,21 +1,20 @@
 import * as React from "react";
 import { CalendarDays } from "lucide-react";
-import { cn } from "../lib/cn";
 import { useControllableState } from "../lib/use-controllable-state";
 import { Button } from "../primitives/Button";
-import { Popover, PopoverContent, PopoverTrigger } from "../primitives/Popover";
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "../primitives/Popover";
 import { Calendar, type DateRange } from "./Calendar";
+import { DateInput } from "./DateInput";
 
 type PickerBaseProps = {
-  placeholder?: string;
-  /** `Intl.DateTimeFormat` options for the trigger text. Default `{ dateStyle: "medium" }`. */
-  formatOptions?: Intl.DateTimeFormatOptions;
+  /** Segment order and separators follow the locale, as do month and weekday names in the calendar. */
   locale?: string;
   min?: Date;
   max?: Date;
   isDateDisabled?: (date: Date) => boolean;
   weekStartsOn?: number;
   disabled?: boolean;
+  readOnly?: boolean;
   /** Shows a Clear action in the popover. */
   clearable?: boolean;
   size?: "sm" | "md";
@@ -56,77 +55,58 @@ export function toISODate(date: Date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-function useFormatter(locale?: string, options?: Intl.DateTimeFormatOptions) {
-  return React.useMemo(
-    () => new Intl.DateTimeFormat(locale, options ?? { dateStyle: "medium" }),
-    [locale, options],
+/** "Open calendar, Due date" — the button's own name, then the field label. */
+function CalendarButton({
+  open,
+  disabled,
+  readOnly,
+  labelledBy,
+  label,
+}: {
+  open: boolean;
+  disabled?: boolean;
+  readOnly?: boolean;
+  labelledBy?: string;
+  label?: string;
+}) {
+  const id = React.useId();
+  return (
+    <PopoverTrigger asChild>
+      <button
+        id={id}
+        type="button"
+        className="spk-date-picker-button"
+        disabled={disabled || readOnly}
+        data-state={open ? "open" : "closed"}
+        aria-label={label ? `Open calendar, ${label}` : "Open calendar"}
+        aria-labelledby={labelledBy ? `${id} ${labelledBy}` : undefined}
+      >
+        <CalendarDays className="size-4" aria-hidden />
+      </button>
+    </PopoverTrigger>
   );
 }
 
-type TriggerProps = PickerBaseProps & { text: string | null; open: boolean };
-
-const PickerTrigger = React.forwardRef<HTMLButtonElement, TriggerProps & React.ComponentPropsWithoutRef<"button">>(
-  (
-    {
-      text,
-      placeholder,
-      size,
-      className,
-      open,
-      disabled,
-      id,
-      "aria-label": ariaLabel,
-      "aria-labelledby": labelledBy,
-      "aria-describedby": describedBy,
-      "aria-invalid": invalid,
-      "aria-required": required,
-      ...props
-    },
-    ref,
-  ) => (
-    <button
-      ref={ref}
-      id={id}
-      type="button"
-      disabled={disabled}
-      data-state={open ? "open" : "closed"}
-      aria-label={ariaLabel}
-      aria-labelledby={labelledBy}
-      aria-describedby={describedBy}
-      aria-invalid={invalid}
-      aria-required={required}
-      className={cn("spk-field spk-date-trigger", size === "sm" && "spk-field--sm", className)}
-      {...props}
-    >
-      <CalendarDays className="size-4 shrink-0 text-fg-tertiary" aria-hidden />
-      <span className="truncate" data-placeholder={text ? undefined : ""}>
-        {text ?? placeholder}
-      </span>
-    </button>
-  ),
-);
-PickerTrigger.displayName = "PickerTrigger";
-
 /**
- * Single-date field: a button that opens a Calendar in a popover. Selecting a day closes it
- * and returns focus to the field; the calendar opens on the selected (or current) day.
+ * Single-date field. Type the date into month / day / year segments (in the locale's order), or
+ * open the calendar with the button at the end. Picking a day closes the calendar and returns
+ * focus to the button; the calendar opens on the typed (or current) day.
  */
 export function DatePicker({
   value: valueProp,
   defaultValue = null,
   onValueChange,
-  placeholder = "Pick a date",
-  formatOptions,
   locale,
   min,
   max,
   isDateDisabled,
   weekStartsOn,
   clearable,
+  disabled,
+  readOnly,
   open: openProp,
   onOpenChange,
-  name,
-  ...trigger
+  ...field
 }: DatePickerProps) {
   const [value, setValue] = useControllableState<Date | null>({
     prop: valueProp,
@@ -134,19 +114,32 @@ export function DatePicker({
     onChange: onValueChange,
   });
   const [open = false, setOpen] = useControllableState({ prop: openProp, defaultProp: false, onChange: onOpenChange });
-  const format = useFormatter(locale, formatOptions);
   const date = value ?? null;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <PickerTrigger
-          {...trigger}
-          placeholder={placeholder}
-          open={open}
-          text={date ? format.format(date) : null}
-        />
-      </PopoverTrigger>
+      <PopoverAnchor asChild>
+        <DateInput
+          {...field}
+          value={date}
+          onValueChange={setValue}
+          locale={locale}
+          min={min}
+          max={max}
+          isDateDisabled={isDateDisabled}
+          disabled={disabled}
+          readOnly={readOnly}
+          className={field.className ? `spk-date-picker ${field.className}` : "spk-date-picker"}
+        >
+          <CalendarButton
+            open={open}
+            disabled={disabled}
+            readOnly={readOnly}
+            labelledBy={field["aria-labelledby"]}
+            label={field["aria-label"]}
+          />
+        </DateInput>
+      </PopoverAnchor>
       <PopoverContent align="start" className="w-auto p-3" aria-label="Choose date">
         <Calendar
           selected={date}
@@ -177,21 +170,19 @@ export function DatePicker({
           </div>
         ) : null}
       </PopoverContent>
-      {name ? <input type="hidden" name={name} value={date ? toISODate(date) : ""} /> : null}
     </Popover>
   );
 }
 
 /**
- * Date-range field: pick a start then an end day (the span previews as you hover or arrow).
- * Optional presets sit beside the calendar and apply in one click.
+ * Date-range field: type the start and end dates, or open the calendar and pick a start then an
+ * end day (the span previews as you hover or arrow). Optional presets sit beside the calendar
+ * and apply in one click.
  */
 export function DateRangePicker({
   value: valueProp,
   defaultValue = { from: null, to: null },
   onValueChange,
-  placeholder = "Pick a date range",
-  formatOptions,
   locale,
   min,
   max,
@@ -200,10 +191,19 @@ export function DateRangePicker({
   clearable,
   numberOfMonths = 2,
   presets,
+  disabled,
+  readOnly,
+  size,
   open: openProp,
   onOpenChange,
   name,
-  ...trigger
+  id,
+  className,
+  "aria-label": ariaLabel,
+  "aria-labelledby": labelledBy,
+  "aria-describedby": describedBy,
+  "aria-invalid": ariaInvalid,
+  "aria-required": required,
 }: DateRangePickerProps) {
   const [value, setValue] = useControllableState<DateRange>({
     prop: valueProp,
@@ -211,23 +211,101 @@ export function DateRangePicker({
     onChange: onValueChange,
   });
   const [open = false, setOpen] = useControllableState({ prop: openProp, defaultProp: false, onChange: onOpenChange });
-  const format = useFormatter(locale, formatOptions);
   const range = value ?? { from: null, to: null };
   const [month, setMonth] = React.useState<Date | undefined>(range.from ?? undefined);
-
-  const text = range.from
-    ? range.to
-      ? typeof format.formatRange === "function"
-        ? format.formatRange(range.from, range.to)
-        : `${format.format(range.from)} – ${format.format(range.to)}`
-      : `${format.format(range.from)} – …`
-    : null;
+  const autoId = React.useId();
+  const baseId = id ?? autoId;
+  const fieldLabelId = `${baseId}-label`;
+  const reversed = Boolean(range.from && range.to && range.from > range.to);
+  const invalid = ariaInvalid === true || ariaInvalid === "true" || reversed;
+  // Each half is named "Start date" / "End date" followed by the field's own label.
+  const half = (which: "start" | "end") => {
+    const ownId = `${baseId}-${which}-name`;
+    return {
+      id: `${baseId}-${which}`,
+      "aria-labelledby": [ownId, labelledBy ?? (ariaLabel ? fieldLabelId : undefined)].filter(Boolean).join(" "),
+      "aria-describedby": describedBy,
+      "aria-required": required,
+      "aria-invalid": invalid || undefined,
+      ownId,
+    };
+  };
+  const start = half("start");
+  const end = half("end");
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <PickerTrigger {...trigger} placeholder={placeholder} open={open} text={text} />
-      </PopoverTrigger>
+      <PopoverAnchor asChild>
+        <div
+          role="group"
+          id={baseId}
+          aria-label={ariaLabel}
+          aria-labelledby={labelledBy}
+          aria-describedby={describedBy}
+          aria-invalid={invalid || undefined}
+          aria-disabled={disabled || undefined}
+          data-slot="date-range-input"
+          className={["spk-field spk-date-input spk-date-picker spk-date-range", size === "sm" ? "spk-field--sm" : "", className ?? ""].filter(Boolean).join(" ")}
+        >
+          {ariaLabel ? (
+            <span id={fieldLabelId} hidden>
+              {ariaLabel}
+            </span>
+          ) : null}
+          <span id={start.ownId} hidden>
+            Start date
+          </span>
+          <span id={end.ownId} hidden>
+            End date
+          </span>
+          <DateInput
+            bare
+            id={start.id}
+            aria-labelledby={start["aria-labelledby"]}
+            aria-describedby={start["aria-describedby"]}
+            aria-required={start["aria-required"]}
+            aria-invalid={start["aria-invalid"]}
+            value={range.from}
+            onValueChange={(from) => {
+              setValue({ from, to: range.to });
+              if (from) setMonth(from);
+            }}
+            locale={locale}
+            min={min}
+            max={max}
+            isDateDisabled={isDateDisabled}
+            disabled={disabled}
+            readOnly={readOnly}
+            name={name ? `${name}.from` : undefined}
+          />
+          <span className="spk-date-literal" aria-hidden>
+            –
+          </span>
+          <DateInput
+            bare
+            id={end.id}
+            aria-labelledby={end["aria-labelledby"]}
+            aria-describedby={end["aria-describedby"]}
+            aria-required={end["aria-required"]}
+            aria-invalid={end["aria-invalid"]}
+            value={range.to}
+            onValueChange={(to) => setValue({ from: range.from, to })}
+            locale={locale}
+            min={min}
+            max={max}
+            isDateDisabled={isDateDisabled}
+            disabled={disabled}
+            readOnly={readOnly}
+            name={name ? `${name}.to` : undefined}
+          />
+          <CalendarButton
+            open={open}
+            disabled={disabled}
+            readOnly={readOnly}
+            labelledBy={labelledBy ?? (ariaLabel ? fieldLabelId : undefined)}
+          />
+        </div>
+      </PopoverAnchor>
       <PopoverContent align="start" className="w-auto p-3" aria-label="Choose date range">
         <div className="spk-date-popover">
           {presets?.length ? (
@@ -283,12 +361,6 @@ export function DateRangePicker({
           </div>
         </div>
       </PopoverContent>
-      {name ? (
-        <>
-          <input type="hidden" name={`${name}.from`} value={range.from ? toISODate(range.from) : ""} />
-          <input type="hidden" name={`${name}.to`} value={range.to ? toISODate(range.to) : ""} />
-        </>
-      ) : null}
     </Popover>
   );
 }

@@ -15,4 +15,4 @@ Fix the 2.3.0 stylesheet regression, meet WCAG 2.2 AA contrast in every theme, r
 
 **Forms.** Loading buttons keep keyboard focus while blocking duplicate submits. FormField generates and wires the control id (now optional), names radio groups with `aria-labelledby`, and announces errors politely instead of with `role="alert"`.
 
-**New components.** NumberInput, TagInput, OtpInput, FileUpload, Calendar, DatePicker, DateRangePicker, TreeView, DescriptionList, VirtualList, ResizablePanels, ContextMenu, ScrollArea, AspectRatio, FormErrorSummary, ResultState (and `EmptyState tone`), DataTable `hiddenColumns` with `DataTableColumnsMenu`, and a `filter` prop on CommandPalette.
+**New components.** NumberInput, TagInput, OtpInput, FileUpload, Calendar, DateInput and TimeInput (typed, segmented entry), DatePicker and DateRangePicker (typed entry plus a calendar), TreeView, DescriptionList, VirtualList, ResizablePanels, ContextMenu, ScrollArea, AspectRatio, FormErrorSummary, ResultState (and `EmptyState tone`), DataTable `hiddenColumns` with `DataTableColumnsMenu`, and a `filter` prop on CommandPalette.

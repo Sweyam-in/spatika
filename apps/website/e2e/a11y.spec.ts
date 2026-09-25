@@ -13,6 +13,8 @@ const PAGES = [
   "/components/form-field",
   "/components/data-table",
   "/components/date-picker",
+  "/components/date-input",
+  "/components/time-input",
   "/components/tree-view",
   "/components/dropdown-menu",
   "/components/tabs",

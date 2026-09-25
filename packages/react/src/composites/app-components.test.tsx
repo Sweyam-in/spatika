@@ -9,7 +9,8 @@ import { ScrollArea } from "../primitives/ScrollArea";
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger, DropdownMenuItem } from "../primitives/DropdownMenu";
 import { Calendar } from "./Calendar";
 import { DataTable, DataTableColumnsMenu } from "./DataTable";
-import { DatePicker, toISODate } from "./DatePicker";
+import { DateInput, TimeInput } from "./DateInput";
+import { DatePicker, DateRangePicker, toISODate } from "./DatePicker";
 import { DescriptionList } from "./DescriptionList";
 import { ResultState } from "./EmptyState";
 import { FileUpload, fileKey } from "./FileUpload";
@@ -209,18 +210,114 @@ describe("Calendar and DatePicker", () => {
     const { container } = render(
       <DatePicker aria-label="Due date" name="due" defaultValue={new Date(2026, 4, 20)} locale="en-US" />,
     );
-    const trigger = screen.getByRole("button", { name: "Due date" });
-    expect(trigger).toHaveTextContent("May 20, 2026");
+    const button = screen.getByRole("button", { name: "Open calendar, Due date" });
+    expect(screen.getByRole("spinbutton", { name: "month" })).toHaveAttribute("aria-valuetext", "05");
     expect(container.querySelector('input[name="due"]')).toHaveValue("2026-05-20");
 
-    await user.click(trigger);
+    await user.click(button);
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Wednesday, May 20, 2026" })).toHaveFocus(),
     );
     await user.keyboard("{ArrowRight}{Enter}");
     await waitFor(() => expect(screen.queryByRole("grid")).not.toBeInTheDocument());
-    expect(trigger).toHaveTextContent("May 21, 2026");
+    expect(screen.getByRole("spinbutton", { name: "day" })).toHaveAttribute("aria-valuenow", "21");
+    expect(container.querySelector('input[name="due"]')).toHaveValue("2026-05-21");
     expect(toISODate(new Date(2026, 4, 21))).toBe("2026-05-21");
+  });
+
+  it("takes a typed date and opens the calendar on it", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<DatePicker aria-label="Start" locale="en-US" onValueChange={onValueChange} />);
+    await user.click(screen.getByRole("spinbutton", { name: "month" }));
+    await user.keyboard("3");
+    // "3" cannot start a two-digit month, so focus moves on.
+    expect(screen.getByRole("spinbutton", { name: "day" })).toHaveFocus();
+    await user.keyboard("09");
+    expect(screen.getByRole("spinbutton", { name: "year" })).toHaveFocus();
+    await user.keyboard("2027");
+    expect(onValueChange).toHaveBeenLastCalledWith(new Date(2027, 2, 9));
+
+    await user.click(screen.getByRole("button", { name: "Open calendar, Start" }));
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Tuesday, March 9, 2027" })).toHaveFocus(),
+    );
+  });
+
+  it("submits both ends of a typed range", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<DateRangePicker aria-label="Stay" name="stay" locale="en-US" />);
+    const [startMonth] = screen.getAllByRole("spinbutton", { name: /^month/ });
+    await user.click(startMonth);
+    await user.keyboard("06012026");
+    // Focus runs on from the start date into the end date.
+    await user.keyboard("06052026");
+    expect(container.querySelector('input[name="stay.from"]')).toHaveValue("2026-06-01");
+    expect(container.querySelector('input[name="stay.to"]')).toHaveValue("2026-06-05");
+  });
+});
+
+describe("DateInput", () => {
+  it("orders segments by locale and names each unit with the field label", () => {
+    render(
+      <>
+        <span id="dob-label">Date of birth</span>
+        <DateInput aria-labelledby="dob-label" locale="de-DE" />
+      </>,
+    );
+    const names = screen.getAllByRole("spinbutton").map((node) => node.getAttribute("aria-label"));
+    expect(names).toEqual(["day", "month", "year"]);
+    expect(screen.getByRole("spinbutton", { name: "month Date of birth" })).toBeInTheDocument();
+  });
+
+  it("steps, wraps, clamps the day to the month and clears", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<DateInput aria-label="Date" locale="en-US" defaultValue={new Date(2026, 0, 31)} onValueChange={onValueChange} />);
+    const month = screen.getByRole("spinbutton", { name: "month" });
+    await user.click(month);
+    await user.keyboard("{ArrowUp}");
+    // 31 January → February: the day is clamped rather than overflowing into March.
+    expect(onValueChange).toHaveBeenLastCalledWith(new Date(2026, 1, 28));
+    await user.keyboard("{ArrowDown}{ArrowDown}");
+    expect(month).toHaveAttribute("aria-valuenow", "12");
+
+    await user.keyboard("{Backspace}");
+    expect(month).toHaveAttribute("aria-valuetext", "Empty");
+    expect(onValueChange).toHaveBeenLastCalledWith(null);
+  });
+
+  it("marks dates outside min / max invalid without blocking entry", async () => {
+    const user = userEvent.setup();
+    render(<DateInput aria-label="Date" locale="en-US" max={new Date(2026, 0, 1)} />);
+    await user.click(screen.getByRole("spinbutton", { name: "month" }));
+    await user.keyboard("02022026");
+    expect(screen.getByRole("group", { name: "Date" })).toHaveAttribute("aria-invalid", "true");
+  });
+});
+
+describe("TimeInput", () => {
+  it("types a 12-hour time and reports 24-hour values", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    const { container } = render(
+      <TimeInput aria-label="Start time" locale="en-US" name="start" onValueChange={onValueChange} />,
+    );
+    await user.click(screen.getByRole("spinbutton", { name: "hour" }));
+    await user.keyboard("230p");
+    expect(onValueChange).toHaveBeenLastCalledWith("14:30");
+    expect(container.querySelector('input[name="start"]')).toHaveValue("14:30");
+    expect(screen.getByRole("spinbutton", { name: "AM/PM" })).toHaveAttribute("aria-valuetext", "PM");
+  });
+
+  it("uses the locale's 24-hour clock and steps minutes", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<TimeInput aria-label="Time" locale="en-GB" defaultValue="09:50" minuteStep={15} onValueChange={onValueChange} />);
+    expect(screen.queryByRole("spinbutton", { name: "AM/PM" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("spinbutton", { name: "minute" }));
+    await user.keyboard("{ArrowUp}");
+    expect(onValueChange).toHaveBeenLastCalledWith("09:05");
   });
 });
 

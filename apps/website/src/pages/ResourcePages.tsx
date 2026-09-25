@@ -225,7 +225,6 @@ export function AccessibilityPage() {
         Known limitations
       </h2>
       <ul className="docs-guidelines">
-        <li>DatePicker has no typed date entry yet; every date is reachable through the calendar grid.</li>
         <li>VirtualList only renders the rows in view, so browser find-in-page cannot see off-screen rows.</li>
         <li>Charts expose a data table and item focus, but complex charts (sankey, chord) need a written summary from you.</li>
         <li>Right-to-left layouts are not verified across all components.</li>

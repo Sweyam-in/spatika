@@ -462,15 +462,106 @@
     cursor: not-allowed;
   }
 
-  .spk-date-trigger {
-    justify-content: flex-start;
-    gap: var(--spk-space-2);
-    text-align: left;
-    cursor: pointer;
+  /* ── Date and time fields (segmented) ──────────────────────────────────── */
+
+  .spk-date-input {
+    gap: var(--spk-space-1);
+    cursor: text;
   }
 
-  .spk-date-trigger [data-placeholder] {
+  .spk-date-input--bare {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .spk-date-segments {
+    display: inline-flex;
+    flex: 1 1 auto;
+    align-items: center;
+    min-width: 0;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .spk-date-input--bare .spk-date-segments {
+    flex: 0 0 auto;
+  }
+
+  .spk-date-segment {
+    padding: 0 0.125rem;
+    border-radius: var(--spk-radius-xs);
+    outline: none;
+    caret-color: transparent;
+    text-align: end;
+    transition: background-color var(--spk-motion-hover), color var(--spk-motion-hover);
+  }
+
+  .spk-date-segment[data-placeholder] {
     color: var(--spk-text-tertiary);
+  }
+
+  /* The focused unit reads as selected text: accent fill with its paired foreground. */
+  .spk-date-segment:focus {
+    background: var(--spk-accent);
+    color: var(--spk-accent-fg);
+  }
+
+  .spk-date-segment[aria-disabled="true"] {
+    color: var(--spk-text-disabled);
+  }
+
+  .spk-date-literal {
+    padding: 0 0.0625rem;
+    color: var(--spk-text-tertiary);
+  }
+
+  .spk-date-range > .spk-date-literal {
+    padding: 0 var(--spk-space-1);
+  }
+
+  .spk-date-picker {
+    padding-right: 0;
+  }
+
+  .spk-date-picker-button {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    width: var(--spk-control-h-sm);
+    margin-left: auto;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid var(--spk-border);
+    border-radius: 0 calc(var(--spk-radius-sm) - 1px) calc(var(--spk-radius-sm) - 1px) 0;
+    background: transparent;
+    color: var(--spk-text-secondary);
+    cursor: pointer;
+    transition:
+      background-color var(--spk-motion-hover),
+      color var(--spk-motion-hover);
+  }
+
+  .spk-date-picker-button:hover:not(:disabled),
+  .spk-date-picker-button[data-state="open"] {
+    background: var(--spk-state-hover);
+    color: var(--spk-text-primary);
+  }
+
+  .spk-date-picker-button:active:not(:disabled) {
+    background: var(--spk-state-active);
+  }
+
+  .spk-date-picker-button:focus-visible {
+    outline: 2px solid var(--spk-focus);
+    outline-offset: -2px;
+  }
+
+  .spk-date-picker-button:disabled {
+    color: var(--spk-text-disabled);
+    cursor: not-allowed;
   }
 
   .spk-date-presets {

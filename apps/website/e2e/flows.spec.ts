@@ -65,20 +65,41 @@ test("the admin customers table filters as you type", async ({ page }) => {
   await expect.poll(records).toBe(before);
 });
 
-test("a date is picked from the keyboard and shown in the field", async ({ page }) => {
+test("a date is picked from the calendar and shown in the field", async ({ page }) => {
   await gotoThemed(page, "/components/date-picker");
-  const trigger = page.locator(".demo-block").first().getByRole("button", { name: "Due date" });
-  await trigger.click();
+  const field = page.locator(".demo-block").first();
+  const button = field.getByRole("button", { name: /Open calendar/ });
+  await button.click();
   const grid = page.getByRole("grid");
   await expect(grid).toBeVisible();
   // Tomorrow is always selectable (the demo disallows past dates).
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("Enter");
   await expect(grid).toHaveCount(0);
-  await expect(trigger).toBeFocused();
+  await expect(button).toBeFocused();
   const tomorrow = new Date(Date.now() + 86_400_000);
-  const expected = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(tomorrow);
-  await expect(trigger).toHaveText(expected);
+  await expect(field.getByRole("spinbutton", { name: /^day/ })).toHaveAttribute("aria-valuenow", String(tomorrow.getDate()));
+  await expect(field.getByRole("spinbutton", { name: /^year/ })).toHaveAttribute("aria-valuenow", String(tomorrow.getFullYear()));
+});
+
+test("a date and a time are typed segment by segment", async ({ page }) => {
+  await gotoThemed(page, "/components/date-input");
+  const dateField = page.locator(".demo-block").first();
+  // Clicking the label focuses the first empty segment, as it would an input.
+  await dateField.getByText("Date of birth").click();
+  await expect(dateField.getByRole("spinbutton", { name: "month Date of birth" })).toBeFocused();
+  await page.keyboard.type("07041990");
+  await expect(dateField.locator('input[name="birthday"]')).toHaveValue("1990-07-04");
+
+  await gotoThemed(page, "/components/time-input");
+  const time = page.locator(".demo-block").first().getByRole("spinbutton", { name: /^hour Meeting starts/ });
+  await time.click();
+  await page.keyboard.type("4");
+  await page.keyboard.type("45");
+  await page.keyboard.type("p");
+  await expect(page.locator(".demo-block").first().getByRole("spinbutton", { name: /^AM\/PM/ })).toHaveAttribute("aria-valuetext", "PM");
+  // 4:45 PM is inside the demo's 08:00–18:00 range.
+  await expect(page.locator(".demo-block").first().getByRole("group", { name: "Meeting starts" })).not.toHaveAttribute("aria-invalid", "true");
 });
 
 test("autocomplete filters options and selects one", async ({ page }) => {

@@ -4805,8 +4805,133 @@
    }
   ]
  },
+ "DateInput": {
+  "description": "Typed date entry: month, day and year segments in the locale's order. Type digits (focus\nadvances when a unit is complete), step with ↑ ↓ (Page ↑ ↓ for larger steps), move with ← →,\nclear with Backspace. Reports a `Date` only when complete.",
+  "props": [
+   {
+    "name": "aria-describedby",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-invalid",
+    "type": "boolean | \"true\" | \"false\"",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-label",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-labelledby",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-required",
+    "type": "boolean | \"true\" | \"false\"",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "bare",
+    "type": "boolean",
+    "optional": true,
+    "description": "Drops the field border and padding, for composing inside another field (DateRangePicker)."
+   },
+   {
+    "name": "children",
+    "type": "React.ReactNode",
+    "optional": true,
+    "description": "Rendered at the end of the field, inside its border (DatePicker puts its calendar button here)."
+   },
+   {
+    "name": "className",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "defaultValue",
+    "type": "Date | null",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "disabled",
+    "type": "boolean",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "id",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "isDateDisabled",
+    "type": "((date: Date) => boolean)",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "locale",
+    "type": "string",
+    "optional": true,
+    "description": "Segment order and separators follow the locale."
+   },
+   {
+    "name": "max",
+    "type": "Date",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "min",
+    "type": "Date",
+    "optional": true,
+    "description": "Dates outside the range mark the field invalid (typing is not blocked)."
+   },
+   {
+    "name": "name",
+    "type": "string",
+    "optional": true,
+    "description": "Form field name — submits an ISO date (`yyyy-mm-dd`), empty while incomplete."
+   },
+   {
+    "name": "onValueChange",
+    "type": "((date: Date | null) => void)",
+    "optional": true,
+    "description": "Called with a date once every segment is filled, and with `null` when one is cleared."
+   },
+   {
+    "name": "readOnly",
+    "type": "boolean",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "size",
+    "type": "\"sm\" | \"md\"",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "value",
+    "type": "Date | null",
+    "optional": true,
+    "description": ""
+   }
+  ]
+ },
  "DatePicker": {
-  "description": "Single-date field: a button that opens a Calendar in a popover. Selecting a day closes it\nand returns focus to the field; the calendar opens on the selected (or current) day.",
+  "description": "Single-date field. Type the date into month / day / year segments (in the locale's order), or\nopen the calendar with the button at the end. Picking a day closes the calendar and returns\nfocus to the button; the calendar opens on the typed (or current) day.",
   "props": [
    {
     "name": "aria-describedby",
@@ -4864,12 +4989,6 @@
     "description": ""
    },
    {
-    "name": "formatOptions",
-    "type": "Intl.DateTimeFormatOptions",
-    "optional": true,
-    "description": "`Intl.DateTimeFormat` options for the trigger text. Default `{ dateStyle: \"medium\" }`."
-   },
-   {
     "name": "id",
     "type": "string",
     "optional": true,
@@ -4885,7 +5004,7 @@
     "name": "locale",
     "type": "string",
     "optional": true,
-    "description": ""
+    "description": "Segment order and separators follow the locale, as do month and weekday names in the calendar."
    },
    {
     "name": "max",
@@ -4924,11 +5043,10 @@
     "description": ""
    },
    {
-    "name": "placeholder",
-    "type": "string",
+    "name": "readOnly",
+    "type": "boolean",
     "optional": true,
-    "description": "",
-    "default": "\"Pick a date\""
+    "description": ""
    },
    {
     "name": "size",
@@ -4951,7 +5069,7 @@
   ]
  },
  "DateRangePicker": {
-  "description": "Date-range field: pick a start then an end day (the span previews as you hover or arrow).\nOptional presets sit beside the calendar and apply in one click.",
+  "description": "Date-range field: type the start and end dates, or open the calendar and pick a start then an\nend day (the span previews as you hover or arrow). Optional presets sit beside the calendar\nand apply in one click.",
   "props": [
    {
     "name": "aria-describedby",
@@ -5009,12 +5127,6 @@
     "description": ""
    },
    {
-    "name": "formatOptions",
-    "type": "Intl.DateTimeFormatOptions",
-    "optional": true,
-    "description": "`Intl.DateTimeFormat` options for the trigger text. Default `{ dateStyle: \"medium\" }`."
-   },
-   {
     "name": "id",
     "type": "string",
     "optional": true,
@@ -5030,7 +5142,7 @@
     "name": "locale",
     "type": "string",
     "optional": true,
-    "description": ""
+    "description": "Segment order and separators follow the locale, as do month and weekday names in the calendar."
    },
    {
     "name": "max",
@@ -5076,17 +5188,16 @@
     "description": ""
    },
    {
-    "name": "placeholder",
-    "type": "string",
-    "optional": true,
-    "description": "",
-    "default": "\"Pick a date range\""
-   },
-   {
     "name": "presets",
     "type": "DateRangePreset[]",
     "optional": true,
     "description": "Quick ranges shown beside the calendar: \"Last 7 days\", \"This month\" …"
+   },
+   {
+    "name": "readOnly",
+    "type": "boolean",
+    "optional": true,
+    "description": ""
    },
    {
     "name": "size",
@@ -15258,6 +15369,133 @@
     "optional": true,
     "description": "",
     "default": "\"md\""
+   }
+  ]
+ },
+ "TimeInput": {
+  "description": "Typed time entry: hour, minute (optionally second) and AM/PM segments in the locale's order.\nKeys work as in DateInput; type A or P (or the locale's first letter) for the day period.",
+  "props": [
+   {
+    "name": "aria-describedby",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-invalid",
+    "type": "boolean | \"true\" | \"false\"",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-label",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-labelledby",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "aria-required",
+    "type": "boolean | \"true\" | \"false\"",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "className",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "defaultValue",
+    "type": "string | null",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "disabled",
+    "type": "boolean",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "granularity",
+    "type": "\"minute\" | \"second\"",
+    "optional": true,
+    "description": "Shows seconds. Default \"minute\".",
+    "default": "\"minute\""
+   },
+   {
+    "name": "hourCycle",
+    "type": "12 | 24",
+    "optional": true,
+    "description": "12- or 24-hour display. Defaults to the locale's convention. The value is always 24-hour."
+   },
+   {
+    "name": "id",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "locale",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "max",
+    "type": "string",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "min",
+    "type": "string",
+    "optional": true,
+    "description": "Times outside the range mark the field invalid (typing is not blocked)."
+   },
+   {
+    "name": "minuteStep",
+    "type": "number",
+    "optional": true,
+    "description": "Minutes stepped by ↑ ↓. Default 1. Typed minutes are not rounded.",
+    "default": "1"
+   },
+   {
+    "name": "name",
+    "type": "string",
+    "optional": true,
+    "description": "Form field name — submits the 24-hour value, empty while incomplete."
+   },
+   {
+    "name": "onValueChange",
+    "type": "((time: string | null) => void)",
+    "optional": true,
+    "description": "Called with a time string once every segment is filled, and with `null` when one is cleared."
+   },
+   {
+    "name": "readOnly",
+    "type": "boolean",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "size",
+    "type": "\"sm\" | \"md\"",
+    "optional": true,
+    "description": ""
+   },
+   {
+    "name": "value",
+    "type": "string | null",
+    "optional": true,
+    "description": "24-hour `HH:mm` (or `HH:mm:ss` with `granularity=\"second\"`), the format of `<input type=\"time\">`."
    }
   ]
  },

@@ -434,6 +434,7 @@ export {
   type FileUploadProps,
 } from "./composites/FileUpload";
 export { Calendar, type CalendarProps, type DateRange } from "./composites/Calendar";
+export { DateInput, TimeInput, type DateInputProps, type TimeInputProps } from "./composites/DateInput";
 export {
   DatePicker,
   DateRangePicker,
