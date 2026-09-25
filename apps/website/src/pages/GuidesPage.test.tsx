@@ -21,6 +21,8 @@ describe("GuidesPage", () => {
     expect(screen.getByRole("heading", { name: "For AI coding agents" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "/llms.txt" })).toHaveAttribute("href", "/llms.txt");
     expect(screen.getByRole("link", { name: "/AGENTS.md" })).toHaveAttribute("href", "/AGENTS.md");
+    expect(screen.getByText("npm run mcp:build && npm --silent run mcp")).toBeInTheDocument();
+    expect(screen.getByText(/"args": \["@spatika\/mcp"\]/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sweyam" })).toHaveAttribute("href", "https://sweyam.com");
     expect(screen.getByRole("link", { name: "Sreelal Chalil" })).toHaveAttribute("href", "https://github.com/SreelalChalil");
   });

@@ -12,7 +12,7 @@ COPY apps/website/package.json apps/website/
 
 RUN npm ci
 
-COPY scripts/fix-esm-extensions.mjs scripts/
+COPY scripts scripts
 COPY packages/tokens packages/tokens
 COPY packages/charts packages/charts
 COPY packages/editor packages/editor

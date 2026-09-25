@@ -2,6 +2,7 @@
 
 React design system for product UI. Packages: `@spatika/tokens`, `@spatika/react`, `@spatika/charts`, `@spatika/editor`.
 Human docs: https://spatika.sweyam.com · Machine index: https://spatika.sweyam.com/llms.txt
+MCP server for Claude/Codex/other agents: `npm run mcp:build && npm --silent run mcp`
 
 ## Use this library
 
@@ -74,5 +75,18 @@ Prop types: `node_modules/@spatika/react/dist/index.d.ts`
 
 Cursor skill (copy into the consumer repo):
 `node_modules/@spatika/react/skills/spatika-ui/` → `.cursor/skills/spatika-ui/`
+
+MCP client config after publishing:
+
+```json
+{
+  "mcpServers": {
+    "spatika": {
+      "command": "npx",
+      "args": ["@spatika/mcp"]
+    }
+  }
+}
+```
 
 Design language: https://spatika.sweyam.com/design · Upgrading from 1.x: https://spatika.sweyam.com/guides

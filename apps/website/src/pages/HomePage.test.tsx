@@ -25,7 +25,7 @@ describe("HomePage", () => {
   it("references Sweyam in the hero", () => {
     renderHome();
     expect(screen.getByRole("link", { name: "Sweyam" })).toHaveAttribute("href", "https://sweyam.com");
-    expect(screen.getByText(/Sweyam's open-source React design system/)).toBeInTheDocument();
+    expect(screen.getByText(/Sweyam's AI-first, open-source React toolkit/)).toBeInTheDocument();
   });
 
   it("explains Spatika as Sanskrit crystal, also spelled Spadik", () => {
@@ -55,8 +55,8 @@ describe("HomePage", () => {
 
   it("links coding agents to llms.txt from the AI-first section", () => {
     renderHome();
-    expect(screen.getByRole("heading", { name: "An AI-first component library" })).toBeInTheDocument();
-    expect(screen.getByText(/read the docs cover to cover/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "An AI-first React toolkit" })).toBeInTheDocument();
+    expect(screen.getByText(/reusable Spatika skill, and an MCP server/i)).toBeInTheDocument();
     const agents = screen.getByRole("link", { name: "Open llms.txt" });
     expect(agents).toHaveAttribute("href", "/llms.txt");
   });

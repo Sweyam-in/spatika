@@ -39,6 +39,10 @@ IMAGE_REPO="${IMAGE_REPO:-spatika-website}"
 IMAGE_TAG="${IMAGE_TAG:-main}"
 IMAGE_SHA_TAG="${IMAGE_SHA_TAG:-}"
 PLATFORMS="${PLATFORMS:-linux/amd64,linux/arm64}"
+# BUILD_ARM=0 forces an amd64-only build, overriding PLATFORMS from the env file.
+if [[ "${BUILD_ARM:-1}" == "0" ]]; then
+  PLATFORMS="linux/amd64"
+fi
 BUILDER_NAME="${BUILDX_BUILDER:-developments-shared}"
 
 detect_github_owner_from_git() {

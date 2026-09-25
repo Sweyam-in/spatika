@@ -5,8 +5,9 @@ description: Build UI with Spatika React components from @spatika/react. Use whe
 
 # Spatika UI
 
-React design system for product UI — SaaS, finance, productivity, admin. Never invent Spatika
-components. Import from `@spatika/react`. Fetch https://spatika.sweyam.com/llms.txt for the live catalog.
+React design system for product UI: SaaS, finance, productivity, and admin interfaces. Never invent
+Spatika components. Import from `@spatika/react`. Fetch https://spatika.sweyam.com/llms.txt for the
+live catalog, or use the Spatika MCP server when it is configured.
 
 ## Bootstrap
 
@@ -29,16 +30,16 @@ export function App() {
 
 ## Rules
 
-- Import `@spatika/tokens/styles.css` before any component; wrap the tree in `SpatikaThemeProvider`
-- Themes: `mukta` (light, default) | `neelam` (dark) | `usha` (warm light) | `sandhya` (warm dark).
-  Brand palettes: `createTheme` + `customThemes`
-- Semantic tokens only — `--spk-*` or the Spatika utility bridge (`bg-surface`, `text-fg-secondary`,
-  `border-line`, `text-title-2`). No hardcoded hex, no `bg-white` / `text-black`
-- Structure pages with `PageHeader` + `PageSection`. A `Card` is for a thing, not for a section
-- Surfaces are solid; `surface="glass"` only for chrome floating over content or media
-- Density comes from tokens: `data-density="compact"` on a region, or `<AppShell density="compact">`
-- Prefer composites over restyling primitives; merge extras through `className`
-- Animate colour, shadow and transform only
+- Import `@spatika/tokens/styles.css` before any component; wrap the tree in `SpatikaThemeProvider`.
+- Themes: `mukta` (light, default), `neelam` (dark), `usha` (warm light), `sandhya` (warm dark).
+- Brand palettes use `createTheme({ id, extends, palette })` and `customThemes`.
+- Use semantic tokens only: `--spk-*` or utilities such as `bg-surface`, `text-fg-secondary`, `border-line`.
+- Do not use hardcoded hex, `bg-white`, or `text-black` inside Spatika UI.
+- Structure pages with `PageHeader` and `PageSection`; use `Card` only for a concrete record/object.
+- Use solid surfaces by default; `surface="glass"` is for chrome floating over content or media.
+- Density comes from tokens: `data-density="compact"` on a region or `<AppShell density="compact">`.
+- Prefer composites over restyling primitives; pass local tweaks through `className`.
+- Animate color, shadow, and transform only.
 
 ## Application shell
 
@@ -163,3 +164,11 @@ components invert automatically — never hand-paint colours inside them.
 
 1.x components (`GlassCard`, `PageShell`, `AppHeader`, `FloatingPageChromeBar`, `CoverHero`) still
 work and are restyled — prefer the 2.0 equivalents above in new code.
+
+## Agent Docs
+
+- Machine index: https://spatika.sweyam.com/llms.txt
+- Full dump: https://spatika.sweyam.com/llms-full.txt
+- Component snippets: `https://spatika.sweyam.com/docs/{slug}.md`
+- Prop types: `node_modules/@spatika/react/dist/index.d.ts`
+- MCP server from this repo: `npm run mcp:build && npm --silent run mcp`

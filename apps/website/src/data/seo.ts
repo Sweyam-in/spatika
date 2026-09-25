@@ -14,7 +14,7 @@ export const FAQS = [
   {
     question: "What is Spatika UI?",
     answer:
-      "Spatika UI is an open-source React design system. It ships semantic CSS tokens, four themes (Mukta, Neelam, Usha, Sandhya), and production React components for app shells, data tables, forms, surfaces, and marketing layouts. Install @spatika/react and @spatika/tokens from npm to get started.",
+      "Spatika UI is an AI-first, open-source React toolkit. It ships semantic CSS tokens, four themes (Mukta, Neelam, Usha, Sandhya), production React components for app shells, data tables, forms, surfaces, and marketing layouts, plus agent-ready docs through llms.txt, a reusable skill, and @spatika/mcp. Install @spatika/react and @spatika/tokens from npm to get started.",
   },
   {
     question: "Is Spadik UI the same as Spatika UI?",
@@ -44,7 +44,7 @@ export const FAQS = [
   {
     question: "How do AI coding agents use Spatika UI?",
     answer:
-      "Fetch https://spatika.sweyam.com/llms.txt for the machine-readable index, or copy the spatika-ui Cursor skill from the GitHub repo or from node_modules/@spatika/react/skills/spatika-ui. Always import @spatika/tokens/styles.css and wrap the app in SpatikaThemeProvider so generated code matches the kit.",
+      "Fetch https://spatika.sweyam.com/llms.txt for the machine-readable index, copy the spatika-ui skill from node_modules/@spatika/react/skills/spatika-ui, or connect the @spatika/mcp server. Always import @spatika/tokens/styles.css and wrap the app in SpatikaThemeProvider so generated code matches the kit.",
   },
 ] as const;
 
@@ -57,7 +57,7 @@ function titled(page: string): string {
 const staticPages: SeoPage[] = [
   {
     path: "/",
-    title: "Spatika UI — React Design System",
+    title: "Spatika UI — AI-first React Toolkit",
     description: SITE.description,
     breadcrumbs: [{ name: "Spatika UI", path: "/" }],
   },

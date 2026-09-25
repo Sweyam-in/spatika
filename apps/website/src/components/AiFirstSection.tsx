@@ -5,6 +5,7 @@ import { CodeBlock } from "@/components/CodeBlock";
 
 const SKILL_COPY =
   "cp -R node_modules/@spatika/react/skills/spatika-ui .cursor/skills/spatika-ui";
+const MCP_CONFIG = 'npx @spatika/mcp';
 
 const points = [
   {
@@ -20,8 +21,8 @@ const points = [
   },
   {
     icon: Bot,
-    title: "Cursor skill",
-    body: "Copy spatika-ui from the npm package into .cursor/skills. The skill tells the agent to import tokens, wrap SpatikaThemeProvider, and stop inventing components from scratch.",
+    title: "Skill + MCP",
+    body: "Copy spatika-ui into .cursor/skills, or point an MCP-capable agent at @spatika/mcp. Both steer agents toward tokens, SpatikaThemeProvider, and real exports.",
   },
   {
     icon: BookOpen,
@@ -40,12 +41,12 @@ export function AiFirstSection() {
             AI first
           </p>
           <h2 className="ai-first-title" id="ai-first-heading">
-            An AI-first component library
+            An AI-first React toolkit
           </h2>
           <p className="ai-first-lead">
             Most kits assume a human will read the docs cover to cover. Spatika also ships the files
-            an agent actually fetches, so Cursor or Claude Code reaches for <code>PageShell</code>{" "}
-            instead of inventing another header.
+            an agent actually fetches: <code>llms.txt</code>, a reusable Spatika skill, and an MCP
+            server for Claude, Codex, and other coding agents.
           </p>
           <div className="ai-first-actions">
             <Button asChild size="touch">
@@ -57,6 +58,7 @@ export function AiFirstSection() {
           </div>
           <div className="ai-first-skill">
             <CodeBlock code={SKILL_COPY} />
+            <CodeBlock code={MCP_CONFIG} />
           </div>
         </div>
 

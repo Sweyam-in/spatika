@@ -18,3 +18,9 @@ scripts/build-push-ghcr.env
 *.key
 .claude/
 .cursor/
+!.cursor/
+.cursor/*
+!.cursor/skills/
+.cursor/skills/*
+!.cursor/skills/spatika-ui/
+!.cursor/skills/spatika-ui/SKILL.md

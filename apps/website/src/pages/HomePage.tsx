@@ -273,9 +273,10 @@ export function HomePage() {
           <p className="home-tagline">{SITE.tagline}</p>
           <p className="home-lead">
             Spatika (Sanskrit स्फटिक, crystal — often spelled <strong>Spadik</strong>) is {SITE.sweyam}&apos;s
-            open-source React design system for SaaS, finance, productivity and admin software:
+            AI-first, open-source React toolkit for SaaS, finance, productivity and admin software:
             semantic tokens, density control, an application shell, data tables, charts, a calendar
-            and an editor that all speak the same visual language.
+            and an editor that all speak the same visual language, plus a skill and MCP server so
+            coding agents can use the real APIs instead of guessing.
           </p>
           <div className="home-actions">
             <Button asChild size="lg" trailingIcon={<ArrowRight />}>

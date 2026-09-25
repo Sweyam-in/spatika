@@ -47,7 +47,7 @@ npm install
 npm run dev
 ```
 
-Machine-readable docs for coding agents: [llms.txt](https://spatika.sweyam.com/llms.txt) · [AGENTS.md](./AGENTS.md) · Cursor skill at `.cursor/skills/spatika-ui`.
+Machine-readable docs for coding agents: [llms.txt](https://spatika.sweyam.com/llms.txt) · [AGENTS.md](./AGENTS.md) · skill at `.cursor/skills/spatika-ui` · MCP server via `npm --silent run mcp`.
 
 Build for production:
 
@@ -84,6 +84,8 @@ Upgrading from 1.x: [docs/redesign/MIGRATION.md](./docs/redesign/MIGRATION.md).
 | Command | Description |
 |---|---|
 | `npm run dev` | Start the docs site |
+| `npm run mcp:build` | Build the Spatika MCP server |
+| `npm --silent run mcp` | Serve Spatika agent docs over MCP stdio |
 | `npm run build` | Build tokens, React, and docs site |
 | `npm run test` | Run charts, React, and website tests |
 | `npm run typecheck` | Typecheck React + website |
