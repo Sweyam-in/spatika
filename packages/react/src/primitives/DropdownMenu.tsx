@@ -27,6 +27,8 @@ type DropdownMenuContextValue = {
   contentId: string;
   /** Where focus lands when the menu opens — first item from the keyboard, the menu from a click. */
   initialFocus: React.MutableRefObject<MenuInitialFocus>;
+  /** Element that gets focus back on close when it differs from the positioning anchor. */
+  focusReturnRef?: React.RefObject<HTMLElement | null>;
 };
 
 const DropdownMenuContext =
@@ -171,7 +173,7 @@ const DropdownMenuContent = React.forwardRef<
     },
     ref,
   ) => {
-    const { open, setOpen, triggerRef, contentRef, triggerId, contentId, initialFocus } =
+    const { open, setOpen, triggerRef, contentRef, triggerId, contentId, initialFocus, focusReturnRef } =
       useDropdownMenuContext("DropdownMenuContent");
     const zIndex = useOverlayZIndex(OVERLAY_Z_INDEX.menu);
     const handleKeyDown = useMenuNavigation({
@@ -179,7 +181,7 @@ const DropdownMenuContent = React.forwardRef<
       contentRef,
       initialFocus: initialFocus.current,
       onClose: () => setOpen(false),
-      returnFocusRef: triggerRef,
+      returnFocusRef: focusReturnRef ?? triggerRef,
     });
 
     const position = useFloatingPosition({
@@ -369,14 +371,16 @@ const DropdownMenuCheckboxItem = React.forwardRef<
         onClick?.(event);
         if (event.defaultPrevented || disabled) return;
 
+        // Radix semantics: the item always toggles; preventDefault() only keeps the menu open.
+        let keepOpen = false;
         if (onSelect) {
           const selectEvent = createSelectEvent();
           onSelect(selectEvent);
-          if (selectEvent.defaultPrevented) return;
+          keepOpen = selectEvent.defaultPrevented;
         }
 
         onCheckedChange?.(!checked);
-        setOpen(false);
+        if (!keepOpen) setOpen(false);
       }}
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
@@ -441,14 +445,15 @@ const DropdownMenuRadioItem = React.forwardRef<
         onClick?.(event);
         if (event.defaultPrevented || disabled) return;
 
+        let keepOpen = false;
         if (onSelect) {
           const selectEvent = createSelectEvent();
           onSelect(selectEvent);
-          if (selectEvent.defaultPrevented) return;
+          keepOpen = selectEvent.defaultPrevented;
         }
 
         radio?.setValue(value);
-        setOpen(false);
+        if (!keepOpen) setOpen(false);
       }}
     >
       <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
@@ -686,7 +691,153 @@ const DropdownMenuSubContent = React.forwardRef<
 });
 DropdownMenuSubContent.displayName = "DropdownMenuSubContent";
 
+type ContextMenuProps = {
+  open?: boolean;
+  defaultOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children?: React.ReactNode;
+};
+
+type ContextMenuAnchor = {
+  point: { x: number; y: number };
+  setPoint: (point: { x: number; y: number }) => void;
+  regionRef: React.RefObject<HTMLDivElement | null>;
+};
+
+const ContextMenuAnchorContext = React.createContext<ContextMenuAnchor | null>(null);
+
+/**
+ * Right-click menu for a region. Shares DropdownMenu's content and items
+ * (`ContextMenuContent` = `DropdownMenuContent`, use `DropdownMenuItem` etc. inside) and its
+ * keyboard model. Keyboard users open it with Shift+F10 or the ContextMenu key; touch users
+ * with a long press.
+ */
+function ContextMenu({ open: openProp, defaultOpen, onOpenChange, children }: ContextMenuProps) {
+  const [open = false, setOpen] = useControllableState({
+    prop: openProp,
+    defaultProp: defaultOpen ?? false,
+    onChange: onOpenChange,
+  });
+  const anchorRef = React.useRef<HTMLElement | null>(null);
+  const regionRef = React.useRef<HTMLDivElement | null>(null);
+  const contentRef = React.useRef<HTMLDivElement | null>(null);
+  const initialFocus = React.useRef<MenuInitialFocus>("content");
+  const [point, setPoint] = React.useState({ x: 0, y: 0 });
+  const id = React.useId();
+
+  return (
+    <DropdownMenuContext.Provider
+      value={{
+        open,
+        setOpen: (next) => setOpen(next),
+        triggerRef: anchorRef,
+        contentRef,
+        triggerId: `${id}-region`,
+        contentId: `${id}-content`,
+        initialFocus,
+        focusReturnRef: regionRef,
+      }}
+    >
+      <ContextMenuAnchorContext.Provider value={{ point, setPoint, regionRef }}>
+        {children}
+        {/* Zero-size anchor at the pointer — the menu positions against it. */}
+        <span
+          ref={anchorRef}
+          aria-hidden
+          style={{ position: "fixed", left: point.x, top: point.y, width: 0, height: 0, pointerEvents: "none" }}
+        />
+      </ContextMenuAnchorContext.Provider>
+    </DropdownMenuContext.Provider>
+  );
+}
+
+const ContextMenuTrigger = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<"div"> & { disabled?: boolean }
+>(({ disabled, onContextMenu, onKeyDown, onPointerDown, onPointerUp, onPointerMove, onPointerCancel, ...props }, ref) => {
+  const { setOpen, initialFocus, triggerId } = useDropdownMenuContext("ContextMenuTrigger");
+  const anchor = React.useContext(ContextMenuAnchorContext);
+  if (!anchor) throw new Error("ContextMenuTrigger must be used within <ContextMenu>");
+  const longPress = React.useRef<{ timer?: number; x: number; y: number }>({ x: 0, y: 0 });
+  const cancelLongPress = () => window.clearTimeout(longPress.current.timer);
+
+  const openAt = (x: number, y: number, focus: MenuInitialFocus) => {
+    anchor.setPoint({ x, y });
+    initialFocus.current = focus;
+    setOpen(true);
+  };
+
+  return (
+    <div
+      ref={composeRefs(ref, anchor.regionRef)}
+      id={triggerId}
+      data-slot="context-menu-trigger"
+      {...props}
+      onContextMenu={(event) => {
+        onContextMenu?.(event);
+        if (event.defaultPrevented || disabled) return;
+        event.preventDefault();
+        openAt(event.clientX, event.clientY, "content");
+      }}
+      onKeyDown={(event) => {
+        onKeyDown?.(event);
+        if (event.defaultPrevented || disabled) return;
+        if ((event.shiftKey && event.key === "F10") || event.key === "ContextMenu") {
+          event.preventDefault();
+          const rect = (event.target as HTMLElement).getBoundingClientRect();
+          openAt(rect.left, rect.bottom, "first");
+        }
+      }}
+      onPointerDown={(event) => {
+        onPointerDown?.(event);
+        if (disabled || event.pointerType !== "touch") return;
+        const { clientX, clientY } = event;
+        longPress.current = {
+          x: clientX,
+          y: clientY,
+          timer: window.setTimeout(() => openAt(clientX, clientY, "first"), 500),
+        };
+      }}
+      onPointerMove={(event) => {
+        onPointerMove?.(event);
+        const { x, y } = longPress.current;
+        if (Math.hypot(event.clientX - x, event.clientY - y) > 10) cancelLongPress();
+      }}
+      onPointerUp={(event) => {
+        onPointerUp?.(event);
+        cancelLongPress();
+      }}
+      onPointerCancel={(event) => {
+        onPointerCancel?.(event);
+        cancelLongPress();
+      }}
+    />
+  );
+});
+ContextMenuTrigger.displayName = "ContextMenuTrigger";
+
+/** Content for `ContextMenu` — identical to `DropdownMenuContent`, opened at the pointer. */
+const ContextMenuContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuContent>
+>(({ align = "start", side = "bottom", sideOffset = 2, "aria-label": ariaLabel = "Context menu", ...props }, ref) => (
+  <DropdownMenuContent
+    ref={ref}
+    align={align}
+    side={side}
+    sideOffset={sideOffset}
+    // The trigger is a whole region; its text is not a name for the menu.
+    aria-labelledby={undefined}
+    aria-label={ariaLabel}
+    {...props}
+  />
+));
+ContextMenuContent.displayName = "ContextMenuContent";
+
 export {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
   DropdownMenu,
   DropdownMenuPortal,
   DropdownMenuTrigger,

@@ -146,6 +146,15 @@ export {
 export { Button, buttonVariants, type ButtonProps } from "./primitives/Button";
 export { Badge, badgeVariants, type BadgeProps } from "./primitives/Badge";
 export { Input, type InputProps, type InputSize } from "./primitives/Input";
+export { NumberInput, parseLocaleNumber, type NumberInputProps } from "./primitives/NumberInput";
+export { TagInput, type TagInputProps } from "./primitives/TagInput";
+export { OtpInput, type OtpInputProps } from "./primitives/OtpInput";
+export {
+  ScrollArea,
+  AspectRatio,
+  type ScrollAreaProps,
+  type AspectRatioProps,
+} from "./primitives/ScrollArea";
 export { Textarea } from "./primitives/Textarea";
 export { Label } from "./primitives/Label";
 export { Separator, Separator as Divider } from "./primitives/Separator";
@@ -345,6 +354,9 @@ export {
   DropdownMenuSub,
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
 } from "./primitives/DropdownMenu";
 export {
   Command,
@@ -407,7 +419,39 @@ export {
   type ChipGroupProps,
   type ChipOption,
 } from "./composites/ChipGroup";
-export { EmptyState, type EmptyStateProps } from "./composites/EmptyState";
+export {
+  EmptyState,
+  ResultState,
+  type EmptyStateProps,
+  type ResultStateProps,
+} from "./composites/EmptyState";
+export { FormErrorSummary, type FormError, type FormErrorSummaryProps } from "./composites/FormErrorSummary";
+export {
+  FileUpload,
+  fileKey,
+  formatBytes,
+  type FileRejection,
+  type FileUploadProps,
+} from "./composites/FileUpload";
+export { Calendar, type CalendarProps, type DateRange } from "./composites/Calendar";
+export {
+  DatePicker,
+  DateRangePicker,
+  toISODate,
+  type DatePickerProps,
+  type DateRangePickerProps,
+  type DateRangePreset,
+} from "./composites/DatePicker";
+export { TreeView, type TreeViewNode, type TreeViewProps } from "./composites/TreeView";
+export {
+  DescriptionList,
+  DescriptionItemRow,
+  type DescriptionItem,
+  type DescriptionItemRowProps,
+  type DescriptionListProps,
+} from "./composites/DescriptionList";
+export { VirtualList, type VirtualListHandle, type VirtualListProps } from "./composites/VirtualList";
+export { ResizablePanels, type ResizablePanelsProps } from "./composites/ResizablePanels";
 export { FormField, type FormFieldProps } from "./composites/FormField";
 export { PageHeader, type PageHeaderProps } from "./composites/PageHeader";
 export { StatCard, type StatCardProps } from "./composites/StatCard";
@@ -446,6 +490,8 @@ export {
 } from "./composites/Metric";
 export {
   DataTable,
+  DataTableColumnsMenu,
+  type DataTableColumnsMenuProps,
   type DataTableColumn,
   type DataTableProps,
   type DataTableSort,

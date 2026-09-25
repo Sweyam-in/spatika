@@ -42,7 +42,8 @@
     "./charts.css": "./src/charts.css",
     "./base.css": "./src/base.css",
     "./src/index.css": "./src/index.css",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./app-components.css": "./src/app-components.css"
   },
   "files": [
     "dist",

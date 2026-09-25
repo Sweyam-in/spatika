@@ -177,7 +177,8 @@ const PopoverContent = React.forwardRef<
         const event = new Event("spatika.popover.openAutoFocus", { cancelable: true });
         autoFocus.current.onOpenAutoFocus?.(event);
         if (event.defaultPrevented || !content || content.contains(document.activeElement)) return;
-        (getTabbable(content)[0] ?? content).focus({ preventScroll: true });
+        const preferred = content.querySelector<HTMLElement>("[data-autofocus]");
+        (preferred ?? getTabbable(content)[0] ?? content).focus({ preventScroll: true });
       });
       return () => {
         window.cancelAnimationFrame(id);
