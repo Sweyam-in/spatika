@@ -168,13 +168,15 @@
 
   /* ── Overlay material ─────────────────────────────────────────────────── */
 
+  /* Opaque: the sheen sits on a solid base, so page text never shows through a menu or popover. */
   .spk-overlay {
     background:
       linear-gradient(
         180deg,
         color-mix(in srgb, var(--spk-surface-raised) 76%, transparent),
         var(--spk-surface-overlay)
-      );
+      )
+      var(--spk-surface-overlay);
     color: var(--spk-text-primary);
     border: 1px solid var(--spk-border);
     border-radius: var(--spk-radius-md);
