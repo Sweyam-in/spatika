@@ -1585,32 +1585,53 @@ a.docs-sidebar-all.active {
     color-mix(in srgb, var(--background) 70%, transparent);
 }
 
+/* Gallery thumbnails: the demo lays out wide, then the stage scales it into the card. */
+.component-preview {
+  position: relative;
+  height: 11.5rem;
+  min-height: 11.5rem;
+}
+
+/* Page-width marketing bands lay out by viewport, not container: show what they are instead. */
+.component-preview-placeholder {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  color: var(--spk-text-secondary);
+  text-align: center;
+}
+
+.component-preview-placeholder svg {
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--spk-accent-text);
+}
+
+.component-preview-placeholder strong {
+  color: var(--spk-text-primary);
+  font-size: var(--spk-text-body-sm);
+  font-weight: 600;
+}
+
+.component-preview-placeholder span {
+  font-size: var(--spk-text-caption);
+}
+
+.component-preview-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+}
+
 .component-preview [data-slot="site-nav"],
 .demo-panel [data-slot="site-nav"],
 .showcase-frame [data-slot="site-nav"] {
   position: absolute;
-}
-
-.component-preview .showcase-frame:has([data-slot="site-nav"]) {
-  width: 126%;
-  transform: scale(0.795);
-  transform-origin: top left;
-}
-
-.component-preview .demo-panel--compact:has(> [data-slot="site-footer"]) {
-  align-items: flex-start;
-  justify-content: flex-start;
-  position: relative;
-}
-
-.component-preview .demo-panel--compact > [data-slot="site-footer"] {
-  position: absolute;
-  top: 0.5rem;
-  left: 0.5rem;
-  width: 38rem !important;
-  max-width: none !important;
-  transform: scale(0.43);
-  transform-origin: top left;
 }
 
 .component-link strong {
@@ -2685,41 +2706,6 @@ a.docs-sidebar-all.active {
   color: var(--primary);
 }
 
-/* ── Theme picker ──────────────────────────────────────── */
-
-.theme-picker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  padding: 0.2rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
-  background: color-mix(in srgb, var(--muted) 35%, transparent);
-}
-
-.theme-picker button {
-  border: none;
-  background: transparent;
-  color: var(--muted-foreground);
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 0.3rem 0.55rem;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: color 0.12s, background 0.12s;
-  white-space: nowrap;
-}
-
-.theme-picker button:hover {
-  color: var(--foreground);
-}
-
-.theme-picker button.active {
-  background: var(--background);
-  color: var(--foreground);
-  box-shadow: var(--spk-shadow-sm);
-}
-
 /* ── Responsive ────────────────────────────────────────── */
 
 @media (max-width: 900px) {
@@ -2745,16 +2731,6 @@ a.docs-sidebar-all.active {
 
   .hero {
     padding: 2.5rem 0 2rem;
-  }
-
-  .theme-picker {
-    display: none;
-  }
-}
-
-@media (min-width: 901px) {
-  .theme-picker-mobile {
-    display: none;
   }
 }
 
@@ -2854,42 +2830,6 @@ pre {
 .docs-sidebar a:focus-visible {
   outline: none;
   box-shadow: var(--spk-focus-ring);
-}
-
-.theme-picker {
-  display: none;
-  gap: 2px;
-  padding: 2px;
-  border-radius: var(--spk-radius-sm);
-  background: var(--spk-surface-sunken);
-  box-shadow: inset 0 0 0 1px var(--spk-border-subtle);
-}
-
-@media (min-width: 1024px) {
-  .theme-picker {
-    display: inline-flex;
-  }
-}
-
-.theme-picker button {
-  height: 1.625rem;
-  padding: 0 0.5rem;
-  border: 0;
-  border-radius: calc(var(--spk-radius-sm) - 2px);
-  background: transparent;
-  color: var(--spk-text-secondary);
-  font: 500 var(--spk-text-caption) / 1 var(--spk-font-sans);
-  cursor: pointer;
-}
-
-.theme-picker button:hover {
-  color: var(--spk-text-primary);
-}
-
-.theme-picker button.active {
-  background: var(--spk-surface-raised);
-  color: var(--spk-text-primary);
-  box-shadow: var(--spk-shadow-sm), var(--spk-facet);
 }
 
 @media (max-width: 480px) {
@@ -4299,15 +4239,76 @@ pre {
   color: var(--spk-text-secondary);
 }
 
-/* The header also carries search and the version menu: keep the four-way theme picker for wide
- * screens and use the compact theme button below that. */
-@media (max-width: 1439px) {
-  .theme-picker {
-    display: none !important;
-  }
+/* ── Theme selector: one trigger, the four themes in a menu with a preview of each ── */
 
-  .theme-picker-mobile {
-    display: inline-flex !important;
+.theme-select-trigger {
+  gap: 0.5rem;
+}
+
+/* A theme preview drawn with that theme's own tokens (the swatch carries the theme class). */
+.theme-dot {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--spk-canvas);
+  box-shadow: inset 0 0 0 1px var(--spk-border-strong);
+}
+
+.theme-dot-surface {
+  position: absolute;
+  inset: 50% 0 0 0;
+  background: var(--spk-surface-raised);
+}
+
+.theme-dot-accent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 999px;
+  background: var(--spk-accent);
+  transform: translate(-50%, -50%);
+}
+
+.theme-select-menu {
+  min-width: 13rem;
+}
+
+.theme-select-item {
+  gap: 0.625rem;
+}
+
+.theme-select-item .theme-dot {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.theme-select-item .theme-dot-accent {
+  width: 0.5625rem;
+  height: 0.5625rem;
+}
+
+.theme-select-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.0625rem;
+  line-height: 1.25;
+}
+
+.theme-select-text small {
+  color: var(--spk-text-tertiary);
+  font-size: var(--spk-text-caption);
+}
+
+/* Icon-only trigger where the header is tight. */
+@media (max-width: 1279px) {
+  .header-theme .theme-select-name {
+    display: none;
   }
 }
 
