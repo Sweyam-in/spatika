@@ -15,9 +15,10 @@ function renderApp(path: string) {
 }
 
 describe("App", () => {
-  it("routes /customize to the customize guide", () => {
+  it("routes /customize to the customize guide", async () => {
     renderApp("/customize");
-    expect(screen.getByRole("heading", { level: 1, name: "Customize" })).toBeInTheDocument();
+    // Pages other than home are code-split, so the heading arrives once the chunk loads.
+    expect(await screen.findByRole("heading", { level: 1, name: "Customize" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Customize", current: "page" })).toHaveAttribute(
       "href",
       "/customize",

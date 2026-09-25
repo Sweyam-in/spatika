@@ -49,7 +49,7 @@ describe("main", () => {
 
     await user.click(screen.getByRole("link", { name: "Get started" }));
 
-    expect(screen.getByRole("heading", { level: 1, name: "Guides" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 1, name: "Guides" })).toBeInTheDocument();
     expect(scrollIntoView).toHaveBeenCalled();
     expect(window.scrollTo).not.toHaveBeenCalled();
   });

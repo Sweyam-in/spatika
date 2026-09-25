@@ -27,6 +27,7 @@ const routeFilter = args
   .filter(Boolean);
 
 const viewports = [
+  { name: "small-mobile", width: 320, height: 568 },
   { name: "mobile", width: 390, height: 844 },
   { name: "tablet", width: 768, height: 1024 },
   { name: "desktop", width: 1280, height: 900 },
@@ -34,6 +35,11 @@ const viewports = [
 
 const fixedRoutes = [
   "/",
+  "/changelog",
+  "/versions",
+  "/migration",
+  "/accessibility",
+  "/docs/v2.3.0/components/button",
   "/design",
   "/components",
   "/customize",
