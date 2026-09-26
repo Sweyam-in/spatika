@@ -133,7 +133,7 @@ describe.each(Object.keys(THEME_BLOCKS))("%s theme contrast", (name) => {
     }
   });
 
-  it("draws control boundaries at 3:1 against the surface (WCAG 1.4.11)", () => {
+  it("draws opt-in high-contrast control boundaries at 3:1 against the surface (WCAG 1.4.11)", () => {
     const controlBorder = mix(t["text-tertiary"], t.border, 0.8);
     expect(contrast(controlBorder, t.surface)).toBeGreaterThanOrEqual(3);
     expect(contrast(controlBorder, t.canvas)).toBeGreaterThanOrEqual(3);
@@ -144,8 +144,9 @@ describe("derived token formulas", () => {
   it("derives focus, control border and hovers from the values checked above", () => {
     expect(tokensCss).toContain("--spk-focus: var(--spk-accent-text);");
     expect(tokensCss).toContain("--spk-focus-ring: 0 0 0 2px var(--spk-surface), 0 0 0 4px var(--spk-focus);");
-    expect(tokensCss).toContain(
-      "--spk-control-border: color-mix(in oklab, var(--spk-text-tertiary) 80%, var(--spk-border));",
+    expect(tokensCss).toContain("--spk-control-border: var(--spk-border);");
+    expect(tokensCss).toMatch(
+      /\[data-contrast="more"\][^{]*\{\s*--spk-control-border: color-mix\(in oklab, var\(--spk-text-tertiary\) 80%, var\(--spk-border\)\);/,
     );
     expect(tokensCss).toContain("--spk-accent-hover: color-mix(in oklab, var(--spk-accent) 90%, black);");
     expect(tokensCss).toContain("--spk-danger-hover: color-mix(in oklab, var(--spk-danger) 88%, black);");

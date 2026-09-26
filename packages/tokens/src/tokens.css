@@ -502,10 +502,10 @@
 
   /* Controls */
   --spk-control-bg: var(--spk-surface);
-  /* Control boundaries meet WCAG 1.4.11 (≥3:1 against the surface) in every theme,
-   * including custom themes, because they derive from the tertiary text colour. */
-  --spk-control-border: color-mix(in oklab, var(--spk-text-tertiary) 80%, var(--spk-border));
-  --spk-control-border-hover: color-mix(in oklab, var(--spk-text-secondary) 85%, var(--spk-border));
+  /* Control boundaries use the quiet theme border by default. High-contrast boundaries
+   * (WCAG 1.4.11, ≥3:1) are opt-in — see "Contrast: more" below. */
+  --spk-control-border: var(--spk-border);
+  --spk-control-border-hover: var(--spk-border-strong);
   --spk-selection: color-mix(in oklab, var(--spk-accent) 22%, transparent);
 
   /* Focus — "crystal" ring: surface-coloured gap + full-strength accent ring.
@@ -607,6 +607,25 @@
   --chart-8: var(--spk-viz-8);
 
   color-scheme: var(--spk-scheme);
+}
+
+/* Contrast: more — opt-in high-contrast control boundaries (WCAG 1.4.11, ≥3:1 against the
+ * surface in every theme, including custom themes, because they derive from the tertiary text
+ * colour). Enable with `data-contrast="more"` on <html> or any container, or automatically
+ * when the OS asks for more contrast. */
+[data-contrast="more"],
+[data-contrast="more"] :is(.mukta, .neelam, .usha, .sandhya, [data-spk-theme]),
+:is(.mukta, .neelam, .usha, .sandhya, [data-spk-theme])[data-contrast="more"] {
+  --spk-control-border: color-mix(in oklab, var(--spk-text-tertiary) 80%, var(--spk-border));
+  --spk-control-border-hover: color-mix(in oklab, var(--spk-text-secondary) 85%, var(--spk-border));
+}
+
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="normal"]),
+  :root:not([data-contrast="normal"]) :is(.mukta, .neelam, .usha, .sandhya, [data-spk-theme]) {
+    --spk-control-border: color-mix(in oklab, var(--spk-text-tertiary) 80%, var(--spk-border));
+    --spk-control-border-hover: color-mix(in oklab, var(--spk-text-secondary) 85%, var(--spk-border));
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

@@ -57,10 +57,14 @@ describe("utility layer coverage", () => {
 
   it("builds gradient direction utilities from their from/via/to stops", () => {
     const css = readFileSync(join(packagesRoot, "tokens/src/utilities.css"), "utf8");
-    const rules = css.split("\n").filter((line) => line.includes(".bg-gradient-to-"));
-    expect(rules.length).toBeGreaterThan(0);
-    for (const rule of rules) expect(rule).toContain("var(--spk-gradient-stops");
-    expect(css).toContain(".bg-gradient-to-t{background-image:linear-gradient(to top,");
+    expect(css).toMatch(/\.bg-gradient-to-t \{\s*--spk-u-gradient-position: to top in oklab;\s*background-image: linear-gradient\(var\(--spk-u-gradient-stops\)\);/);
+    expect(css).toContain("--spk-u-gradient-stops: var(--spk-u-gradient-via-stops,");
+  });
+
+  it("is the current output of the utility compiler (run `npm run utilities`)", async () => {
+    const { buildUtilities } = await import("../../../../scripts/build-utilities.mjs");
+    const committed = readFileSync(join(packagesRoot, "tokens/src/utilities.css"), "utf8");
+    expect(committed === buildUtilities()).toBe(true);
   });
 
   it("ships plain CSS — no Tailwind-only at-rules", () => {

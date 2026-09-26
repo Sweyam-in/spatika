@@ -8,7 +8,8 @@
       "@spatika/react",
       "@spatika/charts",
       "@spatika/editor",
-      "@spatika/mcp"
+      "@spatika/mcp",
+      "@spatika/utilities"
     ]
   ],
   "linked": [],

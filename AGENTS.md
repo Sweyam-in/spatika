@@ -23,6 +23,11 @@ export function App() {
 }
 ```
 
+Utility classes (`flex`, `p-4`, `md:grid-cols-3`, `bg-surface/80`) come from `@spatika/utilities` —
+no Tailwind. Add its Vite plugin (`@spatika/utilities/vite`) or PostCSS plugin
+(`@spatika/utilities/postcss`) and put `@spatika utilities;` in the app stylesheet after the Spatika
+imports; app colours and fonts go in the plugin's `theme` option. See `packages/utilities/README.md`.
+
 ### Must do
 - Import `@spatika/tokens/styles.css` before any component
 - Wrap the app in `<SpatikaThemeProvider>`
@@ -135,7 +140,8 @@ MCP client config after publishing:
 
 ## Change this library
 
-Monorepo: `packages/tokens` (CSS: tokens → recipes) → `packages/charts` → `packages/editor` →
+Monorepo: `packages/utilities` (utility compiler; also generates `packages/tokens/src/utilities.css`
+via `npm run utilities` — never edit that file by hand) → `packages/tokens` (CSS: tokens → recipes) → `packages/charts` → `packages/editor` →
 `packages/react` (components, re-exports charts + editor) → `apps/website` (docs + showcase).
 
 Token layering, in order — never skip one:
@@ -153,8 +159,8 @@ When adding a component:
    code shown on the page — and a docs entry in `apps/website/src/docs/app-catalog.ts`
 3. Regenerate: `npm run docs:api` (props from TypeScript) and `npm run docs:demos` (demo sources)
 4. Add a canonical snippet in `apps/website/src/data/agent-snippets.ts`
-5. If it uses a utility class with no rule, the utilities-coverage test fails — add the rule in
-   `packages/tokens/src/utilities.css`, or a recipe in `app-components.css`
+5. Run `npm run utilities` to regenerate the prebuilt utility layer; the coverage test fails when it is
+   stale or a class has no rule (unsupported utilities need support in `packages/utilities`)
 6. Add a changeset: `npx changeset` (a new component is `minor`)
 
 Checks (run before opening a PR):

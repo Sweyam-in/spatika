@@ -1,6 +1,6 @@
 {
   "name": "@spatika/mcp",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "license": "MIT",
   "description": "MCP server exposing Spatika UI agent docs, component metadata, and skills",
   "homepage": "https://spatika.sweyam.com",
