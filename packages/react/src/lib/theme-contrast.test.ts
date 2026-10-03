@@ -158,3 +158,55 @@ describe("derived token formulas", () => {
     }
   });
 });
+
+/** Liquid glass must stay legible over the worst backdrop: pure black or pure white after blur. */
+describe.each(["mukta", "neelam", "usha"])("%s liquid glass legibility", (name) => {
+  const t = themeValues(name);
+  const block = tokensCss.match(THEME_BLOCKS[name])![1];
+  const glass = block.match(/--spk-glass-tint:\s*rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/)!;
+  const tintRgb = [glass[1], glass[2], glass[3]].map((v) => Number(v) / 255) as Rgb;
+  const alpha = Number(glass[4]);
+  const secondary = mix(t["text-secondary"], t["text-primary"], 0.45);
+
+  it.each([
+    ["black", BLACK],
+    ["white", WHITE],
+  ] as const)("keeps text at 4.5:1 over a %s backdrop", (_label, backdrop) => {
+    const fill = tint(tintRgb, alpha, backdrop);
+    expect(contrast(t["text-primary"], fill), "primary").toBeGreaterThanOrEqual(4.5);
+    expect(contrast(secondary, fill), "secondary/tertiary").toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+describe("clear glass", () => {
+  it("keeps white text at 4.5:1 over a white backdrop under the dim layer", () => {
+    for (const [name, re] of [["mukta", THEME_BLOCKS.mukta], ["neelam", THEME_BLOCKS.neelam]] as const) {
+      const m = tokensCss.match(re)![1].match(/--spk-glass-clear-tint:\s*rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)/)!;
+      const dim = [m[1], m[2], m[3]].map((v) => Number(v) / 255) as Rgb;
+      expect(contrast(WHITE, tint(dim, Number(m[4]), WHITE)), name).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+});
+
+/** Content and control glass sit over the ambient canvas wash: keep every text tier at 4.5:1. */
+describe.each(["mukta", "neelam", "usha"])("%s content glass legibility", (name) => {
+  const t = themeValues(name);
+  const liquid = readFileSync(
+    join(dirname(fileURLToPath(import.meta.url)), "../../../tokens/src/liquid.css"),
+    "utf8",
+  );
+  const content = Number(liquid.match(/--spk-lg-content:\s*(\d+)%/)![1]) / 100;
+  const control = Number(liquid.match(/--spk-lg-control:\s*(\d+)%/)![1]) / 100;
+  const panel = Number(liquid.match(/--spk-lg-panel:\s*(\d+)%/)![1]) / 100;
+  // Worst case wash: the accent at 25% over the canvas, far past the 13% actually painted.
+  const washed = mix(t.accent, t.canvas, 0.25);
+
+  it.each(["surface", "surface-raised", "surface-subtle"])("keeps all tiers at 4.5:1 for %s glass", (s) => {
+    for (const [alpha, label] of [[content, "content"], [control, "control"], ...(s === "surface" ? [[panel, "panel"] as const] : [])] as const) {
+      const fill = tint(t[s], alpha, washed);
+      for (const text of ["text-primary", "text-secondary", "text-tertiary"]) {
+        expect(contrast(t[text], fill), `${text} on ${label} ${s}`).toBeGreaterThanOrEqual(4.5);
+      }
+    }
+  });
+});

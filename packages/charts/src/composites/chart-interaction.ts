@@ -219,3 +219,15 @@ export function bindChartMark({
         : undefined,
   };
 }
+
+/**
+ * Props for a label drawn on top of a filled mark. The stylesheet picks black or white from the
+ * mark's lightness (`.spk-chart-label[data-on-mark]`), so the label keeps its contrast on any
+ * palette colour, theme or custom series colour.
+ */
+export function onMark(color: string) {
+  return {
+    "data-on-mark": "",
+    style: { "--spk-mark-bg": color } as Record<string, string>,
+  };
+}

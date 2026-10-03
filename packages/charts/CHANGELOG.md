@@ -1,5 +1,16 @@
 # @spatika/charts
 
+## 2.6.0
+
+### Minor Changes
+
+- Liquid glass material (Apple-inspired) across every component (new `liquid.css`: content, control and floating densities, plus an ambient canvas wash), and for `.spk-glass` / `Card surface="glass"`: lensed rim, specular sheen, wider blur, plus a `data-variant="clear"` media variant. Tint density and glass-scoped text colours are tuned so text keeps WCAG AA over any backdrop; the previous 0.72 tint did not. Charts pick up the same material: chart interaction states (`chart-interaction.ts`, `charts.css`) and the 3D, flow and radial composites are adjusted to sit on glass surfaces.
+
+### Patch Changes
+
+- Updated dependencies
+  - @spatika/tokens@2.6.0
+
 ## 2.5.0
 
 ### Minor Changes

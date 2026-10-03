@@ -22,7 +22,7 @@ import {
   useChartHover,
   useHiddenSeries,
 } from "./chart-ui";
-import { bindChartMark, hoverMark, type ChartItemEvent, type ChartTooltipRenderer } from "./chart-interaction";
+import { bindChartMark, hoverMark, onMark, type ChartItemEvent, type ChartTooltipRenderer } from "./chart-interaction";
 
 export type HeatDatum = { x: number; y: number; value: number };
 
@@ -335,7 +335,7 @@ export function FunnelChart({
                     {inside ? (
                       <text
                         className="spk-chart-label"
-                        fill="var(--primary-foreground)"
+                        {...(primary ? onMark(info.color) : { fill: "var(--primary-foreground)" })}
                         x={w / 2}
                         y={m.top + row.y + row.height / 2}
                         textAnchor="middle"

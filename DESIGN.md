@@ -2,6 +2,7 @@
 
 Reusable visual patterns for **React**, documented on the site in `apps/website`.
 Spatika means crystal (स्फटिक). 2.0 reads that as **clarity, not frost**.
+The one place it shows glass is **liquid glass** (Apple-inspired): a controls-layer material with lensed edges and enough tint to stay readable.
 
 ## Architecture
 
@@ -29,8 +30,8 @@ theme base values   (--spk-canvas, --spk-surface, --spk-accent … per theme)
 
 1. **Content first** — surfaces support information instead of competing with it. Most page
    structure is a `PageSection` (heading + spacing), not another card.
-2. **Calm surfaces** — solid material, hairline borders, restrained elevation. Translucency is an
-   opt-in material (`surface="glass"`), not the foundation.
+2. **Calm surfaces** — solid material, hairline borders, restrained elevation. Liquid glass is the material everywhere (`liquid.css`): content 92%, controls 94%, floating 86% tint,
+   each keeping text at 4.5:1 (`theme-contrast.test.ts`). Media chrome uses `data-variant="clear"`.
 3. **Hierarchy from type and space** — size, weight, alignment and grouping. No uppercase
    micro-labels, no 900-weight headings.
 4. **Professional density** — controls read their size from density tokens; `data-density="compact"`
@@ -176,3 +177,19 @@ Animate colour, shadow and transform only. Cards do not levitate on hover.
 
 Full audit and rationale: [`docs/redesign/AUDIT.md`](docs/redesign/AUDIT.md).
 Upgrade notes: [`docs/redesign/MIGRATION.md`](docs/redesign/MIGRATION.md).
+
+## Liquid glass
+
+`.spk-glass` / `<Card surface="glass">`: wide blur + saturation lift, a lit inner rim, a soft far-edge
+shade and a faint specular sheen. Tint is dense (0.86) and secondary/tertiary text are re-pointed to
+stronger values inside glass, so labels stay legible over black, white or busy imagery.
+`data-variant="clear"` is the media variant: a dark dim layer with white text. `sandhya` never blurs;
+`prefers-reduced-transparency` turns glass solid.
+
+### Everywhere
+
+`liquid.css` applies the material to every component surface in three densities — content (cards,
+tables, alerts, calendars), control (fields, secondary buttons, tabs, segmented) and floating (menus,
+popovers, dialogs, sheets, top bars). The canvas carries a soft accent wash (`--spk-canvas-wash`
+gradients) so the blur has something to bend. Tune density with `--spk-lg-content`,
+`--spk-lg-control`, `--spk-lg-blur`.

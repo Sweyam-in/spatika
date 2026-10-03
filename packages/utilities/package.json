@@ -1,6 +1,6 @@
 {
   "name": "@spatika/utilities",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "license": "MIT",
   "description": "Spatika UI — on-demand utility class compiler driven by Spatika tokens. Vite and PostCSS plugins; no Tailwind required.",
   "homepage": "https://spatika.sweyam.com",

@@ -17,7 +17,7 @@ import {
   useChartHover,
   useHiddenSeries,
 } from "./chart-ui";
-import { bindChartMark, hoverMark, type ChartItemEvent, type ChartTooltipRenderer } from "./chart-interaction";
+import { bindChartMark, hoverMark, onMark, type ChartItemEvent, type ChartTooltipRenderer } from "./chart-interaction";
 
 export type PieDatum = {
   id?: string | number;
@@ -181,7 +181,7 @@ export function PieChart({
                   {labelText ? (
                     <text
                       className="spk-chart-label"
-                      fill={leader ? "var(--muted-foreground)" : "var(--primary-foreground)"}
+                      {...(leader ? { fill: "var(--muted-foreground)" } : onMark(color))}
                       x={leader ? leader.textX : slice.labelX}
                       y={leader ? leader.textY : slice.labelY}
                       textAnchor={leader ? leader.textAnchor : "middle"}

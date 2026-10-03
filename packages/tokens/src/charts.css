@@ -256,6 +256,18 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* Labels on a filled mark: white by default, black when the mark is light (OKLCH lightness > 0.6). */
+  .spk-chart-label[data-on-mark] {
+    fill: #ffffff;
+    paint-order: stroke;
+  }
+
+  @supports (color: oklch(from red l c h)) {
+    .spk-chart-label[data-on-mark] {
+      fill: oklch(from var(--spk-mark-bg) clamp(0, (l - 0.6) * -1000, 1) 0 0);
+    }
+  }
+
   .spk-chart-color-scale {
     pointer-events: none;
   }

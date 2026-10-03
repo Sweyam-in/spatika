@@ -16,7 +16,7 @@ import {
   useChartHover,
   useHiddenSeries,
 } from "./chart-ui";
-import { hoverMark } from "./chart-interaction";
+import { hoverMark, onMark } from "./chart-interaction";
 import type { NumericSeries } from "./cartesian-charts";
 
 function box(width: number, height: number, m: Required<ChartMargin>) {
@@ -301,7 +301,7 @@ export function PieChart3D({
                     y={cy + Math.sin(((slice.midAngle - 90) * Math.PI) / 180) * ry * 0.55}
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    fill="var(--primary-foreground)"
+                    {...onMark(info.color)}
                   >
                     {Math.round(slice.percent * 100)}%
                   </text>

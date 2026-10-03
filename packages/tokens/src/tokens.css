@@ -273,10 +273,13 @@
   --spk-facet: inset 0 1px 0 rgb(255 255 255 / 0.7);
   --spk-facet-strong: inset 0 1px 0 rgb(255 255 255 / 0.18), inset 0 -1px 0 rgb(0 0 0 / 0.12);
 
-  --spk-glass-tint: rgb(255 255 255 / 0.72);
-  --spk-glass-border: rgb(255 255 255 / 0.6);
-  --spk-glass-blur: 20px;
-  --spk-glass-saturate: 160%;
+  --spk-glass-tint: rgb(255 255 255 / 0.86);
+  --spk-glass-border: rgb(255 255 255 / 0.7);
+  --spk-glass-blur: 24px;
+  --spk-glass-saturate: 180%;
+  --spk-glass-rim-light: rgb(255 255 255 / 0.95);
+  --spk-glass-rim-shade: rgb(22 23 29 / 0.08);
+  --spk-glass-clear-tint: rgb(14 15 20 / 0.62);
 
   --spk-viz-1: #4655d4;
   --spk-viz-2: #25a18e;
@@ -333,10 +336,13 @@
   --spk-facet: inset 0 1px 0 rgb(255 255 255 / 0.05);
   --spk-facet-strong: inset 0 1px 0 rgb(255 255 255 / 0.16), inset 0 -1px 0 rgb(0 0 0 / 0.2);
 
-  --spk-glass-tint: rgb(25 26 33 / 0.72);
-  --spk-glass-border: rgb(255 255 255 / 0.08);
-  --spk-glass-blur: 20px;
-  --spk-glass-saturate: 140%;
+  --spk-glass-tint: rgb(25 26 33 / 0.86);
+  --spk-glass-border: rgb(255 255 255 / 0.1);
+  --spk-glass-blur: 24px;
+  --spk-glass-saturate: 170%;
+  --spk-glass-rim-light: rgb(255 255 255 / 0.22);
+  --spk-glass-rim-shade: rgb(0 0 0 / 0.35);
+  --spk-glass-clear-tint: rgb(0 0 0 / 0.6);
 
   --spk-viz-1: #7584f5;
   --spk-viz-2: #3cc0a8;
@@ -393,10 +399,13 @@
   --spk-facet: inset 0 1px 0 rgb(255 255 255 / 0.75);
   --spk-facet-strong: inset 0 1px 0 rgb(255 255 255 / 0.2), inset 0 -1px 0 rgb(0 0 0 / 0.12);
 
-  --spk-glass-tint: rgb(255 255 255 / 0.74);
-  --spk-glass-border: rgb(255 255 255 / 0.6);
-  --spk-glass-blur: 20px;
-  --spk-glass-saturate: 150%;
+  --spk-glass-tint: rgb(255 255 255 / 0.86);
+  --spk-glass-border: rgb(255 255 255 / 0.7);
+  --spk-glass-blur: 24px;
+  --spk-glass-saturate: 180%;
+  --spk-glass-rim-light: rgb(255 255 255 / 0.95);
+  --spk-glass-rim-shade: rgb(22 23 29 / 0.08);
+  --spk-glass-clear-tint: rgb(14 15 20 / 0.62);
 
   --spk-viz-1: #c2511d;
   --spk-viz-2: #2f8f86;
@@ -458,6 +467,9 @@
   --spk-glass-border: #2b2825;
   --spk-glass-blur: 0px;
   --spk-glass-saturate: 100%;
+  --spk-glass-rim-light: transparent;
+  --spk-glass-rim-shade: transparent;
+  --spk-glass-clear-tint: #22201d;
 
   --spk-viz-1: #e07443;
   --spk-viz-2: #3fb3a3;

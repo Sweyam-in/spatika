@@ -1,0 +1,245 @@
+/**
+ * Liquid glass, everywhere.
+ *
+ * The last word on material: every component surface is glass, in three densities that all keep
+ * text at WCAG AA (enforced by theme-contrast.test.ts):
+ *
+ *   content   (--spk-lg-content)   cards, panels, tables, alerts, calendars — 92% surface tint
+ *   control   (--spk-lg-control)   fields, secondary buttons, tabs, segmented — 94% surface tint
+ *   floating  (.spk-glass tokens)  menus, popovers, dialogs, sheets, bars — 86% tint + text remap
+ *
+ * Glass needs something to bend, so the canvas carries a soft ambient wash (--spk-canvas-wash).
+ * Sandhya is flat (blur 0, no wash). prefers-reduced-transparency and missing backdrop-filter
+ * support fall back to the solid surface.
+ */
+
+@layer components {
+  :root,
+  .mukta,
+  .neelam,
+  .usha,
+  .sandhya {
+    --spk-lg-content: 92%;
+    --spk-lg-control: 94%;
+    --spk-lg-panel: 89%;
+    --spk-lg-blur: 18px;
+    --spk-lg-saturate: 150%;
+    --spk-lg-rim: inset 1px 1px 0 var(--spk-glass-rim-light), inset -1px -1px 0 var(--spk-glass-rim-shade);
+  }
+
+  .sandhya {
+    --spk-lg-content: 100%;
+    --spk-lg-control: 100%;
+    --spk-lg-panel: 100%;
+    --spk-lg-blur: 0px;
+    --spk-lg-saturate: 100%;
+  }
+
+  /* ── Ambient wash the glass refracts ──────────────────────────────────── */
+
+  body,
+  .app-page,
+  .spk-app-shell {
+    background:
+      radial-gradient(56rem 34rem at 8% -8%, color-mix(in srgb, var(--spk-accent) 20%, transparent), transparent 62%),
+      radial-gradient(48rem 30rem at 100% 4%, color-mix(in srgb, var(--spk-info) 14%, transparent), transparent 60%),
+      var(--spk-canvas);
+    background-attachment: fixed;
+  }
+
+  .sandhya body,
+  body.sandhya,
+  .sandhya .app-page,
+  .sandhya .spk-app-shell {
+    background: var(--spk-canvas);
+  }
+
+  /* ── Content glass ────────────────────────────────────────────────────── */
+
+  .spk-surface--default,
+  .app-card,
+  .app-stat-card,
+  .entity-card,
+  .app-toolbar,
+  .spk-table-container[data-bordered="true"],
+  .spk-calendar,
+  .spk-dropzone,
+  .spk-file-item,
+  .spk-alert,
+  .spk-mk-price,
+  .spk-mk-quote,
+  .spk-mk-cta,
+  .spk-mk-feature[data-variant="card"],
+  .spk-mk-bento__item,
+  .spk-mk-article[data-variant="card"] {
+    background: color-mix(in srgb, var(--spk-surface) var(--spk-lg-content), transparent);
+    box-shadow: var(--spk-shadow-xs), var(--spk-lg-rim);
+  }
+
+  .spk-surface--raised,
+  .app-card-elevated,
+  .profile-liquid-card,
+  .profile-liquid-card--primary {
+    background: color-mix(in srgb, var(--spk-surface-raised) var(--spk-lg-content), transparent);
+    box-shadow: var(--spk-shadow-md), var(--spk-lg-rim);
+  }
+
+  .spk-surface--subtle {
+    background: color-mix(in srgb, var(--spk-surface-subtle) var(--spk-lg-content), transparent);
+    box-shadow: var(--spk-lg-rim);
+  }
+
+  /* App shell: one glass world. The sidebar is open canvas (the wash shows through), the content
+     panel is glass over it, and the top bar is a lighter pane of the same panel, not a white strip. */
+  .spk-sidebar,
+  .spk-app-sidebar {
+    background: transparent;
+  }
+
+  .spk-app-main {
+    --spk-topbar-bg: color-mix(in srgb, var(--spk-surface) 72%, transparent);
+    background: color-mix(in srgb, var(--spk-surface) var(--spk-lg-panel), transparent);
+    box-shadow: var(--spk-shadow-xs), var(--spk-lg-rim);
+  }
+
+  .spk-topbar {
+    border-bottom-color: color-mix(in srgb, var(--spk-border) 60%, transparent);
+  }
+
+  /* ── Control glass (no rim shadow: focus rings and pressed states own box-shadow) ─── */
+
+  .spk-field,
+  .spk-btn--secondary,
+  .spk-btn--outline,
+  .spk-btn--soft,
+  .spk-tabs-list,
+  .spk-segmented,
+  .spk-tag-input,
+  .spk-number-input,
+  .spk-otp-cell,
+  .spk-date-input,
+  .spk-kbd,
+  .app-chip,
+  .app-icon-tile {
+    background-color: color-mix(in srgb, var(--spk-surface) var(--spk-lg-control), transparent);
+    background-image: linear-gradient(180deg, color-mix(in srgb, var(--spk-glass-rim-light) 22%, transparent), transparent 60%);
+  }
+
+  /* ── Floating glass: the .spk-glass tint, rim and text remap ──────────── */
+
+  .spk-overlay,
+  .spk-dialog,
+  .spk-sheet,
+  .spk-date-popover,
+  .app-chrome-header,
+  .glass-header,
+  .glass-menu {
+    --spk-text-secondary: color-mix(in oklab, var(--spk-text-secondary) 45%, var(--spk-text-primary));
+    --spk-text-tertiary: var(--spk-text-secondary);
+    background:
+      linear-gradient(160deg, color-mix(in srgb, var(--spk-glass-rim-light) 26%, transparent) 0%, transparent 42%),
+      var(--spk-glass-tint);
+    border-color: var(--spk-glass-border);
+  }
+
+  .spk-overlay,
+  .spk-dialog,
+  .spk-sheet,
+  .spk-date-popover {
+    box-shadow:
+      var(--spk-shadow-lg),
+      inset 1px 1px 0 var(--spk-glass-rim-light),
+      inset -1px -1px 0 var(--spk-glass-rim-shade),
+      inset 0 0 14px color-mix(in srgb, var(--spk-glass-rim-light) 35%, transparent);
+  }
+
+  .spk-chart-tooltip {
+    background: var(--spk-glass-tint);
+    border-color: var(--spk-glass-border);
+  }
+
+  /* ── Blur ─────────────────────────────────────────────────────────────── */
+
+  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
+    .spk-surface--default,
+    .spk-surface--raised,
+    .spk-surface--subtle,
+    .app-card,
+    .app-card-elevated,
+    .app-stat-card,
+    .entity-card,
+    .app-toolbar,
+    .profile-liquid-card,
+    .spk-table-container[data-bordered="true"],
+    .spk-calendar,
+    .spk-dropzone,
+    .spk-file-item,
+    .spk-alert,
+    .spk-app-main,
+    .spk-topbar,
+    .spk-mk-price,
+    .spk-mk-quote,
+    .spk-mk-cta,
+    .spk-mk-feature[data-variant="card"],
+    .spk-mk-bento__item,
+    .spk-mk-article[data-variant="card"],
+    .spk-field,
+    .spk-btn--secondary,
+    .spk-btn--outline,
+    .spk-btn--soft,
+    .spk-tabs-list,
+    .spk-segmented,
+    .spk-tag-input,
+    .spk-number-input,
+    .spk-date-input,
+    .app-chip {
+      -webkit-backdrop-filter: blur(var(--spk-lg-blur)) saturate(var(--spk-lg-saturate));
+      backdrop-filter: blur(var(--spk-lg-blur)) saturate(var(--spk-lg-saturate));
+    }
+
+    .spk-overlay,
+    .spk-dialog,
+    .spk-sheet,
+    .spk-date-popover,
+    .app-chrome-header,
+    .glass-header,
+    .glass-menu,
+    .spk-chart-tooltip {
+      -webkit-backdrop-filter: blur(var(--spk-glass-blur)) saturate(var(--spk-glass-saturate));
+      backdrop-filter: blur(var(--spk-glass-blur)) saturate(var(--spk-glass-saturate));
+    }
+  }
+}
+
+/* Solid fallbacks: no backdrop support, or the user asked for less transparency. */
+@supports not ((backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))) {
+  :root,
+  .mukta,
+  .neelam,
+  .usha {
+    --spk-lg-content: 100%;
+    --spk-lg-control: 100%;
+    --spk-lg-panel: 100%;
+    --spk-glass-tint: var(--spk-surface-overlay);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  .mukta,
+  .neelam,
+  .usha {
+    --spk-lg-content: 100%;
+    --spk-lg-control: 100%;
+    --spk-lg-panel: 100%;
+    --spk-glass-tint: var(--spk-surface-overlay);
+    --spk-glass-blur: 0px;
+    --spk-lg-blur: 0px;
+  }
+
+  body,
+  .app-page,
+  .spk-app-shell {
+    background: var(--spk-canvas);
+  }
+}

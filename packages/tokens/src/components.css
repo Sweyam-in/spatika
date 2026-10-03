@@ -2164,7 +2164,7 @@
   }
 
   .spk-sidebar {
-    --spk-nav-rail-offset: 0.5rem;
+    --spk-nav-rail-offset: 0.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -2177,7 +2177,7 @@
   }
 
   .spk-sidebar[data-collapsed="true"] {
-    --spk-nav-rail-offset: calc((var(--spk-sidebar-w-collapsed) - var(--spk-item-h)) / 2);
+    --spk-nav-rail-offset: calc((var(--spk-sidebar-w-collapsed) - var(--spk-item-h)) / 2 - 0.25rem);
     align-items: center;
     padding-inline: 0;
   }

@@ -2,7 +2,7 @@
  * Materials and interaction helpers.
  *
  * 2.0: glass is an optional material, not the spine of the system.
- *  - `.spk-glass`            real translucency — floating chrome, media controls, overlays on imagery
+ *  - `.spk-glass`            liquid glass — floating chrome, media controls, overlays on imagery
  *  - `.glass*` (1.x names)   kept for compatibility and now render as calm solid surfaces
  *
  * Theme class on <html>: mukta (default), .neelam, .usha, .sandhya (flat, never blurs).
@@ -27,16 +27,73 @@
 }
 
 @layer components {
-  /* ── Opt-in glass material ────────────────────────────────────────────── */
+  /* ── Liquid glass ─────────────────────────────────────────────────────────
+   * Apple-inspired material for the CONTROLS layer only: floating chrome, menus, sheets, media
+   * controls. Content (cards, tables, forms) stays solid.
+   *
+   *   lensing   — a bright inner rim on the lit edge, a soft shade on the far edge, and a wide
+   *               blur + saturation lift so the backdrop bends and glows instead of showing through
+   *   specular  — a faint top sheen that brightens on hover
+   *   legibility — the tint is dense enough that text-primary AND text-secondary keep ≥4.5:1 over the
+   *               worst backdrop (pure black / pure white); glass re-points secondary and tertiary
+   *               text to stronger values. Enforced by glass-contrast.test.ts.
+   *
+   * `data-variant="clear"` is for media overlays: a dark dim layer with white text. Never nest glass
+   * in glass. Sandhya is flat and never blurs.
+   */
 
-  .spk-glass {
-    background: var(--spk-glass-tint);
+  .spk-glass,
+  .spk-surface--glass {
+    --spk-text-secondary: color-mix(in oklab, var(--spk-text-secondary) 45%, var(--spk-text-primary));
+    --spk-text-tertiary: var(--spk-text-secondary);
+    position: relative;
+    isolation: isolate;
+    color: var(--spk-text-primary);
+    background:
+      linear-gradient(
+        160deg,
+        color-mix(in srgb, var(--spk-glass-rim-light) 26%, transparent) 0%,
+        transparent 42%
+      ),
+      var(--spk-glass-tint);
     border: 1px solid var(--spk-glass-border);
-    box-shadow: var(--spk-shadow-lg), var(--spk-facet);
+    box-shadow:
+      var(--spk-shadow-lg),
+      inset 1px 1px 0 var(--spk-glass-rim-light),
+      inset -1px -1px 0 var(--spk-glass-rim-shade),
+      inset 0 0 14px color-mix(in srgb, var(--spk-glass-rim-light) 35%, transparent);
+    transition:
+      box-shadow var(--spk-motion-hover),
+      background-color var(--spk-motion-hover);
+  }
+
+  .spk-glass[data-interactive="true"]:hover,
+  .spk-surface--glass[data-interactive="true"]:hover {
+    box-shadow:
+      var(--spk-shadow-xl),
+      inset 1px 1px 0 var(--spk-glass-rim-light),
+      inset -1px -1px 0 var(--spk-glass-rim-shade),
+      inset 0 0 22px color-mix(in srgb, var(--spk-glass-rim-light) 55%, transparent);
+  }
+
+  .spk-glass[data-variant="clear"],
+  .spk-surface--glass[data-variant="clear"] {
+    --spk-text-primary: #ffffff;
+    --spk-text-secondary: #ffffff;
+    --spk-text-tertiary: #ffffff;
+    background:
+      linear-gradient(
+        160deg,
+        color-mix(in srgb, #ffffff 16%, transparent) 0%,
+        transparent 42%
+      ),
+      var(--spk-glass-clear-tint);
+    border-color: rgb(255 255 255 / 0.28);
   }
 
   @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
-    .spk-glass {
+    .spk-glass,
+    .spk-surface--glass {
       -webkit-backdrop-filter: blur(var(--spk-glass-blur)) saturate(var(--spk-glass-saturate));
       backdrop-filter: blur(var(--spk-glass-blur)) saturate(var(--spk-glass-saturate));
     }
@@ -44,7 +101,8 @@
 
   /* Without backdrop support, fall back to the solid overlay surface. */
   @supports not ((backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0))) {
-    .spk-glass {
+    .spk-glass:not([data-variant="clear"]),
+    .spk-surface--glass:not([data-variant="clear"]) {
       background: var(--spk-surface-overlay);
     }
   }
@@ -132,6 +190,7 @@
 
   /* Sandhya is flat: every material renders solid. */
   .sandhya .spk-glass,
+  .sandhya .spk-surface--glass,
   .sandhya .glass-header,
   .sandhya .glass-tabbar,
   .sandhya .glass-more-sheet,
@@ -173,6 +232,7 @@
 /* Users who ask for less transparency or motion get solid material. */
 @media (prefers-reduced-transparency: reduce) {
   .spk-glass,
+  .spk-surface--glass,
   .glass-header,
   .glass-tabbar,
   .glass-more-sheet {

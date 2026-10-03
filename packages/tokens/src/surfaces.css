@@ -41,17 +41,9 @@
     border: 1px solid transparent;
   }
 
+  /* Liquid glass: the recipe lives in glass.css (.spk-glass); Card surface="glass" adds that class. */
   .spk-surface--glass {
-    background: var(--spk-glass-tint);
-    border: 1px solid var(--spk-glass-border);
-    box-shadow: var(--spk-shadow-md), var(--spk-facet);
-  }
-
-  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
-    .spk-surface--glass {
-      -webkit-backdrop-filter: blur(var(--spk-glass-blur)) saturate(var(--spk-glass-saturate));
-      backdrop-filter: blur(var(--spk-glass-blur)) saturate(var(--spk-glass-saturate));
-    }
+    overflow: clip;
   }
 
   .spk-surface--transparent {
@@ -127,16 +119,6 @@
 
   .spk-surface--sunken {
     box-shadow: inset 0 1px 2px hsl(var(--spk-shadow-color) / 0.08);
-  }
-
-  .spk-surface--glass {
-    background:
-      linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--spk-glass-tint) 84%, var(--spk-surface-raised)),
-        var(--spk-glass-tint)
-      );
-    box-shadow: var(--spk-shadow-lg), var(--spk-facet);
   }
 
   .spk-surface[data-interactive="true"] {
