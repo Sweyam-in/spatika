@@ -1,0 +1,9 @@
+# Local container that serves the website build, like production. Run via scripts/dev-docker.sh.
+# Production uses .env.production and lives in the dev-console repo.
+name: spatika-dev
+
+services:
+  website:
+    build: .
+    ports:
+      - "127.0.0.1:${DOCKER_PORT:-8089}:80"

@@ -10,6 +10,7 @@ coverage
 test-results
 .env
 .env.*
+!.env.local.example
 deploy.env
 prod-deploy/atlas.deploy.env
 prod-deploy/.env.production
