@@ -24,3 +24,9 @@ scripts/build-push-ghcr.env
 .cursor/skills/*
 !.cursor/skills/spatika-ui/
 !.cursor/skills/spatika-ui/SKILL.md
+
+# Production deployment lives in the dev-console repo (dev-console/spatika)
+prod-deploy/
+scripts/build-push-ghcr.sh
+scripts/build-push-ghcr.env
+scripts/build-push-ghcr.env.example
