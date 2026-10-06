@@ -1,30 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Check,
-  Copy,
-  FileText,
-  Home,
-  Layers,
-  Rows3,
-  Search,
-  Settings,
-  Sparkles,
-  Type,
-  Users,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, Copy, FileText, Home, Settings, Users } from "lucide-react";
 import {
   AppShell,
   AreaChart,
   Badge,
   Button,
   Card,
-  Checkbox,
   DataTable,
   IconButton,
-  Input,
   Metric,
   MetricGroup,
   NavItem,
@@ -33,8 +17,6 @@ import {
   Panel,
   SegmentedControl,
   Sidebar,
-  SparkLineChart,
-  Switch,
   TopBar,
   WorkspaceSwitcher,
   type DataTableColumn,
@@ -48,22 +30,18 @@ import { SHOWCASE_SCREENS, ScreenArt } from "@/showcase/screens/ShowcaseIndexPag
 
 const principles = [
   {
-    icon: Layers,
     title: "Calm surfaces",
     body: "Solid material, hairline borders and restrained elevation. Glass is an opt-in material for chrome that floats over content.",
   },
   {
-    icon: Type,
     title: "Hierarchy through type",
     body: "Size, weight and spacing carry structure. Sections are headings, not nested cards; numbers use tabular figures.",
   },
   {
-    icon: Rows3,
     title: "Professional density",
     body: "Every control reads its size from density tokens. One attribute turns a consumer layout into an admin console.",
   },
   {
-    icon: Sparkles,
     title: "Quiet personality",
     body: "A facet edge on raised material, a prism rail on active items, a crisp focus ring. Recognisable, never loud.",
   },
@@ -109,65 +87,36 @@ const invoiceColumns: DataTableColumn<Invoice>[] = [
   { id: "amount", header: "Amount", accessor: (r) => r.amount, sortable: true, numeric: true, cell: (r) => usd(r.amount) },
 ];
 
-/** The same composition rendered in two themes side by side. */
+/** The same invoice list rendered in two themes, so the comparison is a task, not a control catalog. */
 function PreviewPane({ theme, label }: { theme: "mukta" | "neelam"; label: string }) {
-  const [on, setOn] = useState(true);
-  const [period, setPeriod] = useState("30d");
+  const preview = invoices.slice(0, 4);
   return (
     <div className={`home-preview-pane ${theme}`} data-spk-theme={theme}>
       <div className="home-preview-label">
         <span>{label}</span>
         <code>{theme}</code>
       </div>
-      <div className="home-preview-stack">
-        <Card padding="none">
-          <MetricGroup columns={2}>
-            <Metric
-              label="Revenue"
-              value={48_210}
-              format="currency"
-              precision={0}
-              delta={0.124}
-              caption="vs last period"
-              chart={<SparkLineChart data={[31, 34, 33, 38, 41, 39, 44, 48]} height={28} showHighlight={false} />}
-            />
-            <Metric label="Refund rate" value={0.021} format="percent" delta={-0.003} deltaIntent="inverse" caption="Target < 3%" />
-          </MetricGroup>
-        </Card>
-        <div className="home-row">
-          <SegmentedControl
-            aria-label={`${label} period`}
-            size="sm"
-            value={period}
-            onChange={setPeriod}
-            options={[
-              { value: "7d", label: "7d" },
-              { value: "30d", label: "30d" },
-              { value: "90d", label: "90d" },
-            ]}
-          />
-          <Badge variant="success" dot>
-            Live
-          </Badge>
-          <Badge variant="warning">3 flagged</Badge>
+      <div className="home-preview-head">
+        <div>
+          <div className="home-preview-title">Invoices</div>
+          <div className="screen-muted">3 need attention</div>
         </div>
-        <Input leading={<Search />} placeholder="Search customers" aria-label={`${label} search`} />
-        <div className="home-row">
-          <Button size="sm">Create invoice</Button>
-          <Button size="sm" variant="secondary">
-            Export
-          </Button>
-          <Button size="sm" variant="ghost">
-            Cancel
-          </Button>
-        </div>
-        <div className="home-row">
-          <Switch checked={on} onCheckedChange={setOn} aria-label={`${label} auto-pay`} />
-          <span className="screen-muted">Auto-pay {on ? "on" : "off"}</span>
-          <Checkbox defaultChecked aria-label={`${label} reminders`} />
-          <span className="screen-muted">Reminders</span>
-        </div>
+        <Button size="sm">Create invoice</Button>
       </div>
+      <ul className="home-preview-list">
+        {preview.map((invoice) => (
+          <li key={invoice.id}>
+            <span>
+              <span className="home-preview-customer">{invoice.customer}</span>
+              <span className="screen-muted spk-numeric">{invoice.id}</span>
+            </span>
+            <Badge variant={statusBadge[invoice.status].variant} dot>
+              {statusBadge[invoice.status].label}
+            </Badge>
+            <span className="spk-numeric home-preview-amount">{usd(invoice.amount)}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -268,15 +217,14 @@ export function HomePage() {
           </div>
           <h1 className="home-title">
             Spatika UI
-            <span>clarity, not frost.</span>
+            <span>for the work on the screen.</span>
           </h1>
           <p className="home-tagline">{SITE.tagline}</p>
           <p className="home-lead">
             Spatika (Sanskrit स्फटिक, crystal — often spelled <strong>Spadik</strong>) is {SITE.sweyam}&apos;s
-            AI-first, open-source React toolkit for SaaS, finance, productivity and admin software:
-            semantic tokens, density control, an application shell, data tables, charts, a calendar
-            and an editor that all speak the same visual language, plus a skill and MCP server so
-            coding agents can use the real APIs instead of guessing.
+            AI-first, open-source React toolkit for SaaS, finance, productivity and admin software.
+            Tokens, density, tables, charts, a calendar and an editor share one visual language, and
+            the docs are written so a coding agent can use the real APIs.
           </p>
           <div className="home-actions">
             <Button asChild size="lg" trailingIcon={<ArrowRight />}>
@@ -310,9 +258,8 @@ export function HomePage() {
             </p>
           </div>
           <div className="home-principles">
-            {principles.map(({ icon: Icon, title, body }) => (
+            {principles.map(({ title, body }) => (
               <article key={title} className="home-principle">
-                <Icon aria-hidden />
                 <h3>{title}</h3>
                 <p>{body}</p>
               </article>

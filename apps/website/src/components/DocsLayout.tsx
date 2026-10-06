@@ -1,6 +1,6 @@
 import { Suspense, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { ExternalLink, Github, Menu, Package, X } from "lucide-react";
+import { Github, Menu, Package, X } from "lucide-react";
 import { SpatikaLogo } from "@/components/SpatikaLogo";
 import { DocsSidebar } from "@/components/DocsSidebar";
 import { topNav, type NavItem } from "@/data/navigation";
@@ -62,22 +62,13 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
               <Github size={18} />
             </a>
             <a
-              href={SITE.npmOrg}
-              className="icon-link header-npm-link"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="npm packages"
-            >
-              <Package size={18} />
-            </a>
-            <a
               href={SITE.npmReact}
               className="icon-link header-npm-link"
               target="_blank"
               rel="noreferrer"
-              aria-label="View on npm"
+              aria-label="@spatika/react on npm"
             >
-              <ExternalLink size={18} />
+              <Package size={18} />
             </a>
             <button
               type="button"

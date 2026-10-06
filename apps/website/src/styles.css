@@ -3342,7 +3342,6 @@ pre {
   border: 1px solid var(--spk-border);
   border-radius: var(--spk-radius-lg);
   overflow: hidden;
-  box-shadow: var(--spk-shadow-lg);
 }
 
 @media (max-width: 700px) {
@@ -3393,7 +3392,7 @@ pre {
 @media (min-width: 900px) {
   .home-preview-pane + .home-preview-pane {
     border-top: 0;
-    border-left: 1px solid #25262f;
+    border-left: 1px solid var(--spk-border);
   }
 }
 
@@ -3516,9 +3515,56 @@ pre {
 }
 
 .home-principle h3 {
-  margin: 0.875rem 0 0.375rem;
+  margin: 0 0 0.375rem;
   font-size: var(--spk-text-title-3);
   font-weight: 600;
+}
+
+.home-preview-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.home-preview-title {
+  font-size: var(--spk-text-title-3);
+  font-weight: 600;
+  letter-spacing: var(--spk-tracking-snug);
+}
+
+.home-preview-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-preview-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--spk-border-subtle);
+}
+
+.home-preview-list li > span:first-child {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.home-preview-customer {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-preview-amount {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 .home-principle p {
