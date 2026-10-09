@@ -28,7 +28,7 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
       <header className="site-header">
         <div className="site-header-inner">
           <NavLink to="/" className="site-logo" onClick={() => setMobileOpen(false)}>
-            <SpatikaLogo size={32} className="site-logo-mark" />
+            <SpatikaLogo size={28} className="site-logo-mark" />
             <span>{SITE.brand}</span>
           </NavLink>
 
@@ -46,30 +46,33 @@ export function DocsLayout({ sidebar, wide }: DocsLayoutProps) {
 
           <div className="site-header-actions">
             <DocsSearch />
-            <span className="header-version">
-              <VersionSelector />
-            </span>
-            <span className="header-theme">
-              <ThemeToolbar />
-            </span>
-            <a
-              href={SITE.github}
-              className="icon-link"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub repository"
-            >
-              <Github size={18} />
-            </a>
-            <a
-              href={SITE.npmReact}
-              className="icon-link header-npm-link"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="@spatika/react on npm"
-            >
-              <Package size={18} />
-            </a>
+            <div className="site-header-cluster">
+              <span className="header-version">
+                <VersionSelector />
+              </span>
+              <span className="header-theme">
+                <ThemeToolbar />
+              </span>
+              <span className="site-header-divider" aria-hidden />
+              <a
+                href={SITE.github}
+                className="icon-link"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub repository"
+              >
+                <Github size={16} />
+              </a>
+              <a
+                href={SITE.npmReact}
+                className="icon-link header-npm-link"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="@spatika/react on npm"
+              >
+                <Package size={16} />
+              </a>
+            </div>
             <button
               type="button"
               className="icon-link mobile-nav-toggle"

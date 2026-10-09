@@ -49,7 +49,7 @@ export function AiFirstSection() {
             server for Claude, Codex, and other coding agents.
           </p>
           <div className="ai-first-actions">
-            <Button asChild size="touch">
+            <Button asChild>
               <a href="/llms.txt">Open llms.txt</a>
             </Button>
             <Button variant="secondary" asChild>

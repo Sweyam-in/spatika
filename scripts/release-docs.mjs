@@ -276,10 +276,14 @@ switch (command) {
         console.log(`v${version} already has its snapshot (never rebuilt).`);
         buildPackages();
         const manifest = writeManifest(siteDir, [version], [version]);
-        const marker = readRootMarker(siteDir);
         const prerelease = parseVersion(version).pre !== null;
-        if (!prerelease && manifest.latest === version && (marker?.version !== version || marker?.channel !== "stable")) {
-          installRoot(siteDir, buildSite({ outDir: siteDir, base: "/", version, channel: "stable" }), { version, channel: "stable" });
+        // The /docs/vX.Y.Z/ snapshot stays frozen. The live root is this checkout, so a
+        // docs fix on the current release ships without cutting a new version.
+        if (!prerelease && manifest.latest === version) {
+          installRoot(siteDir, buildSite({ outDir: siteDir, base: "/", version, channel: "stable" }), {
+            version,
+            channel: "stable",
+          });
         }
       } else {
         releaseDocs(siteDir, version, { skipTests: Boolean(options["skip-tests"]) });

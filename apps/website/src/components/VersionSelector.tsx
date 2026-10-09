@@ -12,11 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@spatika/react";
 import {
+  DOCS_BASE,
   DOCS_CHANNEL,
   DOCS_VERSION,
   FALLBACK_MANIFEST,
   channelLabel,
   currentRoute,
+  isNewerThanPublished,
   loadVersionManifest,
   versionHref,
   type VersionEntry,
@@ -37,11 +39,28 @@ export function useVersionManifest() {
 
 /** The manifest entry describing this build. */
 export function currentEntry(manifest: VersionManifest): VersionEntry {
+  // This checkout is ahead of the published snapshot, so it is the latest docs.
+  if (DOCS_CHANNEL === "development" && isNewerThanPublished(manifest.latest)) {
+    return {
+      version: DOCS_VERSION,
+      channel: "stable",
+      status: "current",
+      path: DOCS_BASE,
+      docs: "full",
+    };
+  }
   const byChannel =
     DOCS_CHANNEL === "development"
       ? manifest.versions.find((entry) => entry.status === "development")
       : manifest.versions.find((entry) => entry.version === DOCS_VERSION && entry.docs === "full");
   return byChannel ?? FALLBACK_MANIFEST.versions[0];
+}
+
+/** Header label. "Next" is only the unreleased channel; the newest docs say Latest. */
+export function versionTriggerLabel(entry: VersionEntry): string {
+  if (entry.status === "current" && DOCS_CHANNEL === "development") return "Latest";
+  if (entry.status === "development") return "Next";
+  return `v${entry.version.split("+")[0]}`;
 }
 
 /**
@@ -65,7 +84,8 @@ export function VersionSelector() {
   const location = useLocation();
   const current = currentEntry(manifest);
   const route = currentRoute(location.pathname);
-  const label = DOCS_CHANNEL === "development" ? "Next" : `v${DOCS_VERSION}`;
+  const label = versionTriggerLabel(current);
+  const ahead = isNewerThanPublished(manifest.latest);
 
   const groups: { title: string; entries: VersionEntry[] }[] = [
     { title: "Releases", entries: manifest.versions.filter((v) => v.status === "current" || v.status === "supported") },
@@ -80,7 +100,11 @@ export function VersionSelector() {
           variant="ghost"
           size="sm"
           className="docs-version-trigger"
-          aria-label={`Documentation version: ${label} (${channelLabel(current)})`}
+          aria-label={
+            label === "Latest" || label === "Next"
+              ? `Documentation version: ${label} (v${current.version.split("+")[0]})`
+              : `Documentation version: ${label}`
+          }
           trailingIcon={<ChevronDown className="size-3.5" aria-hidden />}
         >
           <span className="spk-numeric">{label}</span>
@@ -92,7 +116,8 @@ export function VersionSelector() {
             {index > 0 ? <DropdownMenuSeparator /> : null}
             <DropdownMenuLabel>{group.title}</DropdownMenuLabel>
             {group.entries.map((entry) => {
-              const isCurrent = entry === current || (entry.version === current.version && entry.status === current.status);
+              const shown = ahead && entry.status === "current" ? { ...entry, status: "supported" as const } : entry;
+              const isCurrent = !ahead && (entry === current || (entry.version === current.version && entry.status === current.status));
               return (
                 <DropdownMenuItem
                   key={`${entry.version}-${entry.status}`}
@@ -102,11 +127,11 @@ export function VersionSelector() {
                     window.location.assign(await resolveVersionTarget(entry, route));
                   }}
                 >
-                  <span className="spk-numeric">{entry.status === "development" ? "Next" : `v${entry.version}`}</span>
+                  <span className="spk-numeric">{shown.status === "development" ? "Next" : `v${shown.version.split("+")[0]}`}</span>
                   <span className="ml-auto flex items-center gap-1.5">
-                    {entry.docs === "archive" ? <span className="text-caption text-fg-tertiary">API only</span> : null}
-                    <Badge variant={entry.status === "current" ? "success" : entry.status === "archived" ? "outline" : "secondary"}>
-                      {channelLabel(entry)}
+                    {shown.docs === "archive" ? <span className="text-caption text-fg-tertiary">API only</span> : null}
+                    <Badge variant={shown.status === "current" ? "success" : shown.status === "archived" ? "outline" : "secondary"}>
+                      {channelLabel(shown)}
                     </Badge>
                   </span>
                 </DropdownMenuItem>

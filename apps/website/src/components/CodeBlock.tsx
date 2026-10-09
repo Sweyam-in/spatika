@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Check, Copy } from "lucide-react";
 
 type CodeBlockProps = {
   code: string;
@@ -16,12 +17,12 @@ export function CodeBlock({ code, language = "bash" }: CodeBlockProps) {
 
   return (
     <div className="code-block">
-      <button type="button" onClick={copy}>
-        {copied ? "Copied" : "Copy"}
-      </button>
       <pre tabIndex={0}>
         <code className={`language-${language}`}>{code}</code>
       </pre>
+      <button type="button" onClick={copy} aria-label={copied ? "Copied" : "Copy"}>
+        {copied ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />}
+      </button>
     </div>
   );
 }

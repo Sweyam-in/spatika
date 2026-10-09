@@ -84,3 +84,30 @@ export function channelLabel(entry: Pick<VersionEntry, "status" | "channel">) {
   if (entry.status === "supported") return "Supported";
   return "Archived";
 }
+
+/** Compare release numbers. `2.6.0` is newer than `2.3.0`; `+next` does not count as newer. */
+export function compareVersions(a: string, b: string): number {
+  const parts = (version: string) =>
+    version
+      .split("+")[0]
+      .split("-")[0]
+      .split(".")
+      .map((part) => Number.parseInt(part, 10) || 0);
+  const av = parts(a);
+  const bv = parts(b);
+  const length = Math.max(av.length, bv.length);
+  for (let index = 0; index < length; index += 1) {
+    const diff = (av[index] ?? 0) - (bv[index] ?? 0);
+    if (diff !== 0) return diff > 0 ? 1 : -1;
+  }
+  return 0;
+}
+
+/**
+ * True when this build documents a release newer than the newest stable snapshot in the
+ * manifest. Local and main-branch docs are that case while `versions.json` still lists an
+ * older release as current — they are the latest docs, not an unreleased "Next" channel.
+ */
+export function isNewerThanPublished(latestPublished: string): boolean {
+  return compareVersions(DOCS_VERSION, latestPublished) > 0;
+}
